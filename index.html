@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulation Teilereinigung</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --surface3: #faf9f6;
+    --border: rgba(0,0,0,0.12);
+    --border-strong: rgba(0,0,0,0.25);
+    --text: #1a1a18;
+    --text-muted: #6b6b66;
+    --accent: #185fa5;
+    --accent-bg: #e6f1fb;
+    --accent-border: #b5d4f4;
+    --success: #3b6d11;
+    --danger: #c0392b;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .header-actions { display: flex; gap: 8px; }
+
+  .btn {
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: #0c447c; }
+  .btn-danger { color: var(--danger); }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 28px 32px;
+  }
+
+  .left-col, .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 14px;
+  }
+
+  .cust-grid, .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); background: #fff; }
+
+  .machine-header, .sub-header {
+    display: grid;
+    gap: 10px;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    padding: 0 8px;
+  }
+
+  .machine-header {
+    grid-template-columns: 28px minmax(180px, 1.3fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
+  }
+
+  .machine-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .machine-row {
+    display: grid;
+    grid-template-columns: 28px minmax(180px, 1.3fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    background: var(--surface);
+  }
+  .machine-row.checked { background: var(--accent-bg); }
+
+  .machine-row input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .editable-name,
+  .price-input,
+  .price-display,
+  .sub-name,
+  .sub-input,
+  .sub-display {
+    width: 100%;
+    min-width: 0;
+    padding: 7px 8px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+  }
+
+  .editable-name:focus,
+  .price-input:focus,
+  .sub-name:focus,
+  .sub-input:focus { border-color: var(--accent); background: #fff; }
+
+  .price-display, .sub-display {
+    background: var(--surface3);
+    text-align: right;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .price-input, .sub-input { text-align: right; }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+  .icon-btn:hover { background: var(--surface2); color: var(--text); }
+
+  .sub-wrap {
+    display: none;
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--surface3);
+  }
+  .machine-card.expanded .sub-wrap { display: block; }
+
+  .sub-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .sub-note { font-size: 12px; color: var(--text-muted); }
+
+  .sub-header {
+    grid-template-columns: minmax(180px, 1.4fr) 110px 110px 110px 110px 110px 110px 28px;
+  }
+
+  .sub-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) 110px 110px 110px 110px 110px 110px 28px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .sub-row .sub-display:last-of-type { font-weight: 700; }
+
+  .add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .add-row input[type=text], .add-row input[type=number] {
+    padding: 7px 10px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+  }
+  .add-row input[type=text] { flex: 1; }
+  .add-row input[type=number] { width: 130px; text-align: right; }
+
+  .param-block, .metric {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+  }
+  .param-label, .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .param-row { display: flex; align-items: center; gap: 6px; }
+  .param-row input {
+    width: 76px;
+    padding: 5px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    text-align: right;
+    outline: none;
+  }
+  .param-row input:focus { border-color: var(--accent); }
+  .param-unit { font-size: 13px; color: var(--text-muted); }
+
+  .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .metric-value { font-size: 17px; font-weight: 600; }
+  .metric-total {
+    background: var(--accent-bg);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .metric-total .label { font-size: 12px; color: var(--accent); margin-bottom: 4px; }
+  .metric-total .value { font-size: 26px; font-weight: 700; color: var(--accent); }
+
+  .breakdown { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .breakdown td { padding: 6px 4px; border-bottom: 1px solid var(--border); }
+  .breakdown td:last-child { text-align: right; font-weight: 500; }
+  .breakdown tr.sep td { border-bottom: 2px solid var(--border-strong); }
+  .breakdown tr.subtotal td { background: var(--surface2); font-weight: 600; }
+  .breakdown tr.grand td { background: var(--accent-bg); color: var(--accent); font-weight: 700; font-size: 14px; }
+  .breakdown tr:last-child td { border-bottom: none; }
+
+  .offer-preview {
+    border: 1px dashed var(--accent-border);
+    background: var(--surface3);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-top: 10px;
+  }
+  .offer-preview h4 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .offer-preview table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .offer-preview td {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .offer-preview td:last-child { text-align: right; font-weight: 600; }
+  .muted { color: var(--text-muted); font-size: 12px; }
+
+  @media print {
+    .no-print { display: none !important; }
+    .app-header { position: static; }
+    body { background: #fff; }
+    .main-layout { display: block; padding: 0; }
+    .card { border: 1px solid #ccc; margin-bottom: 16px; page-break-inside: avoid; }
+    .sub-wrap { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header no-print">
+  <div>
+    <div style="font-size:17px;font-weight:600;">Kalkulation Teilereinigung</div>
+    <div class="subtitle">Hauptpositionen mit Unterpositionen und manuellem Angebotspreis</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="resetForm()">Zurücksetzen</button>
+    <button class="btn btn-primary" onclick="window.print()">&#128438; Angebot drucken / PDF</button>
+  </div>
+</div>
+
+<div class="main-layout">
+  <div class="left-col">
+
+    <div class="card">
+      <div class="card-title">Kundendaten</div>
+      <div class="cust-grid">
+        <div class="field"><label>Kundenname / Firma</label><input type="text" id="cust-name" placeholder="Mustermann GmbH"></div>
+        <div class="field"><label>Ansprechpartner</label><input type="text" id="cust-contact" placeholder="Max Mustermann"></div>
+        <div class="field"><label>Angebotsnummer</label><input type="text" id="offer-no" placeholder="AN-2026-001"></div>
+        <div class="field"><label>Datum</label><input type="text" id="offer-date" placeholder="17.04.2026"></div>
+        <div class="field" style="grid-column:1/-1"><label>Betreff / Projekt</label><input type="text" id="offer-subject" placeholder="Teilereinigungsanlage für Linie 3"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Maschinen &amp; Komponenten</div>
+      <div class="machine-header no-print">
+        <div></div>
+        <div>Position</div>
+        <div>Einkauf</div>
+        <div>Berechnet</div>
+        <div>Angebot</div>
+        <div></div>
+      </div>
+      <div id="machine-list"></div>
+      <div class="add-row no-print">
+        <input type="text" id="new-name" placeholder="Neue Hauptposition...">
+        <input type="number" id="new-price" placeholder="Einkauf €" min="0" step="100">
+        <button class="btn" onclick="addMachine()">+ Hinzufügen</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="right-col">
+    <div class="card">
+      <div class="card-title">Zuschläge &amp; Margen</div>
+      <div class="params-grid">
+        <div class="param-block">
+          <div class="param-label">Materialzuschlag</div>
+          <div class="param-row"><input type="number" id="p-material" value="10" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Provision</div>
+          <div class="param-row"><input type="number" id="p-provision" value="5" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Marge</div>
+          <div class="param-row"><input type="number" id="p-marge" value="15" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Risiko</div>
+          <div class="param-row"><input type="number" id="p-risiko" value="3" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Arbeitszeit</div>
+          <div class="param-row"><input type="number" id="work-rate" value="85" min="0" step="5" oninput="calc()"><span class="param-unit">€/h</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Entwicklungszeit</div>
+          <div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc()"><span class="param-unit">€/h</span></div>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:10px;">Diese Zuschläge werden auf Ebene der Unterpositionen kalkuliert. Jede Unterposition kann Einkauf, Arbeitszeit und Entwicklungszeit enthalten.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Kalkulation</div>
+      <div class="metric-row">
+        <div class="metric"><div class="metric-label">Gesamt Einkauf</div><div class="metric-value" id="s-purchase">0,00 €</div></div>
+        <div class="metric"><div class="metric-label">Gesamt Angebot</div><div class="metric-value" id="s-manual">0,00 €</div></div>
+      </div>
+      <div class="metric-total">
+        <div class="label">Angebotspreis (netto)</div>
+        <div class="value" id="s-total">0,00 €</div>
+      </div>
+      <table class="breakdown"><tbody id="breakdown-body"></tbody></table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Angebotsvorschau</div>
+      <div class="offer-preview">
+        <h4>Positionen für das Angebot</h4>
+        <table><tbody id="offer-preview-body"></tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Notizen / Bemerkungen</div>
+      <div class="field"><textarea id="notes" rows="5" placeholder="Lieferbedingungen, Zahlungsziel, technische Hinweise..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const defaultMachines = [
+  { name: 'Eintank-Ultraschallanlage', purchase: 4200 },
+  { name: 'Mehrtank-Tauchanlage', purchase: 8500 },
+  { name: 'Spritzwaschanlage (Durchlauf)', purchase: 12800 },
+  { name: 'Vakuum-Lösemittelanlage', purchase: 21000 },
+  { name: 'CO₂-Reinigungsanlage', purchase: 35000 },
+  { name: 'Trommelwaschanlage', purchase: 6900 }
+];
+
+let machineId = 0;
+let subId = 0;
+
+function fmt(n) {
+  return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+}
+
+function num(v) {
+  return parseFloat(v) || 0;
+}
+
+function getParams() {
+  return {
+    pMat: num(document.getElementById('p-material').value) / 100,
+    pProv: num(document.getElementById('p-provision').value) / 100,
+    pMarge: num(document.getElementById('p-marge').value) / 100,
+    pRisik: num(document.getElementById('p-risiko').value) / 100,
+    workRate: num(document.getElementById('work-rate').value),
+    devRate: num(document.getElementById('dev-rate').value)
+  };
+}
+
+function calcSubCalculatedPrice(row) {
+  const { pMat, pProv, pMarge, pRisik, workRate, devRate } = getParams();
+  const purchase = num(row.querySelector('.sub-purchase').value);
+  const workH = num(row.querySelector('.sub-workh').value);
+  const devH = num(row.querySelector('.sub-devh').value);
+
+  const mat = purchase * pMat;
+  const work = workH * workRate;
+  const dev = devH * devRate;
+  const base = purchase + mat + work + dev;
+  const prov = base * pProv;
+  const risk = base * pRisik;
+  const sub2 = base + prov + risk;
+  const marge = sub2 * pMarge;
+  const total = sub2 + marge;
+
+  row.querySelector('.sub-calc').value = total ? total.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00';
+  row.dataset.purchase = purchase;
+  row.dataset.material = mat;
+  row.dataset.work = work;
+  row.dataset.dev = dev;
+  row.dataset.prov = prov;
+  row.dataset.risk = risk;
+  row.dataset.marge = marge;
+  row.dataset.total = total;
+
+  return { purchase, mat, work, dev, prov, risk, marge, total };
+}
+
+function calcMachineCard(card) {
+  const checked = card.querySelector('.machine-check').checked;
+  const subRows = card.querySelectorAll('.sub-row');
+  let purchase = 0;
+  let calcPrice = 0;
+
+  subRows.forEach(row => {
+    const result = calcSubCalculatedPrice(row);
+    purchase += result.purchase;
+    calcPrice += result.total;
+  });
+
+  if (subRows.length === 0) {
+    const purchaseInput = card.querySelector('.machine-purchase');
+    const purchaseVal = num(purchaseInput.value);
+    const tempRow = {
+      querySelector: sel => ({
+        '.sub-purchase': { value: purchaseVal },
+        '.sub-workh': { value: 0 },
+        '.sub-devh': { value: 0 },
+        '.sub-calc': { value: '0,00' }
+      }[sel])
+    };
+    const { pMat, pProv, pMarge, pRisik } = getParams();
+    const mat = purchaseVal * pMat;
+    const base = purchaseVal + mat;
+    const prov = base * pProv;
+    const risk = base * pRisik;
+    const sub2 = base + prov + risk;
+    const marge = sub2 * pMarge;
+    calcPrice = sub2 + marge;
+    purchase = purchaseVal;
+  }
+
+  const machinePurchaseInput = card.querySelector('.machine-purchase');
+  if (document.activeElement !== machinePurchaseInput) {
+    machinePurchaseInput.value = purchase ? purchase.toFixed(2) : '0.00';
+  }
+
+  card.querySelector('.machine-calculated').value = calcPrice ? calcPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00';
+
+  const manualInput = card.querySelector('.machine-manual');
+  const manualVal = num(String(manualInput.value).replace(',', '.'));
+  const offerPrice = manualVal > 0 ? manualVal : calcPrice;
+
+  card.dataset.purchase = purchase;
+  card.dataset.calculated = calcPrice;
+  card.dataset.offer = checked ? offerPrice : 0;
+  card.dataset.selected = checked ? '1' : '0';
+
+  card.classList.toggle('checked', checked);
+  return { checked, purchase, calcPrice, offerPrice };
+}
+
+function calc() {
+  const cards = document.querySelectorAll('.machine-card');
+  let totalPurchase = 0;
+  let totalCalculated = 0;
+  let totalOffer = 0;
+  let purchaseMaterial = 0;
+  let purchaseWork = 0;
+  let purchaseDev = 0;
+  let purchaseProv = 0;
+  let purchaseRisk = 0;
+  let purchaseMarge = 0;
+
+  const offerRows = [];
+
+  cards.forEach(card => {
+    const result = calcMachineCard(card);
+    if (!result.checked) return;
+
+    totalPurchase += result.purchase;
+    totalCalculated += result.calcPrice;
+    totalOffer += result.offerPrice;
+
+    card.querySelectorAll('.sub-row').forEach(row => {
+      purchaseMaterial += num(row.dataset.material);
+      purchaseWork += num(row.dataset.work);
+      purchaseDev += num(row.dataset.dev);
+      purchaseProv += num(row.dataset.prov);
+      purchaseRisk += num(row.dataset.risk);
+      purchaseMarge += num(row.dataset.marge);
+    });
+
+    offerRows.push({
+      name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
+      calc: result.calcPrice,
+      offer: result.offerPrice,
+      manualUsed: num(String(card.querySelector('.machine-manual').value).replace(',', '.')) > 0
+    });
+  });
+
+  document.getElementById('s-purchase').textContent = fmt(totalPurchase);
+  document.getElementById('s-manual').textContent = fmt(totalOffer);
+  document.getElementById('s-total').textContent = fmt(totalOffer);
+
+  const base = totalPurchase + purchaseMaterial + purchaseWork + purchaseDev;
+  document.getElementById('breakdown-body').innerHTML = `
+    <tr><td>Einkauf gesamt</td><td>${fmt(totalPurchase)}</td></tr>
+    <tr><td>Materialzuschlag</td><td>${fmt(purchaseMaterial)}</td></tr>
+    <tr><td>Arbeitszeit gesamt</td><td>${fmt(purchaseWork)}</td></tr>
+    <tr class="sep"><td>Entwicklungszeit gesamt</td><td>${fmt(purchaseDev)}</td></tr>
+    <tr class="subtotal"><td>Zwischensumme</td><td>${fmt(base)}</td></tr>
+    <tr><td>Provision</td><td>${fmt(purchaseProv)}</td></tr>
+    <tr><td>Risiko</td><td>${fmt(purchaseRisk)}</td></tr>
+    <tr class="sep"><td>Marge</td><td>${fmt(purchaseMarge)}</td></tr>
+    <tr class="grand"><td>Angebotspreis (netto)</td><td>${fmt(totalOffer)}</td></tr>
+  `;
+
+  const preview = document.getElementById('offer-preview-body');
+  if (!offerRows.length) {
+    preview.innerHTML = '<tr><td class="muted">Noch keine Position ausgewählt.</td><td></td></tr>';
+  } else {
+    preview.innerHTML = offerRows.map(row => `
+      <tr>
+        <td>${row.name}<div class="muted">Berechnet: ${fmt(row.calc)}${row.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td>
+        <td>${fmt(row.offer)}</td>
+      </tr>
+    `).join('');
+  }
+}
+
+function createSubRow(data = {}) {
+  subId++;
+  const row = document.createElement('div');
+  row.className = 'sub-row';
+  row.dataset.subId = subId;
+  row.innerHTML = `
+    <input class="sub-name" type="text" value="${data.name || 'Unterposition'}" oninput="calc()">
+    <input class="sub-input sub-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()">
+    <input class="sub-input sub-workh" type="number" value="${data.workH ?? 0}" min="0" step="0.5" oninput="calc()">
+    <input class="sub-input sub-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()">
+    <input class="sub-display" type="text" value="0,00" readonly tabindex="-1">
+    <input class="sub-display" type="text" value="0,00" readonly tabindex="-1">
+    <input class="sub-display sub-calc" type="text" value="0,00" readonly tabindex="-1">
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.sub-row').remove();calc()" title="Unterposition entfernen">✕</button>
+  `;
+  return row;
+}
+
+function createMachineCard(data = {}) {
+  machineId++;
+  const card = document.createElement('div');
+  card.className = 'machine-card';
+  card.dataset.machineId = machineId;
+  card.innerHTML = `
+    <div class="machine-row">
+      <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
+      <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+      <input class="price-input machine-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()" title="Summe der Einkäufe aus den Unterpositionen">
+      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis">
+      <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
+      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterpositionen öffnen / schließen">▾</button>
+    </div>
+    <div class="sub-wrap">
+      <div class="sub-toolbar">
+        <div class="sub-note">Unterpositionen mit Einkauf, Arbeitszeit und Entwicklungszeit. Alle Zuschläge werden je Unterposition berechnet.</div>
+        <button class="btn no-print" type="button" onclick="addSubPosition(this.closest('.machine-card'))">+ Unterposition</button>
+      </div>
+      <div class="sub-header no-print">
+        <div>Unterposition</div>
+        <div>Einkauf</div>
+        <div>Arbeit h</div>
+        <div>Entw. h</div>
+        <div>Arbeit €</div>
+        <div>Entw. €</div>
+        <div>Berechnet</div>
+        <div></div>
+      </div>
+      <div class="sub-list"></div>
+    </div>
+  `;
+
+  const subList = card.querySelector('.sub-list');
+  if (data.subs && data.subs.length) {
+    data.subs.forEach(sub => subList.appendChild(createSubRow(sub)));
+  }
+
+  return card;
+}
+
+function toggleMachine(cb) {
+  cb.closest('.machine-card').classList.toggle('checked', cb.checked);
+  calc();
+}
+
+function toggleExpand(btn) {
+  const card = btn.closest('.machine-card');
+  card.classList.toggle('expanded');
+  btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
+}
+
+function addSubPosition(card, data = {}) {
+  const list = card.querySelector('.sub-list');
+  list.appendChild(createSubRow(data));
+  card.classList.add('expanded');
+  const toggleBtn = card.querySelector('.machine-row .icon-btn');
+  if (toggleBtn) toggleBtn.textContent = '▴';
+  calc();
+}
+
+function addMachine() {
+  const name = document.getElementById('new-name').value.trim();
+  const price = num(document.getElementById('new-price').value);
+  if (!name) {
+    document.getElementById('new-name').focus();
+    return;
+  }
+  const card = createMachineCard({ name, purchase: price, checked: true, subs: [{ name: name + ' - Basis', purchase: price, workH: 0, devH: 0 }] });
+  document.getElementById('machine-list').appendChild(card);
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-price').value = '';
+  calc();
+}
+
+function buildDefaults() {
+  const list = document.getElementById('machine-list');
+  list.innerHTML = '';
+  defaultMachines.forEach(item => {
+    const card = createMachineCard({
+      name: item.name,
+      purchase: item.purchase,
+      checked: false,
+      subs: [{ name: item.name + ' - Basis', purchase: item.purchase, workH: 0, devH: 0 }]
+    });
+    list.appendChild(card);
+  });
+}
+
+function resetForm() {
+  if (!confirm('Alle Eingaben zurücksetzen?')) return;
+  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('p-material').value = 10;
+  document.getElementById('p-provision').value = 5;
+  document.getElementById('p-marge').value = 15;
+  document.getElementById('p-risiko').value = 3;
+  document.getElementById('work-rate').value = 85;
+  document.getElementById('dev-rate').value = 110;
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-price').value = '';
+  document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
+  buildDefaults();
+  calc();
+}
+
+document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
+buildDefaults();
+calc();
+</script>
+</body>
+</html>
