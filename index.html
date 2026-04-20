@@ -446,13 +446,18 @@ const defaultMachines = [
 ];
 
 let machineId = 0;
-let subId = 0;
+let elementId = 0;
 
 function fmt(n) {
   return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
 }
 
+function fmtNum(n) {
+  return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function num(v) {
+  if (typeof v === 'string') v = v.replace(',', '.');
   return parseFloat(v) || 0;
 }
 
@@ -467,100 +472,103 @@ function getParams() {
   };
 }
 
-function calcSubCalculatedPrice(row) {
-  const { pMat, pProv, pMarge, pRisik, workRate, devRate } = getParams();
-  const purchase = num(row.querySelector('.sub-purchase').value);
-  const workH = num(row.querySelector('.sub-workh').value);
-  const devH = num(row.querySelector('.sub-devh').value);
+function calcElementRow(row) {
+  const workRate = num(document.getElementById('work-rate').value);
+  const purchase = num(row.querySelector('.el-purchase').value);
+  const workH = num(row.querySelector('.el-workh').value);
+  const workCost = workH * workRate;
+  const elementTotal = purchase + workCost;
 
-  const mat = purchase * pMat;
-  const work = workH * workRate;
-  const dev = devH * devRate;
-  const base = purchase + mat + work + dev;
-  const prov = base * pProv;
-  const risk = base * pRisik;
-  const sub2 = base + prov + risk;
-  const marge = sub2 * pMarge;
-  const total = sub2 + marge;
+  row.querySelector('.el-workcost').value = fmtNum(workCost);
+  row.querySelector('.el-total').value = fmtNum(elementTotal);
 
-  row.querySelector('.sub-calc').value = total ? total.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00';
   row.dataset.purchase = purchase;
-  row.dataset.material = mat;
-  row.dataset.work = work;
-  row.dataset.dev = dev;
-  row.dataset.prov = prov;
-  row.dataset.risk = risk;
-  row.dataset.marge = marge;
-  row.dataset.total = total;
+  row.dataset.workh = workH;
+  row.dataset.workcost = workCost;
+  row.dataset.total = elementTotal;
 
-  return { purchase, mat, work, dev, prov, risk, marge, total };
+  return { purchase, workH, workCost, elementTotal };
 }
 
 function calcMachineCard(card) {
+  const { pMat, pProv, pMarge, pRisik, devRate } = getParams();
   const checked = card.querySelector('.machine-check').checked;
-  const subRows = card.querySelectorAll('.sub-row');
-  let purchase = 0;
-  let calcPrice = 0;
+  const rows = card.querySelectorAll('.element-row');
 
-  subRows.forEach(row => {
-    const result = calcSubCalculatedPrice(row);
-    purchase += result.purchase;
-    calcPrice += result.total;
+  let elementPurchase = 0;
+  let elementWorkH = 0;
+  let elementWorkCost = 0;
+  let elementTotal = 0;
+
+  rows.forEach(row => {
+    const result = calcElementRow(row);
+    elementPurchase += result.purchase;
+    elementWorkH += result.workH;
+    elementWorkCost += result.workCost;
+    elementTotal += result.elementTotal;
   });
 
-  if (subRows.length === 0) {
-    const purchaseInput = card.querySelector('.machine-purchase');
-    const purchaseVal = num(purchaseInput.value);
-    const tempRow = {
-      querySelector: sel => ({
-        '.sub-purchase': { value: purchaseVal },
-        '.sub-workh': { value: 0 },
-        '.sub-devh': { value: 0 },
-        '.sub-calc': { value: '0,00' }
-      }[sel])
-    };
-    const { pMat, pProv, pMarge, pRisik } = getParams();
-    const mat = purchaseVal * pMat;
-    const base = purchaseVal + mat;
-    const prov = base * pProv;
-    const risk = base * pRisik;
-    const sub2 = base + prov + risk;
-    const marge = sub2 * pMarge;
-    calcPrice = sub2 + marge;
-    purchase = purchaseVal;
-  }
+  const devH = num(card.querySelector('.machine-devh').value);
+  const devCost = devH * devRate;
+  const material = elementTotal * pMat;
+  const base = elementTotal + devCost + material;
+  const provision = base * pProv;
+  const risk = base * pRisik;
+  const interim = base + provision + risk;
+  const margin = interim * pMarge;
+  const calcPrice = interim + margin;
 
-  const machinePurchaseInput = card.querySelector('.machine-purchase');
-  if (document.activeElement !== machinePurchaseInput) {
-    machinePurchaseInput.value = purchase ? purchase.toFixed(2) : '0.00';
-  }
-
-  card.querySelector('.machine-calculated').value = calcPrice ? calcPrice.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00';
+  card.querySelector('.machine-purchase').value = fmtNum(elementPurchase);
+  card.querySelector('.machine-worksum').value = fmtNum(elementWorkH);
+  card.querySelector('.machine-elementsum').value = fmtNum(elementTotal);
+  card.querySelector('.machine-devcost').value = fmtNum(devCost);
+  card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
 
   const manualInput = card.querySelector('.machine-manual');
-  const manualVal = num(String(manualInput.value).replace(',', '.'));
+  const manualVal = num(manualInput.value);
   const offerPrice = manualVal > 0 ? manualVal : calcPrice;
 
-  card.dataset.purchase = purchase;
+  card.dataset.purchase = elementPurchase;
+  card.dataset.elementWorkCost = elementWorkCost;
+  card.dataset.elementTotal = elementTotal;
+  card.dataset.devCost = devCost;
+  card.dataset.material = material;
+  card.dataset.provision = provision;
+  card.dataset.risk = risk;
+  card.dataset.margin = margin;
   card.dataset.calculated = calcPrice;
   card.dataset.offer = checked ? offerPrice : 0;
   card.dataset.selected = checked ? '1' : '0';
 
   card.classList.toggle('checked', checked);
-  return { checked, purchase, calcPrice, offerPrice };
+
+  return {
+    checked,
+    purchase: elementPurchase,
+    elementWorkCost,
+    elementTotal,
+    devCost,
+    material,
+    provision,
+    risk,
+    margin,
+    calcPrice,
+    offerPrice,
+    manualUsed: manualVal > 0
+  };
 }
 
 function calc() {
   const cards = document.querySelectorAll('.machine-card');
   let totalPurchase = 0;
-  let totalCalculated = 0;
+  let totalElementWork = 0;
+  let totalElements = 0;
+  let totalDev = 0;
+  let totalMaterial = 0;
+  let totalProvision = 0;
+  let totalRisk = 0;
+  let totalMargin = 0;
   let totalOffer = 0;
-  let purchaseMaterial = 0;
-  let purchaseWork = 0;
-  let purchaseDev = 0;
-  let purchaseProv = 0;
-  let purchaseRisk = 0;
-  let purchaseMarge = 0;
 
   const offerRows = [];
 
@@ -569,23 +577,22 @@ function calc() {
     if (!result.checked) return;
 
     totalPurchase += result.purchase;
-    totalCalculated += result.calcPrice;
+    totalElementWork += result.elementWorkCost;
+    totalElements += result.elementTotal;
+    totalDev += result.devCost;
+    totalMaterial += result.material;
+    totalProvision += result.provision;
+    totalRisk += result.risk;
+    totalMargin += result.margin;
     totalOffer += result.offerPrice;
-
-    card.querySelectorAll('.sub-row').forEach(row => {
-      purchaseMaterial += num(row.dataset.material);
-      purchaseWork += num(row.dataset.work);
-      purchaseDev += num(row.dataset.dev);
-      purchaseProv += num(row.dataset.prov);
-      purchaseRisk += num(row.dataset.risk);
-      purchaseMarge += num(row.dataset.marge);
-    });
 
     offerRows.push({
       name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
       calc: result.calcPrice,
       offer: result.offerPrice,
-      manualUsed: num(String(card.querySelector('.machine-manual').value).replace(',', '.')) > 0
+      manualUsed: result.manualUsed,
+      elements: card.querySelectorAll('.element-row').length,
+      workHours: num(card.querySelector('.machine-worksum').value)
     });
   });
 
@@ -593,16 +600,17 @@ function calc() {
   document.getElementById('s-manual').textContent = fmt(totalOffer);
   document.getElementById('s-total').textContent = fmt(totalOffer);
 
-  const base = totalPurchase + purchaseMaterial + purchaseWork + purchaseDev;
+  const interim = totalElements + totalDev + totalMaterial;
   document.getElementById('breakdown-body').innerHTML = `
-    <tr><td>Einkauf gesamt</td><td>${fmt(totalPurchase)}</td></tr>
-    <tr><td>Materialzuschlag</td><td>${fmt(purchaseMaterial)}</td></tr>
-    <tr><td>Arbeitszeit gesamt</td><td>${fmt(purchaseWork)}</td></tr>
-    <tr class="sep"><td>Entwicklungszeit gesamt</td><td>${fmt(purchaseDev)}</td></tr>
-    <tr class="subtotal"><td>Zwischensumme</td><td>${fmt(base)}</td></tr>
-    <tr><td>Provision</td><td>${fmt(purchaseProv)}</td></tr>
-    <tr><td>Risiko</td><td>${fmt(purchaseRisk)}</td></tr>
-    <tr class="sep"><td>Marge</td><td>${fmt(purchaseMarge)}</td></tr>
+    <tr><td>Einkauf Einzelelemente</td><td>${fmt(totalPurchase)}</td></tr>
+    <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalElementWork)}</td></tr>
+    <tr class="sep"><td>Summe Einzelelemente</td><td>${fmt(totalElements)}</td></tr>
+    <tr><td>Entwicklungskosten Einzelpositionen</td><td>${fmt(totalDev)}</td></tr>
+    <tr><td>Materialzuschlag</td><td>${fmt(totalMaterial)}</td></tr>
+    <tr class="subtotal"><td>Zwischensumme</td><td>${fmt(interim)}</td></tr>
+    <tr><td>Provision</td><td>${fmt(totalProvision)}</td></tr>
+    <tr><td>Risiko</td><td>${fmt(totalRisk)}</td></tr>
+    <tr class="sep"><td>Marge</td><td>${fmt(totalMargin)}</td></tr>
     <tr class="grand"><td>Angebotspreis (netto)</td><td>${fmt(totalOffer)}</td></tr>
   `;
 
@@ -612,27 +620,25 @@ function calc() {
   } else {
     preview.innerHTML = offerRows.map(row => `
       <tr>
-        <td>${row.name}<div class="muted">Berechnet: ${fmt(row.calc)}${row.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td>
+        <td>${row.name}<div class="muted">${row.elements} Einzelelemente · Arbeitszeit Summe ${fmtNum(row.workHours)} h · Berechnet: ${fmt(row.calc)}${row.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td>
         <td>${fmt(row.offer)}</td>
       </tr>
     `).join('');
   }
 }
 
-function createSubRow(data = {}) {
-  subId++;
+function createElementRow(data = {}) {
+  elementId++;
   const row = document.createElement('div');
-  row.className = 'sub-row';
-  row.dataset.subId = subId;
+  row.className = 'sub-row element-row';
+  row.dataset.elementId = elementId;
   row.innerHTML = `
-    <input class="sub-name" type="text" value="${data.name || 'Unterposition'}" oninput="calc()">
-    <input class="sub-input sub-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()">
-    <input class="sub-input sub-workh" type="number" value="${data.workH ?? 0}" min="0" step="0.5" oninput="calc()">
-    <input class="sub-input sub-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()">
-    <input class="sub-display" type="text" value="0,00" readonly tabindex="-1">
-    <input class="sub-display" type="text" value="0,00" readonly tabindex="-1">
-    <input class="sub-display sub-calc" type="text" value="0,00" readonly tabindex="-1">
-    <button class="icon-btn no-print" type="button" onclick="this.closest('.sub-row').remove();calc()" title="Unterposition entfernen">✕</button>
+    <input class="sub-name el-name" type="text" value="${data.name || 'Einzelelement'}" oninput="calc()">
+    <input class="sub-input el-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()">
+    <input class="sub-input el-workh" type="number" value="${data.workH ?? 0}" min="0" step="0.5" oninput="calc()">
+    <input class="sub-display el-workcost" type="text" value="0,00" readonly tabindex="-1">
+    <input class="sub-display el-total" type="text" value="0,00" readonly tabindex="-1">
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()" title="Einzelelement entfernen">✕</button>
   `;
   return row;
 }
@@ -646,33 +652,49 @@ function createMachineCard(data = {}) {
     <div class="machine-row">
       <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
       <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
-      <input class="price-input machine-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()" title="Summe der Einkäufe aus den Unterpositionen">
-      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis">
+      <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf Einzelelemente">
+      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Einzelposition">
       <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
-      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterpositionen öffnen / schließen">▾</button>
+      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterebene öffnen / schließen">▾</button>
     </div>
     <div class="sub-wrap">
       <div class="sub-toolbar">
-        <div class="sub-note">Unterpositionen mit Einkauf, Arbeitszeit und Entwicklungszeit. Alle Zuschläge werden je Unterposition berechnet.</div>
-        <button class="btn no-print" type="button" onclick="addSubPosition(this.closest('.machine-card'))">+ Unterposition</button>
+        <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Zuschläge werden erst auf die Gesamtsumme der Einzelposition gerechnet.</div>
+        <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
       </div>
-      <div class="sub-header no-print">
-        <div>Unterposition</div>
+      <div style="display:grid;grid-template-columns:1fr 170px 170px 170px;gap:10px;margin-bottom:12px;" class="no-print">
+        <div class="param-block">
+          <div class="param-label">Entwicklungszeit Einzelposition</div>
+          <div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span class="param-unit">h</span></div>
+        </div>
+        <div class="param-block">
+          <div class="param-label">Arbeitszeit Summe</div>
+          <input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1">
+        </div>
+        <div class="param-block">
+          <div class="param-label">Summe Einzelelemente</div>
+          <input class="price-display machine-elementsum" type="text" value="0,00" readonly tabindex="-1">
+        </div>
+        <div class="param-block">
+          <div class="param-label">Entwicklungskosten</div>
+          <input class="price-display machine-devcost" type="text" value="0,00" readonly tabindex="-1">
+        </div>
+      </div>
+      <div class="sub-header no-print" style="grid-template-columns:minmax(220px,1.8fr) 120px 100px 120px 120px 28px;">
+        <div>Einzelelement</div>
         <div>Einkauf</div>
         <div>Arbeit h</div>
-        <div>Entw. h</div>
         <div>Arbeit €</div>
-        <div>Entw. €</div>
-        <div>Berechnet</div>
+        <div>Gesamt</div>
         <div></div>
       </div>
       <div class="sub-list"></div>
     </div>
   `;
 
-  const subList = card.querySelector('.sub-list');
-  if (data.subs && data.subs.length) {
-    data.subs.forEach(sub => subList.appendChild(createSubRow(sub)));
+  const list = card.querySelector('.sub-list');
+  if (data.elements && data.elements.length) {
+    data.elements.forEach(el => list.appendChild(createElementRow(el)));
   }
 
   return card;
@@ -689,9 +711,9 @@ function toggleExpand(btn) {
   btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
 }
 
-function addSubPosition(card, data = {}) {
+function addElement(card, data = {}) {
   const list = card.querySelector('.sub-list');
-  list.appendChild(createSubRow(data));
+  list.appendChild(createElementRow(data));
   card.classList.add('expanded');
   const toggleBtn = card.querySelector('.machine-row .icon-btn');
   if (toggleBtn) toggleBtn.textContent = '▴';
@@ -705,7 +727,14 @@ function addMachine() {
     document.getElementById('new-name').focus();
     return;
   }
-  const card = createMachineCard({ name, purchase: price, checked: true, subs: [{ name: name + ' - Basis', purchase: price, workH: 0, devH: 0 }] });
+
+  const card = createMachineCard({
+    name,
+    checked: true,
+    elements: [{ name: name + ' - Element 1', purchase: price, workH: 0 }],
+    devH: 0
+  });
+
   document.getElementById('machine-list').appendChild(card);
   document.getElementById('new-name').value = '';
   document.getElementById('new-price').value = '';
@@ -718,9 +747,9 @@ function buildDefaults() {
   defaultMachines.forEach(item => {
     const card = createMachineCard({
       name: item.name,
-      purchase: item.purchase,
       checked: false,
-      subs: [{ name: item.name + ' - Basis', purchase: item.purchase, workH: 0, devH: 0 }]
+      elements: [{ name: item.name + ' - Element 1', purchase: item.purchase, workH: 0 }],
+      devH: 0
     });
     list.appendChild(card);
   });
