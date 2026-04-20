@@ -6,7 +6,6 @@
 <title>Kalkulation Teilereinigung</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --bg: #f5f4f0;
     --surface: #ffffff;
@@ -19,12 +18,10 @@
     --accent: #185fa5;
     --accent-bg: #e6f1fb;
     --accent-border: #b5d4f4;
-    --success: #3b6d11;
     --danger: #c0392b;
     --radius: 10px;
     --radius-sm: 6px;
   }
-
   body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
@@ -33,7 +30,6 @@
     line-height: 1.5;
     min-height: 100vh;
   }
-
   .app-header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -45,15 +41,8 @@
     top: 0;
     z-index: 100;
   }
-
-  .subtitle {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 1px;
-  }
-
+  .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .header-actions { display: flex; gap: 8px; }
-
   .btn {
     padding: 7px 16px;
     font-size: 13px;
@@ -63,35 +52,25 @@
     border: 1px solid var(--border-strong);
     background: var(--surface);
     color: var(--text);
-    transition: background 0.15s;
   }
   .btn:hover { background: var(--surface2); }
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-primary:hover { background: #0c447c; }
-  .btn-danger { color: var(--danger); }
-
   .main-layout {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: minmax(760px, 1fr) 400px;
     gap: 24px;
-    max-width: 1380px;
+    max-width: 1560px;
     margin: 0 auto;
     padding: 28px 32px;
   }
-
   .left-col, .right-col { display: flex; flex-direction: column; gap: 20px; }
-
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
   }
-
   .card-title {
     font-size: 11px;
     font-weight: 600;
@@ -100,10 +79,18 @@
     letter-spacing: 0.07em;
     margin-bottom: 14px;
   }
-
+  .quick-help {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: #f7f9fc;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
   .cust-grid, .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .field input, .field textarea {
+  .field input, .field textarea, .field select {
     width: 100%;
     padding: 7px 10px;
     font-size: 13px;
@@ -112,64 +99,44 @@
     background: var(--surface2);
     color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
     font-family: inherit;
   }
-  .field input:focus, .field textarea:focus { border-color: var(--accent); background: #fff; }
-
-  .machine-header, .sub-header {
-    display: grid;
-    gap: 10px;
-    align-items: center;
-    color: var(--text-muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-    padding: 0 8px;
-  }
-
-  .machine-header {
-    grid-template-columns: 28px minmax(180px, 1.3fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
-  }
-
-  .machine-card {
+  .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); background: #fff; }
+  .group-block {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    margin-bottom: 14px;
     overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    margin-bottom: 16px;
+    background: #fff;
   }
-  .machine-card.checked {
-    border-color: var(--accent-border);
-    box-shadow: 0 0 0 1px var(--accent-border);
+  .group-header {
+    padding: 10px 12px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    text-transform: uppercase;
   }
-
+  .machine-card {
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
+  .machine-card:last-child { border-bottom: none; }
+  .machine-card.checked { background: #fcfdff; }
   .machine-row {
     display: grid;
-    grid-template-columns: 28px minmax(220px, 1.5fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
+    grid-template-columns: 28px minmax(250px, 1.65fr) 120px 120px 120px 34px;
     gap: 10px;
     align-items: center;
     padding: 12px 10px;
-    background: var(--surface);
   }
-  .machine-row.checked { background: var(--accent-bg); }
-  .machine-main {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
+  .machine-row input[type=checkbox] {
+    width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer;
   }
-  .machine-caption {
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-  .machine-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 2px;
-  }
+  .machine-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .machine-badges { display: flex; flex-wrap: wrap; gap: 6px; }
   .badge {
     display: inline-flex;
     align-items: center;
@@ -181,20 +148,7 @@
     color: var(--text-muted);
     white-space: nowrap;
   }
-
-  .machine-row input[type=checkbox] {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
-
-  .editable-name,
-  .price-input,
-  .price-display,
-  .sub-name,
-  .sub-input,
-  .sub-display {
+  .editable-name, .price-input, .price-display, .sub-name, .sub-input, .sub-display, .oh-name, .oh-input {
     width: 100%;
     min-width: 0;
     padding: 7px 8px;
@@ -205,38 +159,27 @@
     color: var(--text);
     outline: none;
   }
-
-  .editable-name:focus,
-  .price-input:focus,
-  .sub-name:focus,
-  .sub-input:focus { border-color: var(--accent); background: #fff; }
-
+  .editable-name:focus, .price-input:focus, .sub-name:focus, .sub-input:focus, .oh-name:focus, .oh-input:focus {
+    border-color: var(--accent); background: #fff;
+  }
   .price-display, .sub-display {
     background: var(--surface3);
     text-align: right;
     font-weight: 600;
     color: var(--accent);
   }
-
-  .price-input, .sub-input { text-align: right; }
-
+  .price-input, .sub-input, .oh-input { text-align: right; }
   .icon-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 4px;
-    border-radius: 4px;
-    color: var(--text-muted);
+    background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; color: var(--text-muted);
   }
   .icon-btn:hover { background: var(--surface2); color: var(--text); }
-
   .sub-wrap {
     display: none;
     padding: 14px;
     border-top: 1px solid var(--border);
     background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
   }
+  .machine-card.expanded .sub-wrap { display: block; }
   .section-box {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -252,24 +195,28 @@
     letter-spacing: 0.06em;
     margin-bottom: 10px;
   }
-  .machine-card.expanded .sub-wrap { display: block; }
-
   .sub-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 10px;
   }
   .sub-note { font-size: 12px; color: var(--text-muted); }
-
   .sub-header {
-    grid-template-columns: minmax(180px, 1.4fr) 110px 110px 110px 110px 110px 110px 28px;
+    display: grid;
+    grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px;
+    gap: 10px;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    padding: 0 8px;
   }
-
   .sub-row {
     display: grid;
-    grid-template-columns: minmax(240px,1.9fr) 120px 100px 120px 120px 28px;
+    grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px;
     gap: 10px;
     align-items: center;
     margin-bottom: 8px;
@@ -278,31 +225,7 @@
     border-radius: var(--radius-sm);
     background: var(--surface3);
   }
-  .sub-row:hover {
-    border-color: var(--accent-border);
-  }
-
-  .sub-row .sub-display:last-of-type { font-weight: 700; }
-
-  .add-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-  .add-row input[type=text], .add-row input[type=number] {
-    padding: 7px 10px;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-  }
-  .add-row input[type=text] { flex: 1; }
-  .add-row input[type=number] { width: 130px; text-align: right; }
-
+  .sub-row:hover { border-color: var(--accent-border); }
   .param-block, .metric {
     background: var(--surface2);
     border-radius: var(--radius-sm);
@@ -310,21 +233,7 @@
   }
   .param-label, .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
   .param-row { display: flex; align-items: center; gap: 6px; }
-  .param-row input {
-    width: 76px;
-    padding: 5px 8px;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    color: var(--text);
-    text-align: right;
-    outline: none;
-  }
-  .param-row input:focus { border-color: var(--accent); }
-  .param-unit { font-size: 13px; color: var(--text-muted); }
-
+  .param-row input { width: 76px; padding: 5px 8px; font-size: 14px; font-weight: 500; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); text-align: right; }
   .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .metric-value { font-size: 17px; font-weight: 600; }
   .metric-total {
@@ -337,50 +246,43 @@
   }
   .metric-total .label { font-size: 12px; color: var(--accent); margin-bottom: 4px; }
   .metric-total .value { font-size: 26px; font-weight: 700; color: var(--accent); }
-
-  .breakdown { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .breakdown td { padding: 6px 4px; border-bottom: 1px solid var(--border); }
-  .breakdown td:last-child { text-align: right; font-weight: 500; }
-  .breakdown tr.sep td { border-bottom: 2px solid var(--border-strong); }
+  .breakdown, .offer-table, .oh-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .breakdown td, .offer-table td, .oh-table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .breakdown td:last-child, .offer-table td:last-child, .oh-table td:last-child { text-align: right; font-weight: 500; }
   .breakdown tr.subtotal td { background: var(--surface2); font-weight: 600; }
   .breakdown tr.grand td { background: var(--accent-bg); color: var(--accent); font-weight: 700; font-size: 14px; }
-  .breakdown tr:last-child td { border-bottom: none; }
-
-  .offer-preview {
+  .breakdown tr:last-child td, .offer-table tr:last-child td, .oh-table tr:last-child td { border-bottom: none; }
+  .offer-preview, .overhead-preview {
     border: 1px dashed var(--accent-border);
     background: var(--surface3);
     border-radius: var(--radius-sm);
     padding: 12px;
     margin-top: 10px;
   }
-  .quick-help {
-    margin-top: 10px;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    background: #f7f9fc;
-    border: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .offer-preview h4 {
+  .offer-preview h4, .overhead-preview h4 {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--text-muted);
     margin-bottom: 8px;
   }
-  .offer-preview table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .offer-preview td {
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .offer-preview td:last-child { text-align: right; font-weight: 600; }
   .muted { color: var(--text-muted); font-size: 12px; }
-
+  .oh-row {
+    display: grid;
+    grid-template-columns: minmax(220px,1.4fr) 120px 180px 30px;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
   @media print {
     .no-print { display: none !important; }
     .app-header { position: static; }
@@ -392,244 +294,164 @@
 </style>
 </head>
 <body>
-
 <div class="app-header no-print">
   <div>
     <div style="font-size:17px;font-weight:600;">Kalkulation Teilereinigung</div>
-    <div class="subtitle">Hauptpositionen mit Unterpositionen und manuellem Angebotspreis</div>
+    <div class="subtitle">Anlagenart, Baureihe, Teilüberschriften, Optionen und Overhead</div>
   </div>
   <div class="header-actions">
     <button class="btn" onclick="resetForm()">Zurücksetzen</button>
     <button class="btn btn-primary" onclick="window.print()">&#128438; Angebot drucken / PDF</button>
   </div>
 </div>
-
 <div class="main-layout">
   <div class="left-col">
-
     <div class="card">
       <div class="card-title">Anlagenauswahl</div>
-      <div class="quick-help no-print">Wähle zuerst die Anlagenkategorie und danach die passende Baureihe. Beim Laden der Baureihe werden typische Hauptpositionen und Startwerte für diese Anlagengruppe vorbereitet.</div>
-      <div class="cust-grid" style="margin-top:12px;">
+      <div class="quick-help no-print">Wähle Anlagenart und Baureihe. Das Tool lädt danach die passende Struktur mit Teilüberschriften. Bei Hybridanlagen werden wässriger Teil, Lösemittelteil sowie gemeinsame Bereiche kombiniert.</div>
+      <div class="cust-grid">
         <div class="field">
-          <label>Anlagenkategorie</label>
-          <select id="plant-category" onchange="updateSeriesOptions();applySeriesTemplate()" style="width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;">
+          <label>Anlagenart</label>
+          <select id="plant-category" onchange="updateSeriesOptions();applySeriesTemplate()">
             <option value="loesemittel">Lösemittelanlagen</option>
             <option value="waessrig">Wässrige Anlagen</option>
             <option value="hybrid">Hybride Anlagen</option>
           </select>
         </div>
         <div class="field">
-          <label>Anlagenbaureihe</label>
-          <select id="plant-series" onchange="applySeriesTemplate()" style="width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;"></select>
+          <label>Baureihe</label>
+          <select id="plant-series" onchange="applySeriesTemplate()"></select>
         </div>
         <div class="field" style="grid-column:1/-1;">
-          <label>Ausgewählte Baureihe / Hinweis</label>
-          <input type="text" id="plant-info" readonly value="" style="background:var(--surface3);">
+          <label>Auswahl / Hinweis</label>
+          <input type="text" id="plant-info" readonly style="background:var(--surface3);">
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Kundendaten</div>
-  
       <div class="cust-grid">
         <div class="field"><label>Kundenname / Firma</label><input type="text" id="cust-name" placeholder="Mustermann GmbH"></div>
         <div class="field"><label>Ansprechpartner</label><input type="text" id="cust-contact" placeholder="Max Mustermann"></div>
         <div class="field"><label>Angebotsnummer</label><input type="text" id="offer-no" placeholder="AN-2026-001"></div>
-        <div class="field"><label>Datum</label><input type="text" id="offer-date" placeholder="17.04.2026"></div>
-        <div class="field" style="grid-column:1/-1"><label>Betreff / Projekt</label><input type="text" id="offer-subject" placeholder="Teilereinigungsanlage für Linie 3"></div>
+        <div class="field"><label>Datum</label><input type="text" id="offer-date"></div>
+        <div class="field" style="grid-column:1/-1"><label>Betreff / Projekt</label><input type="text" id="offer-subject" placeholder="Reinigungsanlage"></div>
       </div>
     </div>
-
     <div class="card">
-      <div class="card-title">Maschinen &amp; Komponenten</div>
-      <div class="quick-help no-print">Oben wählst du die Angebotsposition aus. Mit dem Pfeil rechts öffnest du die Detailkalkulation. Unten in der Hauptposition siehst du sofort Einkauf, berechneten Preis und deinen manuell gerundeten Angebotspreis.</div>
-      <div class="machine-header no-print">
-        <div></div>
-        <div>Position</div>
-        <div>Einkauf</div>
-        <div>Berechnet</div>
-        <div>Angebot</div>
-        <div></div>
-      </div>
-      <div id="machine-list"></div>
-      <div class="add-row no-print">
-        <input type="text" id="new-name" placeholder="Neue Hauptposition...">
-        <input type="number" id="new-price" placeholder="Einkauf €" min="0" step="100">
-        <button class="btn" onclick="addMachine()">+ Hinzufügen</button>
-      </div>
+      <div class="card-title">Anlagenpositionen</div>
+      <div class="quick-help no-print">Jede Teilüberschrift entspricht eurer Angebotsstruktur. Positionen können gewählt, geöffnet und intern kalkuliert werden. Der manuelle Preis dient zum Runden für das Angebot.</div>
+      <div id="machine-groups"></div>
     </div>
-
   </div>
-
   <div class="right-col">
     <div class="card">
-      <div class="card-title">Zuschläge &amp; Margen</div>
+      <div class="card-title">Zuschläge & Margen</div>
       <div class="params-grid">
-        <div class="param-block">
-          <div class="param-label">Materialzuschlag</div>
-          <div class="param-row"><input type="number" id="p-material" value="10" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Provision</div>
-          <div class="param-row"><input type="number" id="p-provision" value="5" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Marge</div>
-          <div class="param-row"><input type="number" id="p-marge" value="15" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Risiko</div>
-          <div class="param-row"><input type="number" id="p-risiko" value="3" min="0" max="100" step="0.5" oninput="calc()"><span class="param-unit">%</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Arbeitszeit</div>
-          <div class="param-row"><input type="number" id="work-rate" value="85" min="0" step="5" oninput="calc()"><span class="param-unit">€/h</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Entwicklungszeit</div>
-          <div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc()"><span class="param-unit">€/h</span></div>
+        <div class="param-block"><div class="param-label">Materialzuschlag</div><div class="param-row"><input type="number" id="p-material" value="10" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Provision</div><div class="param-row"><input type="number" id="p-provision" value="5" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Marge</div><div class="param-row"><input type="number" id="p-marge" value="15" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Risiko</div><div class="param-row"><input type="number" id="p-risiko" value="3" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Arbeitszeit</div><div class="param-row"><input type="number" id="work-rate" value="85" min="0" step="5" oninput="calc()"><span>€/h</span></div></div>
+        <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc()"><span>€/h</span></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Overhead</div>
+      <div class="quick-help no-print">Overhead-Positionen können separat ausgewiesen werden. Optional können sie ganz oder teilweise in den Anlagenpreis einfließen.</div>
+      <div class="toggle-inline no-print"><input type="checkbox" id="oh-include" onchange="calc()"><label for="oh-include">Overhead in Anlagenpreis einrechnen</label></div>
+      <div class="field no-print" style="margin-top:10px; max-width:180px;">
+        <label>Anteil in Preis</label>
+        <input type="number" id="oh-share" value="100" min="0" max="100" step="5" oninput="calc()">
+      </div>
+      <div id="overhead-list" style="margin-top:12px;"></div>
+      <div class="section-box no-print" style="margin-top:12px;">
+        <div class="section-title">Overhead-Position hinzufügen</div>
+        <div class="oh-row">
+          <input class="oh-name" type="text" id="new-oh-name" placeholder="Overhead-Position">
+          <input class="oh-input" type="number" id="new-oh-price" placeholder="Preis" min="0" step="0.01">
+          <div></div>
+          <button class="icon-btn" type="button" onclick="addOverhead()">＋</button>
         </div>
       </div>
-      <div class="muted" style="margin-top:10px;">Diese Zuschläge werden auf Ebene der Unterpositionen kalkuliert. Jede Unterposition kann Einkauf, Arbeitszeit und Entwicklungszeit enthalten.</div>
     </div>
-
     <div class="card">
       <div class="card-title">Kalkulation</div>
       <div class="metric-row">
-        <div class="metric"><div class="metric-label">Gesamt Einkauf</div><div class="metric-value" id="s-purchase">0,00 €</div></div>
-        <div class="metric"><div class="metric-label">Gesamt Angebot</div><div class="metric-value" id="s-manual">0,00 €</div></div>
+        <div class="metric"><div class="metric-label">Anlagenpreis netto</div><div class="metric-value" id="s-total">0,00 €</div></div>
+        <div class="metric"><div class="metric-label">Overhead gesamt</div><div class="metric-value" id="s-overhead">0,00 €</div></div>
       </div>
       <div class="metric-total">
-        <div class="label">Angebotspreis (netto)</div>
-        <div class="value" id="s-total">0,00 €</div>
+        <div class="label">Gesamt inkl. eingerechnetem Overhead</div>
+        <div class="value" id="s-grand">0,00 €</div>
       </div>
       <table class="breakdown"><tbody id="breakdown-body"></tbody></table>
     </div>
-
     <div class="card">
       <div class="card-title">Angebotsvorschau</div>
       <div class="offer-preview">
-        <h4>Positionen für das Angebot</h4>
-        <table><tbody id="offer-preview-body"></tbody></table>
+        <h4>Preisübersicht in Euro</h4>
+        <table class="offer-table"><tbody id="offer-preview-body"></tbody></table>
+      </div>
+      <div class="overhead-preview" style="margin-top:12px;">
+        <h4>Overhead</h4>
+        <table class="oh-table"><tbody id="offer-overhead-body"></tbody></table>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Notizen / Bemerkungen</div>
       <div class="field"><textarea id="notes" rows="5" placeholder="Lieferbedingungen, Zahlungsziel, technische Hinweise..."></textarea></div>
     </div>
   </div>
 </div>
-
 <script>
-const plantTemplates = {
-  loesemittel: {
-    label: 'Lösemittelanlagen',
-    series: {
-      kompakt: {
-        label: 'Kompaktanlage',
-        info: 'Kleine Lösemittelanlage mit kompaktem Aufbau und reduzierter Peripherie.',
-        positions: [
-          { name: 'Arbeitskammer / Anlagenbasis', elements: [{ name: 'Kammergrundkörper', purchase: 7800, workH: 10 }, { name: 'Türen / Dichtungen', purchase: 2100, workH: 4 }] },
-          { name: 'Lösemittelkreislauf', elements: [{ name: 'Pumpe', purchase: 1650, workH: 3 }, { name: 'Filtereinheit', purchase: 1200, workH: 2.5 }, { name: 'Rohrleitungen / Ventile', purchase: 1850, workH: 6 }], devH: 3 },
-          { name: 'Steuerung', elements: [{ name: 'Schaltschrank', purchase: 2600, workH: 5 }, { name: 'Sensorik', purchase: 900, workH: 2 }] }
-        ]
-      },
-      standard: {
-        label: 'Standardanlage',
-        info: 'Mittlere Lösemittelanlage mit typischer Peripherie und erweiterten Funktionsgruppen.',
-        positions: [
-          { name: 'Arbeitskammer / Gestell', elements: [{ name: 'Kammergrundkörper', purchase: 11500, workH: 14 }, { name: 'Gestell / Verkleidung', purchase: 4200, workH: 9 }] },
-          { name: 'Destillation / Tanksystem', elements: [{ name: 'Destille', purchase: 6200, workH: 7 }, { name: 'Tankpaket', purchase: 3400, workH: 5 }, { name: 'Rohrleitungen / Armaturen', purchase: 2900, workH: 8 }], devH: 5 },
-          { name: 'Steuerung / Elektrik', elements: [{ name: 'Schaltschrank', purchase: 3900, workH: 7 }, { name: 'Sensorik', purchase: 1450, workH: 3.5 }, { name: 'Verdrahtung', purchase: 800, workH: 6 }] }
-        ]
-      },
-      gross: {
-        label: 'Großanlage',
-        info: 'Große Lösemittelanlage mit erweitertem Tanksystem, Automatisierung und hoher Peripherie.',
-        positions: [
-          { name: 'Kammer / Tragstruktur', elements: [{ name: 'Kammergrundkörper', purchase: 18500, workH: 22 }, { name: 'Tragstruktur', purchase: 7800, workH: 12 }] },
-          { name: 'Verfahrensmodul', elements: [{ name: 'Destillation', purchase: 9800, workH: 10 }, { name: 'Tanksystem', purchase: 7200, workH: 9 }, { name: 'Paket Rohrleitungen / Ventile', purchase: 6100, workH: 15 }], devH: 8 },
-          { name: 'Steuerung / Automatisierung', elements: [{ name: 'Schaltschrank', purchase: 5200, workH: 9 }, { name: 'Antriebstechnik', purchase: 3100, workH: 5 }, { name: 'Sensorik / Sicherheit', purchase: 2600, workH: 6 }] }
-        ]
-      }
-    }
-  },
-  waessrig: {
-    label: 'Wässrige Anlagen',
-    series: {
-      kompakt: {
-        label: 'Kompaktanlage',
-        info: 'Kleine wässrige Anlage für einfache Reinigungsaufgaben.',
-        positions: [
-          { name: 'Waschbehälter', elements: [{ name: 'Behälter', purchase: 5200, workH: 7 }, { name: 'Heizung', purchase: 1100, workH: 2 }] },
-          { name: 'Pumpen / Verrohrung', elements: [{ name: 'Pumpe', purchase: 950, workH: 2 }, { name: 'Rohrleitungen / Ventile', purchase: 1400, workH: 4 }], devH: 2 },
-          { name: 'Steuerung', elements: [{ name: 'Kleinsteuerung', purchase: 1700, workH: 3.5 }] }
-        ]
-      },
-      standard: {
-        label: 'Mehrbadanlage',
-        info: 'Wässrige Mehrbadanlage mit typischen Wasch-, Spül- und Trocknungsstufen.',
-        positions: [
-          { name: 'Badaufbereitung', elements: [{ name: 'VE-Badaufbereitung', purchase: 4200, workH: 8 }, { name: 'Pumpe', purchase: 1150, workH: 2.5 }, { name: 'Ventile / Verrohrung', purchase: 1700, workH: 5 }], devH: 4 },
-          { name: 'Behälter / Gehäuse', elements: [{ name: 'Waschbehälter', purchase: 6900, workH: 9 }, { name: 'Spülbehälter', purchase: 5800, workH: 8 }, { name: 'Trocknungsmodul', purchase: 4400, workH: 6 }] },
-          { name: 'Steuerung / Elektrik', elements: [{ name: 'Schaltschrank', purchase: 2900, workH: 5 }, { name: 'Sensorik', purchase: 1300, workH: 3 }] }
-        ]
-      },
-      gross: {
-        label: 'Großanlage',
-        info: 'Große wässrige Reinigungsanlage mit mehreren Funktionsstufen und hoher Peripherie.',
-        positions: [
-          { name: 'Badaufbereitung / Medien', elements: [{ name: 'VE-Aufbereitung', purchase: 7200, workH: 12 }, { name: 'Pumpenpaket', purchase: 2600, workH: 4 }, { name: 'Rohrleitungen / Ventile', purchase: 4200, workH: 10 }], devH: 6 },
-          { name: 'Behälterlinie', elements: [{ name: 'Waschbehälter', purchase: 9800, workH: 13 }, { name: 'Spülbehälter', purchase: 8600, workH: 11 }, { name: 'Trocknung', purchase: 7300, workH: 9 }] },
-          { name: 'Steuerung / Automatisierung', elements: [{ name: 'Schaltschrank', purchase: 4300, workH: 7 }, { name: 'Sensorik / Sicherheit', purchase: 2400, workH: 5 }, { name: 'Verdrahtung', purchase: 1200, workH: 7 }] }
-        ]
-      }
-    }
-  },
-  hybrid: {
-    label: 'Hybride Anlagen',
-    series: {
-      basis: {
-        label: 'Basisanlage',
-        info: 'Hybride Anlage mit kombinierter wässriger und lösemittelbasierter Verfahrenstechnik.',
-        positions: [
-          { name: 'Grundmodul', elements: [{ name: 'Anlagenbasis', purchase: 8600, workH: 11 }, { name: 'Verkleidung', purchase: 2600, workH: 4 }] },
-          { name: 'Verfahrensmodule', elements: [{ name: 'Wässriges Modul', purchase: 4900, workH: 7 }, { name: 'Lösemittelmodul', purchase: 6200, workH: 8 }, { name: 'Ventile / Rohrleitungen', purchase: 3300, workH: 8 }], devH: 5 },
-          { name: 'Steuerung', elements: [{ name: 'Schaltschrank', purchase: 3700, workH: 6 }, { name: 'Sensorik', purchase: 1600, workH: 3 }] }
-        ]
-      },
-      erweitert: {
-        label: 'Erweiterte Anlage',
-        info: 'Hybride Anlage mit mehreren Prozessstufen und erhöhtem Automatisierungsgrad.',
-        positions: [
-          { name: 'Grundstruktur', elements: [{ name: 'Rahmen / Kammer', purchase: 12800, workH: 16 }, { name: 'Verkleidung / Türen', purchase: 4100, workH: 7 }] },
-          { name: 'Prozessmodule', elements: [{ name: 'Wässriges Modul', purchase: 7100, workH: 9 }, { name: 'Lösemittelmodul', purchase: 9200, workH: 11 }, { name: 'Medienverteilung', purchase: 5200, workH: 10 }], devH: 7 },
-          { name: 'Steuerung / Sicherheit', elements: [{ name: 'Schaltschrank', purchase: 4700, workH: 8 }, { name: 'Sicherheitstechnik', purchase: 2200, workH: 4 }, { name: 'Verdrahtung', purchase: 1300, workH: 7 }] }
-        ]
-      }
-    }
-  }
+const SERIES = {
+  loesemittel: ['Multiclean LC-III','Multiclean S-Standard','Multiclean S-1 PRO','Multiclean S-2 PRO','Multiclean S-3 PRO','Multiclean S-4 PRO','Multiclean S-1 MAX','Multiclean S-2 MAX','Multiclean S-3 MAX','Multiclean S-4 MAX'],
+  waessrig: ['Multiclean A-Standard','Multiclean A-1 PRO','Multiclean A-2 PRO','Multiclean A-3 PRO','Multiclean A-4 PRO','Multiclean A-1 MAX','Multiclean A-2 MAX','Multiclean A-3 MAX','Multiclean A-4 MAX'],
+  hybrid: ['Multiclean DUO-Standard','Multiclean DUO-1 PRO','Multiclean DUO-2 PRO','Multiclean DUO-3 PRO','Multiclean DUO-4 PRO','Multiclean DUO-1 MAX','Multiclean DUO-2 MAX','Multiclean DUO-3 MAX','Multiclean DUO-4 MAX']
 };
+
+const LOESEMITTEL_GROUPS = [
+  { title: 'Basisanlage', positions: ['Basisanlage'] },
+  { title: 'OPTIONEN ANLAGE & PROZESS', positions: ['Elektropolierte Arbeitskammer','Abweichendes Nutzmaß','Auflastung auf höheres Chargengewicht','Vor-Reinigungs-Kreislauf','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 2)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 3)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 4)','Aktivkohlefass zur Emissionsminderung','Auto-Adsorber für den 2-Schicht-Betrieb mit PER','Erweiterung auf 3-Schicht-Betrieb PER','Konzentrationsmessgerät PER (Vorschrift in D, CH)','Konzentrationsmessgerät modifizierter Alkohol','VA-Bodenwanne','Wartungszugang mit Rollladen','Anlagendach','Innenraum-Absaugung','Schalldämmung'] },
+  { title: 'TROCKNUNG', positions: ['Heißluft-Trocknung (PER)','Infrarottrocknung','Verstärkte Vakuum-Trocknung 300 m³/h','Verstärkte, Vakuum-Trocknung mit Schraubenpumpe, 350 m³/h','Wärmetauscher aus Edelstahl','Kompakt-Kälteaggregat (sofern bauseits kein Kühlwasser vorh.)','Drycooler','Wartungs-Kühleinrichtung'] },
+  { title: 'ULTRASCHALL', positions: ['Standard-Ultraschall 1x 1.500 W / 30 kHz','Standard-Ultraschall 2x 1.500 W / 30 kHz','3-Seiten-Ultraschall 3x 1.500 W / 30 kHz','Verstärkter Ultraschall'] },
+  { title: 'FILTRATION', positions: ['Grobschmutzfilter-Gehäuse mit VA-Siebkorbeinsatz','Neodym-Magnetstab im Grobschmutzfilter-Gehäuse','Neodym-Magnetstab im Beutelfilter-Gehäuse, je Kreislauf','Kerzenfilter-Einsatz im Beutelfilter-Gehäuse, je Einheit','Doppel-Filter mit automatischer Umschaltung, je Kreislauf','Filter-Differenzdruck-Überwachung','Filterdeckelabfrage','Destillatfilter mit 1x20“ Filterkerze'] },
+  { title: 'BADPFLEGE', positions: ['Restdestillation mit Ölaustrag in Betriebspausen','Restdestille VRD 50 mit kontinuierlichem Ölaustrag','Sumpfkühlung','Dampfbeheizte Ausführung nur Hauptdestille','Dampfbeheizte Ausführung, Haupt- und Restdestille','Konzentrations-Messgerät für Konservierbad','Dosiereinrichtung für Konservierbad','Schlauchset / Füllarmaturen für offenes Fass','Füllarmaturen für Sicherheitsgebinde'] },
+  { title: 'AUTOMATISIERUNG', positions: ['Automatischer Korbdeckel, 10 mm','Standard Ladetisch','Manuelle Rollenbahn (1-1-1)','Manuelle Rollenbahn (3-1-3)','Beladeplatz mit automatischem Einschub','Automatische Beschickungeinrichtung (ABE) mit 1-spuriger Stau-Förderstrecke (3-1-3)','Verlängerung der angetriebenen Förderstrecke','Docking-Station für Trolley','Trolley','Offener Tunnel über der Auslauf-Förderstrecke','FFU zur Spülung des Tunnels mit gefilterter Luft','Doppel-Schleuse zur Reinraum-Anbindung','Hubtisch Belade/Entladeplatz','Rückführ-Rollenbahn','Eckumsetzer','Spezielle Warenträger'] },
+  { title: 'INDUSTRIALISIERUNG', positions: ['VPN-Modem für Fernwartung via Talk2M','Barcode-Scanner zur Programmanwahl','Betriebsdatenerfassung auf Wechselspeicher','Netzwerkanbindung über OPC-UA','Leuchtmeldesäule','Schaltschrank-Klimatisierung','Energie-Erfassung (nur Anzeige)','Energie-Erfassung (mit Anbindung)','Einzelader-Kennzeichnung','Rohrleitung-Kennzeichnung','Bedieneranmeldung mittels RFID / System Euchner','Sonderlackierung','Einhaltung spezieller Betriebsmittel-Vorschriften'] }
+];
+
+const WAESSRIG_GROUPS = [
+  { title: 'Basisanlage', positions: ['Basisanlage'] },
+  { title: 'OPTIONEN ANLAGE & PROZESS', positions: ['Elektropolierte Arbeitskammer','Abweichendes Nutzmaß','Auflastung auf höheres Chargengewicht','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 3)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 4)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 5)','Verstärkte Pumpe: 450 l/min @ 6 bar, mit Druckvorwahl, je Kreislauf','Wartungszugang mit Rollladen','Anlagendach','Innenraum-Absaugung','Schalldämmung'] },
+  { title: 'TROCKNUNG', positions: ['Heißluft-Trocknung','Infrarottrocknung','Verstärkte Vakuum-Trocknung 300 m³/h','Verstärkte, Vakuum-Trocknung mit Schraubenpumpe, 350 m³/h','Vakuum-unterstütztes Reinigen','Schwaden-Kondensator','Kompakt-Kälteaggregat (sofern bauseits kein Kühlwasser vorh.)'] },
+  { title: 'ULTRASCHALL', positions: ['Standard-Ultraschall 2x 1.500 W / 30 kHz','3-Seiten-Ultraschall 3x 1.500 W / 30 kHz','Verstärkter Ultraschall'] },
+  { title: 'FILTRATION', positions: ['Grobschmutzfilter-Gehäuse mit VA-Siebkorbeinsatz','Neodym-Magnetstab im Grobschmutzfilter-Gehäuse','Neodym-Magnetstab im Beutelfilter-Gehäuse, je Kreislauf','Kerzenfilter-Einsatz im Beutelfilter-Gehäuse, je Einheit','Doppel-Filter mit automatischer Umschaltung, je Kreislauf','Filter-Differenzdruck-Überwachung','Filterdeckelabfrage'] },
+  { title: 'BADPFLEGE', positions: ['Separater Koaleszenz-Ölabscheider für Tank 1','Separater Koaleszenz-Ölabscheider weiterer Tank','VE-Patrone mit Leitwertmessgerät (für Nachspeisung)','VE-Kreislaufanlage mit LF-Messgerät, 1.000 l/h zur Aufbereitung des letzten Spülbades','Zusätzliche Leitwert-Messung direkt im letzten Spülbad','Reiniger-Konzentrationsmessgerät je Einheit','Reiniger-Dosiereinrichtung, je Einheit','Automatische Wassernachspeisung inkl. Leckwarnsonde (2-Tank)','Automatische Wassernachspeisung inkl. Leckwarnsonde (3-Tank)','Automatische Wassernachspeisung inkl. Leckwarnsonde (4-Tank)','Automatische Wassernachspeisung inkl. Leckwarnsonde (5-Tank)','Entleerpumpe, selbstansaugend','Automatische Entleerfunktion'] },
+  { title: 'AUTOMATISIERUNG', positions: ['Automatischer Korbdeckel, 10 mm','Standard Ladetisch','Manuelle Rollenbahn (1-1-1)','Manuelle Rollenbahn (3-1-3)','Beladeplatz mit automatischem Einschub','Automatische Beschickungeinrichtung (ABE) mit 1-spuriger Stau-Förderstrecke (3-1-3)','Verlängerung der angetriebenen Förderstrecke','Docking-Station für Trolley','Trolley','Offener Tunnel über der Auslauf-Förderstrecke','FFU zur Spülung des Tunnels mit gefilterter Luft','Doppel-Schleuse zur Reinraum-Anbindung','Hubtisch Belade/Entladeplatz','Rückführ-Rollenbahn','Eckumsetzer','Spezielle Warenträger'] },
+  { title: 'INDUSTRIALISIERUNG', positions: ['VPN-Modem für Fernwartung via Talk2M','Barcode-Scanner zur Programmanwahl','Betriebsdatenerfassung auf Wechselspeicher','Netzwerkanbindung über OPC-UA','Leuchtmeldesäule','Schaltschrank-Klimatisierung','Energie-Erfassung (nur Anzeige)','Energie-Erfassung (mit Anbindung)','Einzelader-Kennzeichnung','Rohrleitung-Kennzeichnung','Bedieneranmeldung mittels RFID / System Euchner','Sonderlackierung','Einhaltung spezieller Betriebsmittel-Vorschriften'] }
+];
+
+const OVERHEAD_DEFAULTS = ['Transport frei Abladestelle (Deutschland)','Montage, Inbetriebnahme, Schulung zzgl. Reisekosten','Tagessatz für Nachschulung, Prozessoptimierung','Übersetzung Dokumentation','Garantieerweiterung auf 24 Monate','Heißabnahme','Inbetriebnahme','Anlagenabnahme'];
 
 let machineId = 0;
 let elementId = 0;
+let overheadId = 0;
 
 function fmt(n) {
   return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
 }
-
 function fmtNum(n) {
   return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
 function num(v) {
   if (typeof v === 'string') v = v.replace(',', '.');
   return parseFloat(v) || 0;
 }
-
+function slug(str) {
+  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
 function getParams() {
   return {
     pMat: num(document.getElementById('p-material').value) / 100,
@@ -640,174 +462,80 @@ function getParams() {
     devRate: num(document.getElementById('dev-rate').value)
   };
 }
-
-function calcElementRow(row) {
-  const workRate = num(document.getElementById('work-rate').value);
-  const purchase = num(row.querySelector('.el-purchase').value);
-  const workH = num(row.querySelector('.el-workh').value);
-  const workCost = workH * workRate;
-  const elementTotal = purchase + workCost;
-
-  row.querySelector('.el-workcost').value = fmtNum(workCost);
-  row.querySelector('.el-total').value = fmtNum(elementTotal);
-
-  row.dataset.purchase = purchase;
-  row.dataset.workh = workH;
-  row.dataset.workcost = workCost;
-  row.dataset.total = elementTotal;
-
-  return { purchase, workH, workCost, elementTotal };
+function sizeFactor(series) {
+  if (/LC-III/i.test(series)) return 0.95;
+  if (/Standard/i.test(series)) return 1.0;
+  const m = series.match(/(?:S|A|DUO)-([1-4])/i);
+  if (!m) return 1.0;
+  const n = Number(m[1]);
+  const isMax = /MAX/i.test(series);
+  const base = 0.95 + (n * 0.18);
+  return isMax ? base + 0.2 : base;
 }
-
-function calcMachineCard(card) {
-  const { pMat, pProv, pMarge, pRisik, devRate } = getParams();
-  const checked = card.querySelector('.machine-check').checked;
-  const rows = card.querySelectorAll('.element-row');
-
-  let purchaseSum = 0;
-  let workHoursSum = 0;
-  let workCostSum = 0;
-  let elementTotalSum = 0;
-
-  rows.forEach(row => {
-    const result = calcElementRow(row);
-    purchaseSum += result.purchase;
-    workHoursSum += result.workH;
-    workCostSum += result.workCost;
-    elementTotalSum += result.elementTotal;
-  });
-
-  const devH = num(card.querySelector('.machine-devh').value);
-  const devCost = devH * devRate;
-  const material = purchaseSum * pMat;
-  const basis = purchaseSum + material + workCostSum + devCost;
-  const provision = basis * pProv;
-  const risk = basis * pRisik;
-  const interim = basis + provision + risk;
-  const margin = interim * pMarge;
-  const calcPrice = interim + margin;
-
-  card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
-  card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
-  card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
-  card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
-  card.querySelector('.machine-devcost').value = fmtNum(devCost);
-  card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
-  const badgeEl = card.querySelector('.machine-elements-badge');
-  const badgeHours = card.querySelector('.machine-hours-badge');
-  if (badgeEl) badgeEl.textContent = `${rows.length} Einzelelemente`;
-  if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
-
-  const manualInput = card.querySelector('.machine-manual');
-  const manualVal = num(manualInput.value);
-  const offerPrice = manualVal > 0 ? manualVal : calcPrice;
-
-  card.dataset.purchase = purchaseSum;
-  card.dataset.workHours = workHoursSum;
-  card.dataset.workCost = workCostSum;
-  card.dataset.elementTotal = elementTotalSum;
-  card.dataset.devCost = devCost;
-  card.dataset.material = material;
-  card.dataset.basis = basis;
-  card.dataset.provision = provision;
-  card.dataset.risk = risk;
-  card.dataset.margin = margin;
-  card.dataset.calculated = calcPrice;
-  card.dataset.offer = checked ? offerPrice : 0;
-  card.dataset.selected = checked ? '1' : '0';
-
-  card.classList.toggle('checked', checked);
-
-  return {
-    checked,
-    purchase: purchaseSum,
-    workHours: workHoursSum,
-    workCost: workCostSum,
-    elementTotal: elementTotalSum,
-    devCost,
-    material,
-    basis,
-    provision,
-    risk,
-    margin,
-    calcPrice,
-    offerPrice,
-    manualUsed: manualVal > 0
-  };
+function basePriceForPosition(name, factor, category, groupTitle) {
+  const t = name.toLowerCase();
+  let base = 1800;
+  if (t.includes('basisanlage')) base = category === 'hybrid' ? 32000 : 22000;
+  else if (groupTitle.includes('ANLAGE')) base = 2800;
+  else if (groupTitle.includes('TROCKNUNG')) base = 3600;
+  else if (groupTitle.includes('ULTRASCHALL')) base = 2600;
+  else if (groupTitle.includes('FILTRATION')) base = 1700;
+  else if (groupTitle.includes('BADPFLEGE')) base = 2100;
+  else if (groupTitle.includes('AUTOMATISIERUNG')) base = 3200;
+  else if (groupTitle.includes('INDUSTRIALISIERUNG')) base = 1900;
+  if (t.includes('kälteaggregat') || t.includes('drycooler')) base += 2400;
+  if (t.includes('schalldämmung')) base += 800;
+  if (t.includes('arbeitskammer')) base += 1200;
+  if (t.includes('tankkreislauf')) base += 2600;
+  if (t.includes('ultraschall')) base += 2000;
+  if (t.includes('barcode') || t.includes('opc') || t.includes('vpn')) base += 1200;
+  return Math.round(base * factor);
 }
-
-function calc() {
-  const cards = document.querySelectorAll('.machine-card');
-  let totalPurchase = 0;
-  let totalWorkHours = 0;
-  let totalWorkCost = 0;
-  let totalElementSum = 0;
-  let totalDev = 0;
-  let totalMaterial = 0;
-  let totalBasis = 0;
-  let totalProvision = 0;
-  let totalRisk = 0;
-  let totalMargin = 0;
-  let totalOffer = 0;
-
-  const offerRows = [];
-
-  cards.forEach(card => {
-    const result = calcMachineCard(card);
-    if (!result.checked) return;
-
-    totalPurchase += result.purchase;
-    totalWorkHours += result.workHours;
-    totalWorkCost += result.workCost;
-    totalElementSum += result.elementTotal;
-    totalDev += result.devCost;
-    totalMaterial += result.material;
-    totalBasis += result.basis;
-    totalProvision += result.provision;
-    totalRisk += result.risk;
-    totalMargin += result.margin;
-    totalOffer += result.offerPrice;
-
-    offerRows.push({
-      name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
-      calc: result.calcPrice,
-      offer: result.offerPrice,
-      manualUsed: result.manualUsed,
-      elements: card.querySelectorAll('.element-row').length,
-      workHours: result.workHours,
-      devCost: result.devCost
+function makeElementsForPosition(name, category, groupTitle, series) {
+  const factor = sizeFactor(series);
+  const total = basePriceForPosition(name, factor, category, groupTitle);
+  const mainShare = Math.round(total * 0.72);
+  const secShare = total - mainShare;
+  return [
+    { name: name + ' - Material / Komponenten', purchase: mainShare, workH: Math.max(1, Math.round((mainShare / 700) * 2) / 2) },
+    { name: name + ' - Montage / Integration', purchase: secShare, workH: Math.max(0.5, Math.round((secShare / 900) * 2) / 2) }
+  ];
+}
+function normalizeGroups(groups, prefix = '') {
+  return groups.map(g => ({ title: prefix ? prefix + ' – ' + g.title : g.title, positions: [...g.positions] }));
+}
+function dedupeGroups(groups) {
+  const out = [];
+  const byTitle = new Map();
+  groups.forEach(group => {
+    if (!byTitle.has(group.title)) {
+      const entry = { title: group.title, positions: [] };
+      byTitle.set(group.title, entry);
+      out.push(entry);
+    }
+    const entry = byTitle.get(group.title);
+    group.positions.forEach(pos => {
+      if (!entry.positions.includes(pos)) entry.positions.push(pos);
     });
   });
-
-  document.getElementById('s-purchase').textContent = fmt(totalPurchase);
-  document.getElementById('s-manual').textContent = fmt(totalOffer);
-  document.getElementById('s-total').textContent = fmt(totalOffer);
-
-  document.getElementById('breakdown-body').innerHTML = `
-    <tr><td>Einkauf Einzelelemente</td><td>${fmt(totalPurchase)}</td></tr>
-    <tr><td>Materialzuschlag auf Einkauf</td><td>${fmt(totalMaterial)}</td></tr>
-    <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalWorkCost)}</td></tr>
-    <tr class="sep"><td>Entwicklungskosten Hauptpositionen</td><td>${fmt(totalDev)}</td></tr>
-    <tr class="subtotal"><td>Positionsbasis gesamt</td><td>${fmt(totalBasis)}</td></tr>
-    <tr><td>Provision</td><td>${fmt(totalProvision)}</td></tr>
-    <tr><td>Risiko</td><td>${fmt(totalRisk)}</td></tr>
-    <tr class="sep"><td>Marge</td><td>${fmt(totalMargin)}</td></tr>
-    <tr class="grand"><td>Angebotspreis (netto)</td><td>${fmt(totalOffer)}</td></tr>
-  `;
-
-  const preview = document.getElementById('offer-preview-body');
-  if (!offerRows.length) {
-    preview.innerHTML = '<tr><td class="muted">Noch keine Position ausgewählt.</td><td></td></tr>';
-  } else {
-    preview.innerHTML = offerRows.map(row => `
-      <tr>
-        <td>${row.name}<div class="muted">${row.elements} Einzelelemente · Arbeitszeit Summe ${fmtNum(row.workHours)} h · Berechnet: ${fmt(row.calc)}${row.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td>
-        <td>${fmt(row.offer)}</td>
-      </tr>
-    `).join('');
-  }
+  return out;
 }
-
+function groupsForCategory(category) {
+  if (category === 'loesemittel') return LOESEMITTEL_GROUPS;
+  if (category === 'waessrig') return WAESSRIG_GROUPS;
+  const commonAuto = WAESSRIG_GROUPS.find(g => g.title === 'AUTOMATISIERUNG');
+  const commonInd = WAESSRIG_GROUPS.find(g => g.title === 'INDUSTRIALISIERUNG');
+  const loes = LOESEMITTEL_GROUPS.filter(g => !['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
+  const waes = WAESSRIG_GROUPS.filter(g => !['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
+  return dedupeGroups([
+    ...normalizeGroups([{ title: 'Basisanlage', positions: ['Basisanlage'] }], 'Wässriger Teil'),
+    ...normalizeGroups(waes.filter(g => g.title !== 'Basisanlage'), 'Wässriger Teil'),
+    ...normalizeGroups([{ title: 'Basisanlage', positions: ['Basisanlage'] }], 'Lösemittelteil'),
+    ...normalizeGroups(loes.filter(g => g.title !== 'Basisanlage'), 'Lösemittelteil'),
+    { title: 'AUTOMATISIERUNG', positions: commonAuto ? commonAuto.positions : [] },
+    { title: 'INDUSTRIALISIERUNG', positions: commonInd ? commonInd.positions : [] }
+  ]);
+}
 function createElementRow(data = {}) {
   elementId++;
   const row = document.createElement('div');
@@ -823,19 +551,19 @@ function createElementRow(data = {}) {
   `;
   return row;
 }
-
 function createMachineCard(data = {}) {
   machineId++;
   const card = document.createElement('div');
   card.className = 'machine-card';
   card.dataset.machineId = machineId;
+  card.dataset.groupTitle = data.groupTitle || '';
   card.innerHTML = `
     <div class="machine-row">
       <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
       <div class="machine-main">
         <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
         <div class="machine-badges no-print">
-          <span class="badge">Details per Pfeil öffnen</span>
+          <span class="badge machine-group-badge">${data.groupTitle || ''}</span>
           <span class="badge machine-elements-badge">0 Einzelelemente</span>
           <span class="badge machine-hours-badge">0,00 h Arbeit</span>
         </div>
@@ -843,191 +571,279 @@ function createMachineCard(data = {}) {
       <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf Einzelelemente">
       <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Hauptposition">
       <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
-      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterebene öffnen / schließen">▾</button>
+      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Details öffnen / schließen">▾</button>
     </div>
     <div class="sub-wrap">
       <div class="section-box">
         <div class="sub-toolbar">
-          <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert. Die übrigen Zuschläge werden auf die Positionsbasis gerechnet.</div>
+          <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Position. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert.</div>
           <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
         </div>
       </div>
       <div class="section-box no-print">
-        <div class="section-title">Zusammenfassung Hauptposition</div>
+        <div class="section-title">Zusammenfassung Position</div>
         <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;">
-        <div class="param-block">
-          <div class="param-label">Entwicklungszeit Hauptposition</div>
-          <div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span class="param-unit">h</span></div>
-        </div>
-        <div class="param-block">
-          <div class="param-label">Arbeitszeit Summe</div>
-          <input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1">
-        </div>
-        <div class="param-block">
-          <div class="param-label">Arbeitskosten Summe</div>
-          <input class="price-display machine-workcostsum" type="text" value="0,00" readonly tabindex="-1">
-        </div>
-        <div class="param-block">
-          <div class="param-label">Summe Einzelelemente</div>
-          <input class="price-display machine-elementsum" type="text" value="0,00" readonly tabindex="-1">
-        </div>
-        <div class="param-block">
-          <div class="param-label">Entwicklungskosten</div>
-          <input class="price-display machine-devcost" type="text" value="0,00" readonly tabindex="-1">
+          <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span>h</span></div></div>
+          <div class="param-block"><div class="param-label">Arbeitszeit Summe</div><input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1"></div>
+          <div class="param-block"><div class="param-label">Arbeitskosten Summe</div><input class="price-display machine-workcostsum" type="text" value="0,00" readonly tabindex="-1"></div>
+          <div class="param-block"><div class="param-label">Summe Einzelelemente</div><input class="price-display machine-elementsum" type="text" value="0,00" readonly tabindex="-1"></div>
+          <div class="param-block"><div class="param-label">Entwicklungskosten</div><input class="price-display machine-devcost" type="text" value="0,00" readonly tabindex="-1"></div>
         </div>
       </div>
       <div class="section-box no-print">
         <div class="section-title">Einzelelemente</div>
-        <div class="sub-header no-print" style="grid-template-columns:minmax(240px,1.9fr) 120px 100px 120px 120px 28px;">
-        <div>Einzelelement</div>
-        <div>Einkauf</div>
-        <div>Arbeit h</div>
-        <div>Arbeit €</div>
-        <div>Gesamt</div>
-        <div></div>
-      </div>
-      <div class="sub-list"></div>
+        <div class="sub-header">
+          <div>Einzelelement</div><div>Einkauf</div><div>Arbeit h</div><div>Arbeit €</div><div>Gesamt</div><div></div>
+        </div>
+        <div class="sub-list"></div>
       </div>
     </div>
   `;
-
   const list = card.querySelector('.sub-list');
-  if (data.elements && data.elements.length) {
-    data.elements.forEach(el => list.appendChild(createElementRow(el)));
-  }
-
+  (data.elements || []).forEach(el => list.appendChild(createElementRow(el)));
   return card;
 }
-
+function calcElementRow(row) {
+  const workRate = num(document.getElementById('work-rate').value);
+  const purchase = num(row.querySelector('.el-purchase').value);
+  const workH = num(row.querySelector('.el-workh').value);
+  const workCost = workH * workRate;
+  const total = purchase + workCost;
+  row.querySelector('.el-workcost').value = fmtNum(workCost);
+  row.querySelector('.el-total').value = fmtNum(total);
+  row.dataset.purchase = purchase;
+  row.dataset.workH = workH;
+  row.dataset.workCost = workCost;
+  row.dataset.total = total;
+  return { purchase, workH, workCost, total };
+}
+function calcMachineCard(card) {
+  const { pMat, pProv, pMarge, pRisik, devRate } = getParams();
+  const rows = card.querySelectorAll('.element-row');
+  let purchaseSum = 0, workHoursSum = 0, workCostSum = 0, elementTotalSum = 0;
+  rows.forEach(row => {
+    const r = calcElementRow(row);
+    purchaseSum += r.purchase;
+    workHoursSum += r.workH;
+    workCostSum += r.workCost;
+    elementTotalSum += r.total;
+  });
+  const devH = num(card.querySelector('.machine-devh').value);
+  const devCost = devH * devRate;
+  const material = purchaseSum * pMat;
+  const basis = purchaseSum + material + workCostSum + devCost;
+  const provision = basis * pProv;
+  const risk = basis * pRisik;
+  const interim = basis + provision + risk;
+  const margin = interim * pMarge;
+  const calcPrice = interim + margin;
+  card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
+  card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
+  card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
+  card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
+  card.querySelector('.machine-devcost').value = fmtNum(devCost);
+  card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
+  const badgeEl = card.querySelector('.machine-elements-badge');
+  const badgeHours = card.querySelector('.machine-hours-badge');
+  if (badgeEl) badgeEl.textContent = `${rows.length} Einzelelemente`;
+  if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
+  const checked = card.querySelector('.machine-check').checked;
+  const manualVal = num(card.querySelector('.machine-manual').value);
+  return {
+    checked,
+    name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
+    groupTitle: card.dataset.groupTitle || '',
+    purchaseSum,
+    workHoursSum,
+    workCostSum,
+    elementTotalSum,
+    devCost,
+    material,
+    basis,
+    provision,
+    risk,
+    margin,
+    calcPrice,
+    offerPrice: manualVal > 0 ? manualVal : calcPrice,
+    manualUsed: manualVal > 0
+  };
+}
+function createOverheadRow(name = '', price = 0) {
+  overheadId++;
+  const row = document.createElement('div');
+  row.className = 'oh-row';
+  row.dataset.overheadId = overheadId;
+  row.innerHTML = `
+    <input class="oh-name" type="text" value="${name}" oninput="calc()">
+    <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc()">
+    <div></div>
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc()">✕</button>
+  `;
+  return row;
+}
+function addOverhead() {
+  const name = document.getElementById('new-oh-name').value.trim();
+  const price = num(document.getElementById('new-oh-price').value);
+  if (!name) { document.getElementById('new-oh-name').focus(); return; }
+  document.getElementById('overhead-list').appendChild(createOverheadRow(name, price));
+  document.getElementById('new-oh-name').value = '';
+  document.getElementById('new-oh-price').value = '';
+  calc();
+}
+function seedOverhead() {
+  const list = document.getElementById('overhead-list');
+  list.innerHTML = '';
+  OVERHEAD_DEFAULTS.forEach(name => list.appendChild(createOverheadRow(name, 0)));
+}
+function updateSeriesOptions() {
+  const category = document.getElementById('plant-category').value;
+  const select = document.getElementById('plant-series');
+  select.innerHTML = SERIES[category].map(s => `<option value="${s}">${s}</option>`).join('');
+  updatePlantInfo();
+}
+function updatePlantInfo() {
+  const category = document.getElementById('plant-category').value;
+  const series = document.getElementById('plant-series').value;
+  const label = category === 'loesemittel' ? 'Lösemittelanlagen' : category === 'waessrig' ? 'Wässrige Anlagen' : 'Hybride Anlagen';
+  document.getElementById('plant-info').value = `${label} – ${series}`;
+}
+function addElement(card, data = {}) {
+  const list = card.querySelector('.sub-list');
+  list.appendChild(createElementRow(data));
+  card.classList.add('expanded');
+  const btn = card.querySelector('.machine-row .icon-btn');
+  if (btn) btn.textContent = '▴';
+  calc();
+}
 function toggleMachine(cb) {
   cb.closest('.machine-card').classList.toggle('checked', cb.checked);
   calc();
 }
-
 function toggleExpand(btn) {
   const card = btn.closest('.machine-card');
   card.classList.toggle('expanded');
   btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
 }
-
-function addElement(card, data = {}) {
-  const list = card.querySelector('.sub-list');
-  list.appendChild(createElementRow(data));
-  card.classList.add('expanded');
-  const toggleBtn = card.querySelector('.machine-row .icon-btn');
-  if (toggleBtn) toggleBtn.textContent = '▴';
-  calc();
-}
-
-function addMachine() {
-  const name = document.getElementById('new-name').value.trim();
-  const price = num(document.getElementById('new-price').value);
-  if (!name) {
-    document.getElementById('new-name').focus();
-    return;
-  }
-
-  const card = createMachineCard({
-    name,
-    checked: true,
-    elements: [{ name: name + ' - Element 1', purchase: price, workH: 0 }],
-    devH: 0
-  });
-
-  document.getElementById('machine-list').appendChild(card);
-  document.getElementById('new-name').value = '';
-  document.getElementById('new-price').value = '';
-  calc();
-}
-
-function getSelectedCategory() {
-  return document.getElementById('plant-category')?.value || 'loesemittel';
-}
-
-function getSelectedSeries() {
-  return document.getElementById('plant-series')?.value || '';
-}
-
-function updateSeriesOptions() {
-  const category = getSelectedCategory();
-  const select = document.getElementById('plant-series');
-  if (!select) return;
-  const series = plantTemplates[category].series;
-  select.innerHTML = Object.entries(series).map(([key, item]) => `<option value="${key}">${item.label}</option>`).join('');
-  updatePlantInfo();
-}
-
-function updatePlantInfo() {
-  const category = getSelectedCategory();
-  const series = getSelectedSeries();
-  const infoEl = document.getElementById('plant-info');
-  if (!infoEl) return;
-  const tpl = plantTemplates[category]?.series?.[series];
-  infoEl.value = tpl ? `${plantTemplates[category].label} – ${tpl.label}: ${tpl.info}` : '';
-}
-
-function buildFromTemplate(category, seriesKey) {
-  const list = document.getElementById('machine-list');
-  list.innerHTML = '';
-  const tpl = plantTemplates[category]?.series?.[seriesKey];
-  if (!tpl) return;
-
-  tpl.positions.forEach(pos => {
-    const card = createMachineCard({
-      name: pos.name,
-      checked: false,
-      elements: pos.elements || [],
-      devH: pos.devH || 0
+function buildGroupsForSelection() {
+  const category = document.getElementById('plant-category').value;
+  const series = document.getElementById('plant-series').value;
+  const groups = groupsForCategory(category);
+  const container = document.getElementById('machine-groups');
+  container.innerHTML = '';
+  groups.forEach(group => {
+    const block = document.createElement('div');
+    block.className = 'group-block';
+    block.innerHTML = `<div class="group-header">${group.title}</div>`;
+    group.positions.forEach(pos => {
+      const card = createMachineCard({
+        name: pos,
+        checked: /basisanlage/i.test(pos),
+        groupTitle: group.title,
+        devH: /basisanlage/i.test(pos) ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
+        elements: makeElementsForPosition(pos, category, group.title, series)
+      });
+      block.appendChild(card);
     });
-    list.appendChild(card);
+    container.appendChild(block);
   });
 }
-
 function applySeriesTemplate() {
-  const category = getSelectedCategory();
-  const series = getSelectedSeries();
   updatePlantInfo();
-  buildFromTemplate(category, series);
+  buildGroupsForSelection();
   calc();
 }
-
-function buildDefaults() {
-  updateSeriesOptions();
-  const select = document.getElementById('plant-series');
-  if (select && !select.value) {
-    const firstOption = select.querySelector('option');
-    if (firstOption) select.value = firstOption.value;
-  }
-  applySeriesTemplate();
-}],
-      devH: 0
-    });
-    list.appendChild(card);
+function calc() {
+  const machineCards = document.querySelectorAll('.machine-card');
+  let totalPurchase = 0, totalMaterial = 0, totalWork = 0, totalDev = 0, totalBasis = 0, totalProv = 0, totalRisk = 0, totalMargin = 0, totalOffer = 0;
+  const rows = [];
+  machineCards.forEach(card => {
+    const r = calcMachineCard(card);
+    if (!r.checked) return;
+    totalPurchase += r.purchaseSum;
+    totalMaterial += r.material;
+    totalWork += r.workCostSum;
+    totalDev += r.devCost;
+    totalBasis += r.basis;
+    totalProv += r.provision;
+    totalRisk += r.risk;
+    totalMargin += r.margin;
+    totalOffer += r.offerPrice;
+    rows.push(r);
   });
-}
+  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
+    name: row.querySelector('.oh-name').value || 'Overhead',
+    price: num(row.querySelector('.oh-price').value)
+  }));
+  const overheadTotal = ohRows.reduce((s, r) => s + r.price, 0);
+  const includeOverhead = document.getElementById('oh-include').checked;
+  const ohShare = Math.min(100, Math.max(0, num(document.getElementById('oh-share').value))) / 100;
+  const includedOverhead = includeOverhead ? overheadTotal * ohShare : 0;
+  const grandTotal = totalOffer + includedOverhead;
 
+  document.getElementById('s-total').textContent = fmt(totalOffer);
+  document.getElementById('s-overhead').textContent = fmt(overheadTotal);
+  document.getElementById('s-grand').textContent = fmt(grandTotal);
+  document.getElementById('breakdown-body').innerHTML = `
+    <tr><td>Einkauf Einzelelemente</td><td>${fmt(totalPurchase)}</td></tr>
+    <tr><td>Materialzuschlag auf Einkauf</td><td>${fmt(totalMaterial)}</td></tr>
+    <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalWork)}</td></tr>
+    <tr><td>Entwicklungskosten Hauptpositionen</td><td>${fmt(totalDev)}</td></tr>
+    <tr class="subtotal"><td>Positionsbasis gesamt</td><td>${fmt(totalBasis)}</td></tr>
+    <tr><td>Provision</td><td>${fmt(totalProv)}</td></tr>
+    <tr><td>Risiko</td><td>${fmt(totalRisk)}</td></tr>
+    <tr><td>Marge</td><td>${fmt(totalMargin)}</td></tr>
+    <tr><td>Overhead gesamt</td><td>${fmt(overheadTotal)}</td></tr>
+    <tr><td>Davon eingerechnet</td><td>${fmt(includedOverhead)}</td></tr>
+    <tr class="grand"><td>Gesamt inkl. eingerechnetem Overhead</td><td>${fmt(grandTotal)}</td></tr>
+  `;
+
+  const preview = document.getElementById('offer-preview-body');
+  if (!rows.length) {
+    preview.innerHTML = '<tr><td class="muted">Noch keine Position ausgewählt.</td><td></td></tr>';
+  } else {
+    let html = '';
+    let currentGroup = '';
+    rows.forEach(r => {
+      if (r.groupTitle !== currentGroup) {
+        currentGroup = r.groupTitle;
+        html += `<tr><td colspan="2" style="font-weight:700;color:#6b6b66;background:#f0efe9;">${currentGroup}</td></tr>`;
+      }
+      html += `<tr><td>${r.name}<div class="muted">Berechnet: ${fmt(r.calcPrice)}${r.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td><td>${fmt(r.offerPrice)}</td></tr>`;
+    });
+    html += `<tr><td style="font-weight:700;">Anlagenpreis</td><td style="font-weight:700;">${fmt(totalOffer)}</td></tr>`;
+    preview.innerHTML = html;
+  }
+
+  const ohPreview = document.getElementById('offer-overhead-body');
+  if (!ohRows.length) {
+    ohPreview.innerHTML = '<tr><td class="muted">Keine Overhead-Positionen.</td><td></td></tr>';
+  } else {
+    ohPreview.innerHTML = ohRows.map(r => `<tr><td>${r.name}</td><td>${fmt(r.price)}</td></tr>`).join('') + `<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;">${fmt(overheadTotal)}</td></tr>`;
+  }
+}
 function resetForm() {
   if (!confirm('Alle Eingaben zurücksetzen?')) return;
-  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
+  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('p-material').value = 10;
   document.getElementById('p-provision').value = 5;
   document.getElementById('p-marge').value = 15;
   document.getElementById('p-risiko').value = 3;
   document.getElementById('work-rate').value = 85;
   document.getElementById('dev-rate').value = 110;
-  document.getElementById('new-name').value = '';
-  document.getElementById('new-price').value = '';
+  document.getElementById('oh-include').checked = false;
+  document.getElementById('oh-share').value = 100;
+  document.getElementById('new-oh-name').value = '';
+  document.getElementById('new-oh-price').value = '';
   document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
-  buildDefaults();
-  calc();
+  updateSeriesOptions();
+  seedOverhead();
+  applySeriesTemplate();
 }
 
 document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
-buildDefaults();
-calc();
+updateSeriesOptions();
+seedOverhead();
+applySeriesTemplate();
 </script>
 </body>
 </html>
