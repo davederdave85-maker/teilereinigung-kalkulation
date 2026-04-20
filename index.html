@@ -649,6 +649,22 @@ function calcMachineCard(card) {
   if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
   const checked = card.querySelector('.machine-check').checked;
   const manualVal = num(card.querySelector('.machine-manual').value);
+  function roundUpPrice(value) {
+  if (!value || value <= 0) return 0;
+  const remainder1000 = value % 1000;
+  const remainder500 = value % 500;
+
+  // If already exact
+  if (remainder1000 === 0 || remainder500 === 0) return value;
+
+  // Distance to next 500 and 1000
+  const next500 = value + (500 - remainder500);
+  const next1000 = value + (1000 - remainder1000);
+
+  // Always round UP → choose smaller jump but still above
+  return Math.min(next500, next1000);
+}
+
   return {
     checked,
     name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
@@ -664,7 +680,9 @@ function calcMachineCard(card) {
     risk,
     margin,
     calcPrice,
-    offerPrice: manualVal > 0 ? manualVal : calcPrice,
+    const autoRounded = roundUpPrice(calcPrice);
+
+    offerPrice: manualVal > 0 ? manualVal : autoRounded,
     manualUsed: manualVal > 0
   };
 }
