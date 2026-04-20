@@ -637,31 +637,50 @@ function calcMachineCard(card) {
   const interim = basis + provision + risk;
   const margin = interim * pMarge;
   const calcPrice = interim + margin;
+  const autoRounded = roundUpPrice(calcPrice);
+
   card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
   card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
   card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
   card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
   card.querySelector('.machine-devcost').value = fmtNum(devCost);
-  card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
+  card.querySelector('.machine-calculated').value = fmtNum(autoRounded);
+
   const badgeEl = card.querySelector('.machine-elements-badge');
   const badgeHours = card.querySelector('.machine-hours-badge');
   if (badgeEl) badgeEl.textContent = `${rows.length} Einzelelemente`;
   if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
+
   const checked = card.querySelector('.machine-check').checked;
   const manualVal = num(card.querySelector('.machine-manual').value);
-  function roundUpPrice(value) {
+
+  return {
+    checked,
+    name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
+    groupTitle: card.dataset.groupTitle || '',
+    purchaseSum,
+    workHoursSum,
+    workCostSum,
+    elementTotalSum,
+    devCost,
+    material,
+    basis,
+    provision,
+    risk,
+    margin,
+    calcPrice: autoRounded,
+    offerPrice: manualVal > 0 ? manualVal : autoRounded,
+    manualUsed: manualVal > 0
+  };
+}
+
+function roundUpPrice(value) {
   if (!value || value <= 0) return 0;
   const remainder1000 = value % 1000;
   const remainder500 = value % 500;
-
-  // If already exact
   if (remainder1000 === 0 || remainder500 === 0) return value;
-
-  // Distance to next 500 and 1000
   const next500 = value + (500 - remainder500);
   const next1000 = value + (1000 - remainder1000);
-
-  // Always round UP → choose smaller jump but still above
   return Math.min(next500, next1000);
 }
 
