@@ -495,32 +495,33 @@ function calcMachineCard(card) {
   const checked = card.querySelector('.machine-check').checked;
   const rows = card.querySelectorAll('.element-row');
 
-  let elementPurchase = 0;
-  let elementWorkH = 0;
-  let elementWorkCost = 0;
-  let elementTotal = 0;
+  let purchaseSum = 0;
+  let workHoursSum = 0;
+  let workCostSum = 0;
+  let elementTotalSum = 0;
 
   rows.forEach(row => {
     const result = calcElementRow(row);
-    elementPurchase += result.purchase;
-    elementWorkH += result.workH;
-    elementWorkCost += result.workCost;
-    elementTotal += result.elementTotal;
+    purchaseSum += result.purchase;
+    workHoursSum += result.workH;
+    workCostSum += result.workCost;
+    elementTotalSum += result.elementTotal;
   });
 
   const devH = num(card.querySelector('.machine-devh').value);
   const devCost = devH * devRate;
-  const material = elementTotal * pMat;
-  const base = elementTotal + devCost + material;
-  const provision = base * pProv;
-  const risk = base * pRisik;
-  const interim = base + provision + risk;
+  const material = purchaseSum * pMat;
+  const basis = purchaseSum + material + workCostSum + devCost;
+  const provision = basis * pProv;
+  const risk = basis * pRisik;
+  const interim = basis + provision + risk;
   const margin = interim * pMarge;
   const calcPrice = interim + margin;
 
-  card.querySelector('.machine-purchase').value = fmtNum(elementPurchase);
-  card.querySelector('.machine-worksum').value = fmtNum(elementWorkH);
-  card.querySelector('.machine-elementsum').value = fmtNum(elementTotal);
+  card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
+  card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
+  card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
+  card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
   card.querySelector('.machine-devcost').value = fmtNum(devCost);
   card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
 
@@ -528,11 +529,13 @@ function calcMachineCard(card) {
   const manualVal = num(manualInput.value);
   const offerPrice = manualVal > 0 ? manualVal : calcPrice;
 
-  card.dataset.purchase = elementPurchase;
-  card.dataset.elementWorkCost = elementWorkCost;
-  card.dataset.elementTotal = elementTotal;
+  card.dataset.purchase = purchaseSum;
+  card.dataset.workHours = workHoursSum;
+  card.dataset.workCost = workCostSum;
+  card.dataset.elementTotal = elementTotalSum;
   card.dataset.devCost = devCost;
   card.dataset.material = material;
+  card.dataset.basis = basis;
   card.dataset.provision = provision;
   card.dataset.risk = risk;
   card.dataset.margin = margin;
@@ -544,11 +547,13 @@ function calcMachineCard(card) {
 
   return {
     checked,
-    purchase: elementPurchase,
-    elementWorkCost,
-    elementTotal,
+    purchase: purchaseSum,
+    workHours: workHoursSum,
+    workCost: workCostSum,
+    elementTotal: elementTotalSum,
     devCost,
     material,
+    basis,
     provision,
     risk,
     margin,
@@ -561,10 +566,12 @@ function calcMachineCard(card) {
 function calc() {
   const cards = document.querySelectorAll('.machine-card');
   let totalPurchase = 0;
-  let totalElementWork = 0;
-  let totalElements = 0;
+  let totalWorkHours = 0;
+  let totalWorkCost = 0;
+  let totalElementSum = 0;
   let totalDev = 0;
   let totalMaterial = 0;
+  let totalBasis = 0;
   let totalProvision = 0;
   let totalRisk = 0;
   let totalMargin = 0;
@@ -577,10 +584,12 @@ function calc() {
     if (!result.checked) return;
 
     totalPurchase += result.purchase;
-    totalElementWork += result.elementWorkCost;
-    totalElements += result.elementTotal;
+    totalWorkHours += result.workHours;
+    totalWorkCost += result.workCost;
+    totalElementSum += result.elementTotal;
     totalDev += result.devCost;
     totalMaterial += result.material;
+    totalBasis += result.basis;
     totalProvision += result.provision;
     totalRisk += result.risk;
     totalMargin += result.margin;
@@ -592,7 +601,8 @@ function calc() {
       offer: result.offerPrice,
       manualUsed: result.manualUsed,
       elements: card.querySelectorAll('.element-row').length,
-      workHours: num(card.querySelector('.machine-worksum').value)
+      workHours: result.workHours,
+      devCost: result.devCost
     });
   });
 
@@ -600,14 +610,12 @@ function calc() {
   document.getElementById('s-manual').textContent = fmt(totalOffer);
   document.getElementById('s-total').textContent = fmt(totalOffer);
 
-  const interim = totalElements + totalDev + totalMaterial;
   document.getElementById('breakdown-body').innerHTML = `
     <tr><td>Einkauf Einzelelemente</td><td>${fmt(totalPurchase)}</td></tr>
-    <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalElementWork)}</td></tr>
-    <tr class="sep"><td>Summe Einzelelemente</td><td>${fmt(totalElements)}</td></tr>
-    <tr><td>Entwicklungskosten Einzelpositionen</td><td>${fmt(totalDev)}</td></tr>
-    <tr><td>Materialzuschlag</td><td>${fmt(totalMaterial)}</td></tr>
-    <tr class="subtotal"><td>Zwischensumme</td><td>${fmt(interim)}</td></tr>
+    <tr><td>Materialzuschlag auf Einkauf</td><td>${fmt(totalMaterial)}</td></tr>
+    <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalWorkCost)}</td></tr>
+    <tr class="sep"><td>Entwicklungskosten Hauptpositionen</td><td>${fmt(totalDev)}</td></tr>
+    <tr class="subtotal"><td>Positionsbasis gesamt</td><td>${fmt(totalBasis)}</td></tr>
     <tr><td>Provision</td><td>${fmt(totalProvision)}</td></tr>
     <tr><td>Risiko</td><td>${fmt(totalRisk)}</td></tr>
     <tr class="sep"><td>Marge</td><td>${fmt(totalMargin)}</td></tr>
@@ -653,23 +661,27 @@ function createMachineCard(data = {}) {
       <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
       <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
       <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf Einzelelemente">
-      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Einzelposition">
+      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Hauptposition">
       <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
       <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterebene öffnen / schließen">▾</button>
     </div>
     <div class="sub-wrap">
       <div class="sub-toolbar">
-        <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Zuschläge werden erst auf die Gesamtsumme der Einzelposition gerechnet.</div>
+        <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert. Die übrigen Zuschläge werden auf die Positionsbasis gerechnet.</div>
         <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 170px 170px 170px;gap:10px;margin-bottom:12px;" class="no-print">
+      <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;margin-bottom:12px;" class="no-print">
         <div class="param-block">
-          <div class="param-label">Entwicklungszeit Einzelposition</div>
+          <div class="param-label">Entwicklungszeit Hauptposition</div>
           <div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span class="param-unit">h</span></div>
         </div>
         <div class="param-block">
           <div class="param-label">Arbeitszeit Summe</div>
           <input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1">
+        </div>
+        <div class="param-block">
+          <div class="param-label">Arbeitskosten Summe</div>
+          <input class="price-display machine-workcostsum" type="text" value="0,00" readonly tabindex="-1">
         </div>
         <div class="param-block">
           <div class="param-label">Summe Einzelelemente</div>
