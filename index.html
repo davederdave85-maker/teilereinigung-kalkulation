@@ -449,12 +449,6 @@ function num(v) {
   if (typeof v === 'string') v = v.replace(',', '.');
   return parseFloat(v) || 0;
 }
-function roundUpPrice(value) {
-  if (!value || value <= 0) return 0;
-  const next500 = Math.ceil(value / 500) * 500;
-  const next1000 = Math.ceil(value / 1000) * 1000;
-  return Math.min(next500, next1000);
-}
 function slug(str) {
   return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-');
 }
@@ -642,8 +636,7 @@ function calcMachineCard(card) {
   const risk = basis * pRisik;
   const interim = basis + provision + risk;
   const margin = interim * pMarge;
-  const calcPriceRaw = interim + margin;
-  const calcPrice = roundUpPrice(calcPriceRaw);
+  const calcPrice = interim + margin;
   card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
   card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
   card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
