@@ -136,19 +136,51 @@
   .machine-card {
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .machine-card.checked {
+    border-color: var(--accent-border);
+    box-shadow: 0 0 0 1px var(--accent-border);
   }
 
   .machine-row {
     display: grid;
-    grid-template-columns: 28px minmax(180px, 1.3fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
+    grid-template-columns: 28px minmax(220px, 1.5fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.8fr) 34px;
     gap: 10px;
     align-items: center;
-    padding: 10px;
+    padding: 12px 10px;
     background: var(--surface);
   }
   .machine-row.checked { background: var(--accent-bg); }
+  .machine-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .machine-caption {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .machine-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--surface3);
+    border: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
 
   .machine-row input[type=checkbox] {
     width: 16px;
@@ -201,9 +233,24 @@
 
   .sub-wrap {
     display: none;
-    padding: 12px;
+    padding: 14px;
     border-top: 1px solid var(--border);
-    background: var(--surface3);
+    background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
+  }
+  .section-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
   }
   .machine-card.expanded .sub-wrap { display: block; }
 
@@ -222,10 +269,17 @@
 
   .sub-row {
     display: grid;
-    grid-template-columns: minmax(180px, 1.4fr) 110px 110px 110px 110px 110px 110px 28px;
+    grid-template-columns: minmax(240px,1.9fr) 120px 100px 120px 120px 28px;
     gap: 10px;
     align-items: center;
     margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface3);
+  }
+  .sub-row:hover {
+    border-color: var(--accent-border);
   }
 
   .sub-row .sub-display:last-of-type { font-weight: 700; }
@@ -299,6 +353,15 @@
     padding: 12px;
     margin-top: 10px;
   }
+  .quick-help {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    background: #f7f9fc;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
   .offer-preview h4 {
     font-size: 12px;
     text-transform: uppercase;
@@ -357,6 +420,7 @@
 
     <div class="card">
       <div class="card-title">Maschinen &amp; Komponenten</div>
+      <div class="quick-help no-print">Oben wählst du die Angebotsposition aus. Mit dem Pfeil rechts öffnest du die Detailkalkulation. Unten in der Hauptposition siehst du sofort Einkauf, berechneten Preis und deinen manuell gerundeten Angebotspreis.</div>
       <div class="machine-header no-print">
         <div></div>
         <div>Position</div>
@@ -524,6 +588,10 @@ function calcMachineCard(card) {
   card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
   card.querySelector('.machine-devcost').value = fmtNum(devCost);
   card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
+  const badgeEl = card.querySelector('.machine-elements-badge');
+  const badgeHours = card.querySelector('.machine-hours-badge');
+  if (badgeEl) badgeEl.textContent = `${rows.length} Einzelelemente`;
+  if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
 
   const manualInput = card.querySelector('.machine-manual');
   const manualVal = num(manualInput.value);
@@ -659,18 +727,29 @@ function createMachineCard(data = {}) {
   card.innerHTML = `
     <div class="machine-row">
       <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
-      <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+      <div class="machine-main">
+        <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+        <div class="machine-badges no-print">
+          <span class="badge">Details per Pfeil öffnen</span>
+          <span class="badge machine-elements-badge">0 Einzelelemente</span>
+          <span class="badge machine-hours-badge">0,00 h Arbeit</span>
+        </div>
+      </div>
       <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf Einzelelemente">
       <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Hauptposition">
       <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
       <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Unterebene öffnen / schließen">▾</button>
     </div>
     <div class="sub-wrap">
-      <div class="sub-toolbar">
-        <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert. Die übrigen Zuschläge werden auf die Positionsbasis gerechnet.</div>
-        <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
+      <div class="section-box">
+        <div class="sub-toolbar">
+          <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Einzelposition. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert. Die übrigen Zuschläge werden auf die Positionsbasis gerechnet.</div>
+          <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;margin-bottom:12px;" class="no-print">
+      <div class="section-box no-print">
+        <div class="section-title">Zusammenfassung Hauptposition</div>
+        <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;">
         <div class="param-block">
           <div class="param-label">Entwicklungszeit Hauptposition</div>
           <div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span class="param-unit">h</span></div>
@@ -692,7 +771,9 @@ function createMachineCard(data = {}) {
           <input class="price-display machine-devcost" type="text" value="0,00" readonly tabindex="-1">
         </div>
       </div>
-      <div class="sub-header no-print" style="grid-template-columns:minmax(220px,1.8fr) 120px 100px 120px 120px 28px;">
+      <div class="section-box no-print">
+        <div class="section-title">Einzelelemente</div>
+        <div class="sub-header no-print" style="grid-template-columns:minmax(240px,1.9fr) 120px 100px 120px 120px 28px;">
         <div>Einzelelement</div>
         <div>Einkauf</div>
         <div>Arbeit h</div>
@@ -701,6 +782,7 @@ function createMachineCard(data = {}) {
         <div></div>
       </div>
       <div class="sub-list"></div>
+      </div>
     </div>
   `;
 
