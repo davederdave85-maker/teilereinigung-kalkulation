@@ -408,7 +408,31 @@
   <div class="left-col">
 
     <div class="card">
+      <div class="card-title">Anlagenauswahl</div>
+      <div class="quick-help no-print">Wähle zuerst die Anlagenkategorie und danach die passende Baureihe. Beim Laden der Baureihe werden typische Hauptpositionen und Startwerte für diese Anlagengruppe vorbereitet.</div>
+      <div class="cust-grid" style="margin-top:12px;">
+        <div class="field">
+          <label>Anlagenkategorie</label>
+          <select id="plant-category" onchange="updateSeriesOptions();applySeriesTemplate()" style="width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;">
+            <option value="loesemittel">Lösemittelanlagen</option>
+            <option value="waessrig">Wässrige Anlagen</option>
+            <option value="hybrid">Hybride Anlagen</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Anlagenbaureihe</label>
+          <select id="plant-series" onchange="applySeriesTemplate()" style="width:100%;padding:7px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none;"></select>
+        </div>
+        <div class="field" style="grid-column:1/-1;">
+          <label>Ausgewählte Baureihe / Hinweis</label>
+          <input type="text" id="plant-info" readonly value="" style="background:var(--surface3);">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title">Kundendaten</div>
+  
       <div class="cust-grid">
         <div class="field"><label>Kundenname / Firma</label><input type="text" id="cust-name" placeholder="Mustermann GmbH"></div>
         <div class="field"><label>Ansprechpartner</label><input type="text" id="cust-contact" placeholder="Max Mustermann"></div>
@@ -500,14 +524,95 @@
 </div>
 
 <script>
-const defaultMachines = [
-  { name: 'Eintank-Ultraschallanlage', purchase: 4200 },
-  { name: 'Mehrtank-Tauchanlage', purchase: 8500 },
-  { name: 'Spritzwaschanlage (Durchlauf)', purchase: 12800 },
-  { name: 'Vakuum-Lösemittelanlage', purchase: 21000 },
-  { name: 'CO₂-Reinigungsanlage', purchase: 35000 },
-  { name: 'Trommelwaschanlage', purchase: 6900 }
-];
+const plantTemplates = {
+  loesemittel: {
+    label: 'Lösemittelanlagen',
+    series: {
+      kompakt: {
+        label: 'Kompaktanlage',
+        info: 'Kleine Lösemittelanlage mit kompaktem Aufbau und reduzierter Peripherie.',
+        positions: [
+          { name: 'Arbeitskammer / Anlagenbasis', elements: [{ name: 'Kammergrundkörper', purchase: 7800, workH: 10 }, { name: 'Türen / Dichtungen', purchase: 2100, workH: 4 }] },
+          { name: 'Lösemittelkreislauf', elements: [{ name: 'Pumpe', purchase: 1650, workH: 3 }, { name: 'Filtereinheit', purchase: 1200, workH: 2.5 }, { name: 'Rohrleitungen / Ventile', purchase: 1850, workH: 6 }], devH: 3 },
+          { name: 'Steuerung', elements: [{ name: 'Schaltschrank', purchase: 2600, workH: 5 }, { name: 'Sensorik', purchase: 900, workH: 2 }] }
+        ]
+      },
+      standard: {
+        label: 'Standardanlage',
+        info: 'Mittlere Lösemittelanlage mit typischer Peripherie und erweiterten Funktionsgruppen.',
+        positions: [
+          { name: 'Arbeitskammer / Gestell', elements: [{ name: 'Kammergrundkörper', purchase: 11500, workH: 14 }, { name: 'Gestell / Verkleidung', purchase: 4200, workH: 9 }] },
+          { name: 'Destillation / Tanksystem', elements: [{ name: 'Destille', purchase: 6200, workH: 7 }, { name: 'Tankpaket', purchase: 3400, workH: 5 }, { name: 'Rohrleitungen / Armaturen', purchase: 2900, workH: 8 }], devH: 5 },
+          { name: 'Steuerung / Elektrik', elements: [{ name: 'Schaltschrank', purchase: 3900, workH: 7 }, { name: 'Sensorik', purchase: 1450, workH: 3.5 }, { name: 'Verdrahtung', purchase: 800, workH: 6 }] }
+        ]
+      },
+      gross: {
+        label: 'Großanlage',
+        info: 'Große Lösemittelanlage mit erweitertem Tanksystem, Automatisierung und hoher Peripherie.',
+        positions: [
+          { name: 'Kammer / Tragstruktur', elements: [{ name: 'Kammergrundkörper', purchase: 18500, workH: 22 }, { name: 'Tragstruktur', purchase: 7800, workH: 12 }] },
+          { name: 'Verfahrensmodul', elements: [{ name: 'Destillation', purchase: 9800, workH: 10 }, { name: 'Tanksystem', purchase: 7200, workH: 9 }, { name: 'Paket Rohrleitungen / Ventile', purchase: 6100, workH: 15 }], devH: 8 },
+          { name: 'Steuerung / Automatisierung', elements: [{ name: 'Schaltschrank', purchase: 5200, workH: 9 }, { name: 'Antriebstechnik', purchase: 3100, workH: 5 }, { name: 'Sensorik / Sicherheit', purchase: 2600, workH: 6 }] }
+        ]
+      }
+    }
+  },
+  waessrig: {
+    label: 'Wässrige Anlagen',
+    series: {
+      kompakt: {
+        label: 'Kompaktanlage',
+        info: 'Kleine wässrige Anlage für einfache Reinigungsaufgaben.',
+        positions: [
+          { name: 'Waschbehälter', elements: [{ name: 'Behälter', purchase: 5200, workH: 7 }, { name: 'Heizung', purchase: 1100, workH: 2 }] },
+          { name: 'Pumpen / Verrohrung', elements: [{ name: 'Pumpe', purchase: 950, workH: 2 }, { name: 'Rohrleitungen / Ventile', purchase: 1400, workH: 4 }], devH: 2 },
+          { name: 'Steuerung', elements: [{ name: 'Kleinsteuerung', purchase: 1700, workH: 3.5 }] }
+        ]
+      },
+      standard: {
+        label: 'Mehrbadanlage',
+        info: 'Wässrige Mehrbadanlage mit typischen Wasch-, Spül- und Trocknungsstufen.',
+        positions: [
+          { name: 'Badaufbereitung', elements: [{ name: 'VE-Badaufbereitung', purchase: 4200, workH: 8 }, { name: 'Pumpe', purchase: 1150, workH: 2.5 }, { name: 'Ventile / Verrohrung', purchase: 1700, workH: 5 }], devH: 4 },
+          { name: 'Behälter / Gehäuse', elements: [{ name: 'Waschbehälter', purchase: 6900, workH: 9 }, { name: 'Spülbehälter', purchase: 5800, workH: 8 }, { name: 'Trocknungsmodul', purchase: 4400, workH: 6 }] },
+          { name: 'Steuerung / Elektrik', elements: [{ name: 'Schaltschrank', purchase: 2900, workH: 5 }, { name: 'Sensorik', purchase: 1300, workH: 3 }] }
+        ]
+      },
+      gross: {
+        label: 'Großanlage',
+        info: 'Große wässrige Reinigungsanlage mit mehreren Funktionsstufen und hoher Peripherie.',
+        positions: [
+          { name: 'Badaufbereitung / Medien', elements: [{ name: 'VE-Aufbereitung', purchase: 7200, workH: 12 }, { name: 'Pumpenpaket', purchase: 2600, workH: 4 }, { name: 'Rohrleitungen / Ventile', purchase: 4200, workH: 10 }], devH: 6 },
+          { name: 'Behälterlinie', elements: [{ name: 'Waschbehälter', purchase: 9800, workH: 13 }, { name: 'Spülbehälter', purchase: 8600, workH: 11 }, { name: 'Trocknung', purchase: 7300, workH: 9 }] },
+          { name: 'Steuerung / Automatisierung', elements: [{ name: 'Schaltschrank', purchase: 4300, workH: 7 }, { name: 'Sensorik / Sicherheit', purchase: 2400, workH: 5 }, { name: 'Verdrahtung', purchase: 1200, workH: 7 }] }
+        ]
+      }
+    }
+  },
+  hybrid: {
+    label: 'Hybride Anlagen',
+    series: {
+      basis: {
+        label: 'Basisanlage',
+        info: 'Hybride Anlage mit kombinierter wässriger und lösemittelbasierter Verfahrenstechnik.',
+        positions: [
+          { name: 'Grundmodul', elements: [{ name: 'Anlagenbasis', purchase: 8600, workH: 11 }, { name: 'Verkleidung', purchase: 2600, workH: 4 }] },
+          { name: 'Verfahrensmodule', elements: [{ name: 'Wässriges Modul', purchase: 4900, workH: 7 }, { name: 'Lösemittelmodul', purchase: 6200, workH: 8 }, { name: 'Ventile / Rohrleitungen', purchase: 3300, workH: 8 }], devH: 5 },
+          { name: 'Steuerung', elements: [{ name: 'Schaltschrank', purchase: 3700, workH: 6 }, { name: 'Sensorik', purchase: 1600, workH: 3 }] }
+        ]
+      },
+      erweitert: {
+        label: 'Erweiterte Anlage',
+        info: 'Hybride Anlage mit mehreren Prozessstufen und erhöhtem Automatisierungsgrad.',
+        positions: [
+          { name: 'Grundstruktur', elements: [{ name: 'Rahmen / Kammer', purchase: 12800, workH: 16 }, { name: 'Verkleidung / Türen', purchase: 4100, workH: 7 }] },
+          { name: 'Prozessmodule', elements: [{ name: 'Wässriges Modul', purchase: 7100, workH: 9 }, { name: 'Lösemittelmodul', purchase: 9200, workH: 11 }, { name: 'Medienverteilung', purchase: 5200, workH: 10 }], devH: 7 },
+          { name: 'Steuerung / Sicherheit', elements: [{ name: 'Schaltschrank', purchase: 4700, workH: 8 }, { name: 'Sicherheitstechnik', purchase: 2200, workH: 4 }, { name: 'Verdrahtung', purchase: 1300, workH: 7 }] }
+        ]
+      }
+    }
+  }
+};
 
 let machineId = 0;
 let elementId = 0;
@@ -835,14 +940,66 @@ function addMachine() {
   calc();
 }
 
-function buildDefaults() {
+function getSelectedCategory() {
+  return document.getElementById('plant-category')?.value || 'loesemittel';
+}
+
+function getSelectedSeries() {
+  return document.getElementById('plant-series')?.value || '';
+}
+
+function updateSeriesOptions() {
+  const category = getSelectedCategory();
+  const select = document.getElementById('plant-series');
+  if (!select) return;
+  const series = plantTemplates[category].series;
+  select.innerHTML = Object.entries(series).map(([key, item]) => `<option value="${key}">${item.label}</option>`).join('');
+  updatePlantInfo();
+}
+
+function updatePlantInfo() {
+  const category = getSelectedCategory();
+  const series = getSelectedSeries();
+  const infoEl = document.getElementById('plant-info');
+  if (!infoEl) return;
+  const tpl = plantTemplates[category]?.series?.[series];
+  infoEl.value = tpl ? `${plantTemplates[category].label} – ${tpl.label}: ${tpl.info}` : '';
+}
+
+function buildFromTemplate(category, seriesKey) {
   const list = document.getElementById('machine-list');
   list.innerHTML = '';
-  defaultMachines.forEach(item => {
+  const tpl = plantTemplates[category]?.series?.[seriesKey];
+  if (!tpl) return;
+
+  tpl.positions.forEach(pos => {
     const card = createMachineCard({
-      name: item.name,
+      name: pos.name,
       checked: false,
-      elements: [{ name: item.name + ' - Element 1', purchase: item.purchase, workH: 0 }],
+      elements: pos.elements || [],
+      devH: pos.devH || 0
+    });
+    list.appendChild(card);
+  });
+}
+
+function applySeriesTemplate() {
+  const category = getSelectedCategory();
+  const series = getSelectedSeries();
+  updatePlantInfo();
+  buildFromTemplate(category, series);
+  calc();
+}
+
+function buildDefaults() {
+  updateSeriesOptions();
+  const select = document.getElementById('plant-series');
+  if (select && !select.value) {
+    const firstOption = select.querySelector('option');
+    if (firstOption) select.value = firstOption.value;
+  }
+  applySeriesTemplate();
+}],
       devH: 0
     });
     list.appendChild(card);
