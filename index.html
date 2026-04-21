@@ -51,7 +51,7 @@
   .machine-card.in-angebot { background: #fdfeff; }
   .machine-card.is-optional { background: #fffcf0; }
   .machine-card.is-empfohlen { background: #f8fff5; }
- 
+
   /* ── Main machine row: 6 cols ── */
   /* cb-angebot | cb-optional | name+badges | Einkauf | Berechnet | Manuell | expand */
   .machine-row {
@@ -68,7 +68,7 @@
   .badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 999px; background: var(--surface3); border: 1px solid var(--border); font-size: 10px; color: var(--text-muted); white-space: nowrap; }
   .badge-opt { background: var(--opt-bg); border-color: var(--opt-border); color: var(--opt-text); }
   .badge-emp { background: var(--emp-bg); border-color: var(--emp-border); color: var(--emp-text); }
- 
+
   .editable-name, .price-input, .price-display, .sub-name, .sub-input, .sub-display, .oh-name, .oh-input {
     width: 100%; min-width: 0; padding: 6px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); outline: none;
   }
@@ -107,7 +107,7 @@
   .muted { color: var(--text-muted); font-size: 12px; }
   .oh-row { display: grid; grid-template-columns: minmax(220px,1.4fr) 120px 180px 30px; gap: 10px; align-items: center; margin-bottom: 8px; }
   .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
- 
+
   /* Column legend */
   .col-legend { display: flex; gap: 16px; margin-bottom: 10px; font-size: 11px; }
   .leg-item { display: flex; align-items: center; gap: 5px; }
@@ -115,12 +115,12 @@
   .leg-angebot { background: var(--accent-bg); border-color: var(--accent-border); }
   .leg-opt { background: var(--opt-bg); border-color: var(--opt-border); }
   .leg-emp { background: var(--emp-bg); border-color: var(--emp-border); }
- 
+
   /* Offer table opt/emp columns */
   .offer-table .col-opt { color: var(--opt-text); background: var(--opt-bg); }
   .offer-table .col-emp { color: var(--emp-text); background: var(--emp-bg); }
   .offer-table th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); padding: 4px 4px 8px; border-bottom: 2px solid var(--border-strong); }
- 
+
   @media print {
     .no-print { display: none !important; }
     .app-header { position: static; }
@@ -132,7 +132,7 @@
 </style>
 </head>
 <body>
- 
+
 <div class="app-header no-print">
   <div>
     <div style="font-size:17px;font-weight:600;">Kalkulation Teilereinigung</div>
@@ -145,7 +145,7 @@
     <button class="btn btn-primary" onclick="window.print()">&#128438; PDF / Drucken</button>
   </div>
 </div>
- 
+
 <div class="project-bar no-print">
   <label>Projekte:</label>
   <select id="project-select" onchange="loadSelectedProject()"><option value="">— Projekt laden —</option></select>
@@ -154,7 +154,7 @@
   <input type="text" id="project-name-input" placeholder="Projektname...">
   <button class="btn btn-success" onclick="saveProject()">&#128190; Speichern</button>
 </div>
- 
+
 <div class="main-layout">
   <div class="left-col">
     <div class="card">
@@ -188,7 +188,7 @@
       <div id="machine-groups"></div>
     </div>
   </div>
- 
+
   <div class="right-col">
     <div class="card">
       <div class="card-title">Zuschläge &amp; Margen</div>
@@ -249,7 +249,7 @@
     </div>
   </div>
 </div>
- 
+
 <script>
 /* ═══════════════ DATEN ═══════════════ */
 const SERIES = {
@@ -278,13 +278,13 @@ const WAESSRIG_GROUPS = [
   { title: 'INDUSTRIALISIERUNG', positions: ['VPN-Modem für Fernwartung via Talk2M','Barcode-Scanner zur Programmanwahl','Betriebsdatenerfassung auf Wechselspeicher','Netzwerkanbindung über OPC-UA','Leuchtmeldesäule','Schaltschrank-Klimatisierung','Energie-Erfassung (nur Anzeige)','Energie-Erfassung (mit Anbindung)','Einzelader-Kennzeichnung','Rohrleitung-Kennzeichnung','Bedieneranmeldung mittels RFID / System Euchner','Sonderlackierung','Einhaltung spezieller Betriebsmittel-Vorschriften'] }
 ];
 const OVERHEAD_DEFAULTS = ['Transport frei Abladestelle (Deutschland)','Montage, Inbetriebnahme, Schulung zzgl. Reisekosten','Tagessatz für Nachschulung, Prozessoptimierung','Übersetzung Dokumentation','Garantieerweiterung auf 24 Monate','Heißabnahme','Inbetriebnahme','Anlagenabnahme'];
- 
+
 let machineId = 0, elementId = 0, overheadId = 0;
- 
+
 const fmt    = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 const fmtNum = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
 const num    = v => { if(typeof v==='string') v=v.replace(',','.'); return parseFloat(v)||0; };
- 
+
 function getParams() {
   return {
     pMat:    num(document.getElementById('p-material').value)/100,
@@ -358,7 +358,7 @@ function groupsForCategory(category) {
     {title:'INDUSTRIALISIERUNG',positions:cI?cI.positions:[]}
   ]);
 }
- 
+
 /* ═══ DOM BAUSTEINE ═══ */
 function createElementRow(data={}) {
   elementId++;
@@ -374,7 +374,7 @@ function createElementRow(data={}) {
     <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()">✕</button>`;
   return row;
 }
- 
+
 function createMachineCard(data={}) {
   machineId++;
   const card=document.createElement('div');
@@ -428,7 +428,7 @@ function createMachineCard(data={}) {
   updateCardStyle(card);
   return card;
 }
- 
+
 function updateCardStyle(card) {
   const checked = card.querySelector('.machine-check').checked;
   const isOpt = card.querySelector('.machine-opt').checked;
@@ -441,7 +441,7 @@ function updateCardStyle(card) {
   if (isOpt) { badge.textContent='Optional'; badge.className='badge badge-opt'; }
   else { badge.textContent='Empfohlen'; badge.className='badge badge-emp'; }
 }
- 
+
 function createOverheadRow(name='', price=0) {
   overheadId++;
   const row=document.createElement('div');
@@ -454,7 +454,7 @@ function createOverheadRow(name='', price=0) {
     <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>`;
   return row;
 }
- 
+
 /* ═══ KALKULATION ═══ */
 function calcElementRow(row) {
   const workRate=num(document.getElementById('work-rate').value);
@@ -494,7 +494,7 @@ function calcMachineCard(card) {
   const manualVal=num(card.querySelector('.machine-manual').value);
   return { checked, isOptional, name:card.querySelector('.machine-name').value||'Ohne Bezeichnung', groupTitle:card.dataset.groupTitle||'', purchaseSum, workHoursSum, workCostSum, elementTotalSum, devCost, material, basis, provision, risk, margin, calcPrice, offerPrice:manualVal>0?manualVal:calcPrice, manualUsed:manualVal>0 };
 }
- 
+
 function calc() {
   const machineCards=document.querySelectorAll('.machine-card');
   let totalPurchase=0,totalMaterial=0,totalWork=0,totalDev=0,totalBasis=0,totalProv=0,totalRisk=0,totalMargin=0;
@@ -516,7 +516,7 @@ function calc() {
   const ohShare=Math.min(100,Math.max(0,num(document.getElementById('oh-share').value)))/100;
   const includedOH=includeOH?overheadTotal*ohShare:0;
   const grandTotal=totalOffer+includedOH;
- 
+
   document.getElementById('s-emp').textContent=fmt(totalEmp);
   document.getElementById('s-opt').textContent=fmt(totalOpt);
   document.getElementById('s-total').textContent=fmt(totalOffer);
@@ -536,7 +536,7 @@ function calc() {
     <tr><td>Overhead gesamt</td><td>${fmt(overheadTotal)}</td></tr>
     <tr><td>Davon eingerechnet</td><td>${fmt(includedOH)}</td></tr>
     <tr class="grand"><td>Gesamt inkl. Overhead</td><td>${fmt(grandTotal)}</td></tr>`;
- 
+
   const preview=document.getElementById('offer-preview-body');
   if(!rows.length){preview.innerHTML='<tr><td class="muted" colspan="3">Noch keine Position ausgewählt.</td></tr>';}
   else {
@@ -553,7 +553,7 @@ function calc() {
   if(!ohRows.length){ohPreview.innerHTML='<tr><td class="muted">Keine Overhead-Positionen.</td><td></td></tr>';}
   else{ohPreview.innerHTML=ohRows.map(r=>`<tr><td>${r.name}</td><td style="text-align:right;">${r.price>0?fmt(r.price):'TBD'}</td></tr>`).join('')+`<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;text-align:right;">${fmt(overheadTotal)}</td></tr>`;}
 }
- 
+
 /* ═══ UI AKTIONEN ═══ */
 function addElement(card, data={}) {
   card.querySelector('.sub-list').appendChild(createElementRow(data));
@@ -604,7 +604,7 @@ function buildGroupsForSelection() {
   });
 }
 function applySeriesTemplate(){updatePlantInfo();buildGroupsForSelection();calc();}
- 
+
 /* ═══ WORD EXPORT ═══ */
 function collectAngebotData() {
   const machineCards=document.querySelectorAll('.machine-card');
@@ -643,174 +643,233 @@ function collectAngebotData() {
     notes: document.getElementById('notes').value
   };
 }
- 
-async function exportWord() {
+
+function escapeHtml(text) {
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function fmtWord(n) {
+  return (Number(n) || 0).toLocaleString('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }) + ' €';
+}
+
+function buildWordHtml(data) {
+  const emp = data.positions.filter(p => !p.isOptional);
+  const opt = data.positions.filter(p => p.isOptional);
+
+  function renderPositions(list, title) {
+    if (!list.length) return '';
+    let html = `<tr><td colspan="2" class="section">${escapeHtml(title)}</td></tr>`;
+    let currentGroup = '';
+
+    list.forEach((pos, idx) => {
+      if (pos.groupTitle !== currentGroup) {
+        currentGroup = pos.groupTitle;
+        html += `<tr><td colspan="2" class="group">${escapeHtml(currentGroup)}</td></tr>`;
+      }
+      html += `
+        <tr>
+          <td class="text">${idx + 1}. ${escapeHtml(pos.name)}</td>
+          <td class="price">${fmtWord(pos.offerPrice)}</td>
+        </tr>
+      `;
+    });
+
+    return html;
+  }
+
+  const overheadRows = (data.overhead || []).map((oh, i) => `
+    <tr>
+      <td class="text">${51 + i}. ${escapeHtml(oh.name)}</td>
+      <td class="price">${oh.price > 0 ? fmtWord(oh.price) : 'TBD'}</td>
+    </tr>
+  `).join('');
+
+  const notesHtml = escapeHtml(data.notes || '').replace(/\n/g, '<br>');
+
+  return `
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Angebot</title>
+<!--[if gte mso 9]>
+<xml>
+  <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+    <w:DoNotOptimizeForBrowser/>
+  </w:WordDocument>
+</xml>
+<![endif]-->
+<style>
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    color: #000;
+    margin: 30px;
+  }
+  h1 {
+    font-size: 16pt;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: normal;
+    letter-spacing: 0.5px;
+  }
+  .meta {
+    margin-bottom: 14px;
+  }
+  .meta div {
+    margin-bottom: 3px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  th, td {
+    padding: 6px 4px;
+    vertical-align: top;
+  }
+  th {
+    border-bottom: 2px solid #000;
+    font-size: 10pt;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .section {
+    font-style: italic;
+    text-decoration: underline;
+    padding-top: 12px;
+    font-weight: bold;
+  }
+  .group {
+    font-style: italic;
+    text-decoration: underline;
+    color: #333;
+    padding-top: 10px;
+  }
+  .text {
+    width: 78%;
+  }
+  .price {
+    width: 22%;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .sumline td {
+    border-top: 2px solid #000;
+    font-weight: bold;
+    padding-top: 8px;
+  }
+  .footer-note {
+    margin-top: 18px;
+    font-weight: bold;
+  }
+  .notes-title {
+    margin-top: 20px;
+    font-weight: bold;
+  }
+  .notes {
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>PREISÜBERSICHT in EURO</h1>
+
+<div class="meta">
+  <div><strong>Angebot Nr.:</strong> ${escapeHtml(data.offerNo || '—')}</div>
+  <div><strong>Datum:</strong> ${escapeHtml(data.offerDate || '—')}</div>
+  <div><strong>Kunde:</strong> ${escapeHtml(data.custName || '—')}</div>
+  <div><strong>Ansprechpartner:</strong> ${escapeHtml(data.custContact || '—')}</div>
+  <div><strong>Baureihe:</strong> ${escapeHtml(data.seriesLabel || '—')}</div>
+  <div><strong>Betreff:</strong> ${escapeHtml(data.offerSubject || '—')}</div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:left;">Position</th>
+      <th style="text-align:right;">Preis in EUR</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${renderPositions(opt, 'OPTIONAL')}
+    ${renderPositions(emp, 'EMPFOHLEN')}
+    <tr class="sumline">
+      <td>Anlagenpreis in empfohlener Ausstattung</td>
+      <td class="price">${fmtWord(data.totalEmpfohlen)}</td>
+    </tr>
+  </tbody>
+</table>
+
+${data.overhead && data.overhead.length ? `
+  <table style="margin-top:24px;">
+    <tbody>
+      <tr><td colspan="2" class="section">OVERHEAD</td></tr>
+      ${overheadRows}
+    </tbody>
+  </table>
+` : ''}
+
+<div class="footer-note">Weitere Optionen und Varianten auf Anfrage.</div>
+
+${data.notes ? `
+  <div class="notes-title">Bemerkungen:</div>
+  <div class="notes">${notesHtml}</div>
+` : ''}
+
+</body>
+</html>
+  `;
+}
+
+function exportWord() {
   const btn = document.querySelector('.btn-word');
   const orig = btn.textContent;
-  btn.textContent = '⏳ Wird erstellt...'; btn.disabled=true;
- 
+  btn.textContent = '⏳ Word wird erstellt...';
+  btn.disabled = true;
+
   try {
     const data = collectAngebotData();
- 
-    // Dynamically load docx from CDN
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/docx@9.6.1/build/index.umd.js';
-    script.onload = () => generateDocx(data, btn, orig);
-    script.onerror = () => { alert('Fehler: docx-Bibliothek konnte nicht geladen werden (Internet benötigt). Für Offline-Nutzung bitte die .exe-Version verwenden.'); btn.textContent=orig; btn.disabled=false; };
-    document.head.appendChild(script);
-  } catch(e) {
-    alert('Fehler beim Erstellen des Word-Dokuments: ' + e.message);
-    btn.textContent=orig; btn.disabled=false;
+    const html = buildWordHtml(data);
+
+    const blob = new Blob(
+      ['\ufeff', html],
+      { type: 'application/msword' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Angebot_${(data.offerNo || 'Export').replace(/[^\w\-]+/g, '_')}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.textContent = orig;
+    btn.disabled = false;
+  } catch (e) {
+    alert('Fehler beim Erstellen der Word-Datei: ' + e.message);
+    btn.textContent = orig;
+    btn.disabled = false;
   }
 }
- 
-function generateDocx(data, btn, orig) {
-  try {
-    const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, TabStopType, UnderlineType } = docx;
- 
-    const CAL = 'Calibri';
-    const sz = pt => pt * 2;
- 
-    function r(text, opts={}) {
-      return new TextRun({ text, font: CAL, size: opts.size||sz(11), bold: opts.bold||false, italics: opts.italic||false, underline: opts.ul ? {type: UnderlineType.SINGLE} : undefined, color: opts.color||undefined });
-    }
-    function tab(size) { return new TextRun({text:'\t', font:CAL, size:size||sz(11)}); }
- 
-    const TABS = [
-      {type:TabStopType.LEFT,  position:709},
-      {type:TabStopType.RIGHT, position:6200},
-      {type:TabStopType.RIGHT, position:7800},
-    ];
- 
-    const pBase = { tabStops:TABS, spacing:{after:80, line:240, lineRule:'auto'}, indent:{left:709, hanging:709} };
- 
-    function poRow(nr, desc, optPrice, empPrice, opts={}) {
-      const ch = [];
-      if(nr) ch.push(r(nr, {size:sz(11), bold:opts.bold}));
-      ch.push(tab(sz(11)));
-      if(opts.section) ch.push(r(desc, {size:sz(11), italic:true, ul:true}));
-      else ch.push(r(desc, {size:sz(11), bold:opts.bold}));
-      if(optPrice!==null && optPrice!==undefined) {
-        ch.push(tab(sz(11)));
-        ch.push(r(typeof optPrice==='string'?optPrice:fmtWord(optPrice), {size:sz(11)}));
-      }
-      if(empPrice!==null && empPrice!==undefined) {
-        ch.push(tab(sz(11)));
-        ch.push(r(typeof empPrice==='string'?empPrice:fmtWord(empPrice), {size:sz(11), bold:opts.boldPrice}));
-      }
-      return new Paragraph({...pBase, children:ch, border: opts.border ? {top:{style:BorderStyle.SINGLE,size:8,color:'000000',space:3}} : undefined });
-    }
- 
-    function fmtWord(n) {
-      return (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
-    }
- 
-    const paras = [];
- 
-    // Title
-    paras.push(new Paragraph({
-      alignment: AlignmentType.CENTER,
-      spacing:{after:180, line:240},
-      children:[r('PREISÜBERSICHT in EURO', {size:sz(16)})]
-    }));
- 
-    // Column header with bottom border
-    paras.push(new Paragraph({
-      ...pBase,
-      spacing:{after:120, line:240},
-      border:{bottom:{style:BorderStyle.SINGLE,size:4,color:'000000',space:2}},
-      children:[tab(), r(''), tab(), r('Optional',{size:sz(10),ul:true}), tab(), r('Preis in EUR',{size:sz(11),bold:true,ul:true})]
-    }));
- 
-    // Offer info
-    paras.push(new Paragraph({spacing:{after:80},children:[
-      r(`Angebot Nr.: ${data.offerNo||'—'} `, {bold:true}),
-      r(` | Datum: ${data.offerDate||'—'} | Kunde: ${data.custName||'—'}`),
-    ]}));
-    if(data.offerSubject) paras.push(new Paragraph({spacing:{after:120},children:[r(data.offerSubject,{bold:true})]}));
- 
-    // Positions
-    let posNr = 1;
-    let lastGroup = '';
-    data.positions.forEach(pos => {
-      if(pos.groupTitle !== lastGroup) {
-        lastGroup = pos.groupTitle;
-        paras.push(new Paragraph({spacing:{after:40},children:[r('')]}));
-        paras.push(new Paragraph({
-          ...pBase, spacing:{after:60,line:240},
-          children:[tab(), r(pos.groupTitle, {size:sz(11), italic:true, ul:true})]
-        }));
-      }
-      const isOpt = pos.isOptional;
-      paras.push(poRow(
-        String(posNr++), pos.name,
-        isOpt ? pos.offerPrice : null,
-        !isOpt ? pos.offerPrice : null,
-        {boldPrice: !isOpt}
-      ));
-    });
- 
-    // Total line
-    paras.push(new Paragraph({spacing:{after:40},children:[r('')]}));
-    paras.push(new Paragraph({
-      ...pBase, spacing:{after:120,line:240},
-      border:{top:{style:BorderStyle.SINGLE,size:8,color:'000000',space:3}},
-      children:[tab(), r('Anlagenpreis in empfohlener Ausstattung (rechte Spalte)',{size:sz(11),bold:true}), tab(), tab(), r(fmtWord(data.totalEmpfohlen)+' €',{size:sz(11),bold:true})]
-    }));
- 
-    // Overhead
-    if(data.overhead && data.overhead.length) {
-      paras.push(new Paragraph({spacing:{after:40},children:[r('')]}));
-      paras.push(new Paragraph({...pBase,spacing:{after:60,line:240},children:[tab(),r('OVERHEAD',{size:sz(11),bold:true,italic:true,ul:true})]}));
-      data.overhead.forEach((oh,i) => {
-        const pv = parseFloat(oh.price)||0;
-        paras.push(poRow(String(51+i), oh.name, null, pv>0?pv:'TBD', {}));
-      });
-    }
- 
-    paras.push(new Paragraph({spacing:{after:80},children:[r('')]}));
-    paras.push(new Paragraph({spacing:{after:0},children:[r('Weitere Optionen und Varianten auf Anfrage',{bold:true})]}));
- 
-    // Notes
-    if(data.notes) {
-      paras.push(new Paragraph({spacing:{before:160,after:40},children:[r('Bemerkungen:',{bold:true})]}));
-      data.notes.split('\n').forEach(line=>paras.push(new Paragraph({children:[r(line)]})));
-    }
- 
-    // Footer
-    paras.push(new Paragraph({
-      border:{top:{style:BorderStyle.SINGLE,size:4,color:'AAAAAA',space:4}},
-      spacing:{before:200,after:0},
-      children:[r('Höckh Metall-Reinigungsanlagen GmbH',{bold:true,size:sz(9)}), r('  |  Untere Reute 58-66, 75305 Neuenbürg  |  Tel: +49 7082 410931-10  |  info@hoeckh.com',{size:sz(9),color:'666666'})]
-    }));
- 
-    const doc = new Document({
-      styles:{default:{document:{run:{font:CAL,size:sz(11)}}}},
-      sections:[{
-        properties:{page:{size:{width:11906,height:16838},margin:{top:720,right:720,bottom:720,left:1134}}},
-        children: paras
-      }]
-    });
- 
-    Packer.toBlob(doc).then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Angebot_${data.offerNo||'Export'}_${data.custName||''}.docx`.replace(/\s+/g,'_');
-      a.click();
-      URL.revokeObjectURL(url);
-      btn.textContent=orig; btn.disabled=false;
-    });
-  } catch(e) {
-    alert('Fehler beim Generieren: ' + e.message);
-    btn.textContent=orig; btn.disabled=false;
-  }
-}
- 
+
 /* ═══ EINSTELLUNGEN / PROJEKTE ═══ */
 const SETTINGS_KEY='teilereinigung_settings';
 const PROJECTS_KEY='teilereinigung_projects';
- 
+
 function collectSettings() {
   return {
     pMaterial:document.getElementById('p-material').value,
@@ -843,7 +902,7 @@ function autoSaveSettings() {
 }
 function loadSettings(){try{const raw=localStorage.getItem(SETTINGS_KEY);if(raw)applySettings(JSON.parse(raw));}catch(e){}}
 function flashSaved(){const el=document.getElementById('save-indicator');el.classList.add('visible');clearTimeout(el._timer);el._timer=setTimeout(()=>el.classList.remove('visible'),2000);}
- 
+
 function getAllProjects(){try{return JSON.parse(localStorage.getItem(PROJECTS_KEY))||{};}catch(e){return {};}}
 function saveAllProjects(obj){try{localStorage.setItem(PROJECTS_KEY,JSON.stringify(obj));}catch(e){}}
 function collectProjectData() {
@@ -890,7 +949,7 @@ function refreshProjectSelect(sel=''){const projects=getAllProjects();const name
 function saveProject(){const name=document.getElementById('project-name-input').value.trim();if(!name){document.getElementById('project-name-input').focus();alert('Bitte einen Projektnamen eingeben.');return;}const projects=getAllProjects();if(projects[name]&&!confirm(`Projekt "${name}" bereits vorhanden. Überschreiben?`))return;projects[name]=collectProjectData();saveAllProjects(projects);refreshProjectSelect(name);flashSaved();}
 function loadSelectedProject(){const name=document.getElementById('project-select').value;if(!name)return;const projects=getAllProjects();if(!projects[name])return;if(!confirm(`Projekt "${name}" laden? Nicht gespeicherte Änderungen gehen verloren.`)){document.getElementById('project-select').value='';return;}document.getElementById('project-name-input').value=name;applyProjectData(projects[name]);flashSaved();}
 function deleteProject(){const name=document.getElementById('project-select').value;if(!name){alert('Kein Projekt ausgewählt.');return;}if(!confirm(`Projekt "${name}" wirklich löschen?`))return;const projects=getAllProjects();delete projects[name];saveAllProjects(projects);document.getElementById('project-name-input').value='';refreshProjectSelect();}
- 
+
 function resetForm(){
   if(!confirm('Alle Eingaben zurücksetzen? Gespeicherte Projekte bleiben erhalten.'))return;
   ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id=>document.getElementById(id).value='');
@@ -901,7 +960,7 @@ function resetForm(){
   document.getElementById('project-select').value='';document.getElementById('project-name-input').value='';
   updateSeriesOptions();seedOverhead();applySeriesTemplate();
 }
- 
+
 /* ═══ INIT ═══ */
 document.getElementById('offer-date').value=new Date().toLocaleDateString('de-DE');
 updateSeriesOptions(); seedOverhead(); applySeriesTemplate();
