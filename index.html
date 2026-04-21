@@ -375,35 +375,39 @@ function createElementRow(data={}) {
   return row;
 }
 
-function createMachineCard(data={}) {
+function createMachineCard(data = {}) {
   machineId++;
-  const card=document.createElement('div');
-  card.className='machine-card';
-  card.dataset.machineId=machineId;
-  card.dataset.groupTitle=data.groupTitle||'';
-  const isBasis = !!data.isBase;
-  card.innerHTML=`
-    <div class="machine-row">
-      <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked?'checked':''} onchange="toggleMachine(this)">
-      <input class="machine-opt cb-opt" type="checkbox" title="Optional (linke Spalte)" ${data.isOptional?'checked':''} ${isBasis?'disabled':''}  onchange="toggleOptional(this)">
-      <div class="machine-main">
-${isBasis ? `
-<div class="base-options no-print" style="margin-top:6px; display:flex; flex-direction:column; gap:4px; font-size:12px;">
-  <label><input type="checkbox" class="base-opt" value="inkl. Glastüre" onchange="calc()"> inkl. Glastüre</label>
-  <label><input type="checkbox" class="base-opt" value="inkl. Glas-Bullauge" onchange="calc()"> inkl. Glas-Bullauge</label>
-  <label><input type="checkbox" class="base-opt" value="inkl. elektropolierte Arbeitskammer" onchange="calc()"> inkl. elektropolierte Arbeitskammer</label>
-  <label><input type="checkbox" class="base-opt" value="inkl. Vakuumpumpe" onchange="calc()"> inkl. Vakuumpumpe</label>
-  <label><input type="checkbox" class="base-opt" value="inkl. verstärkte Vakuumpumpe" onchange="calc()"> inkl. verstärkte Vakuumpumpe</label>
-  <label><input type="checkbox" class="base-opt" value="inkl. Heißlufttrocknung" onchange="calc()"> inkl. Heißlufttrocknung</label>
+  const card = document.createElement('div');
+  card.className = 'machine-card';
+  card.dataset.machineId = machineId;
+  card.dataset.groupTitle = data.groupTitle || '';
+  card.dataset.isBase = data.isBase ? '1' : '0';
 
-  <div style="display:flex; gap:6px;">
-    <input type="text" class="base-opt-extra" placeholder="weiterer inkl. Zusatz..." style="flex:1;" oninput="calc()">
-  </div>
-</div>
-` : ''}
-        <input class="editable-name machine-name" type="text" value="${data.name||'Neue Position'}" oninput="calc()">
+  const isBasis = !!data.isBase;
+
+  card.innerHTML = `
+    <div class="machine-row">
+      <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
+      <input class="machine-opt cb-opt" type="checkbox" title="Optional (linke Spalte)" ${data.isOptional ? 'checked' : ''} ${isBasis ? 'disabled' : ''} onchange="toggleOptional(this)">
+      <div class="machine-main">
+        <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+
+        ${isBasis ? `
+        <div class="base-options no-print" style="margin-top:6px; display:flex; flex-direction:column; gap:4px; font-size:12px;">
+          <label><input type="checkbox" class="base-opt" value="inkl. Glastüre" onchange="calc()"> inkl. Glastüre</label>
+          <label><input type="checkbox" class="base-opt" value="inkl. Glas-Bullauge" onchange="calc()"> inkl. Glas-Bullauge</label>
+          <label><input type="checkbox" class="base-opt" value="inkl. elektropolierte Arbeitskammer" onchange="calc()"> inkl. elektropolierte Arbeitskammer</label>
+          <label><input type="checkbox" class="base-opt" value="inkl. Vakuumpumpe" onchange="calc()"> inkl. Vakuumpumpe</label>
+          <label><input type="checkbox" class="base-opt" value="inkl. verstärkte Vakuumpumpe" onchange="calc()"> inkl. verstärkte Vakuumpumpe</label>
+          <label><input type="checkbox" class="base-opt" value="inkl. Heißlufttrocknung" onchange="calc()"> inkl. Heißlufttrocknung</label>
+          <div style="display:flex; gap:6px;">
+            <input type="text" class="base-opt-extra" placeholder="weiterer inkl. Zusatz..." style="flex:1;" oninput="calc()">
+          </div>
+        </div>
+        ` : ''}
+
         <div class="machine-badges no-print">
-          <span class="badge machine-group-badge">${data.groupTitle||''}</span>
+          <span class="badge machine-group-badge">${data.groupTitle || ''}</span>
           <span class="badge machine-status-badge"></span>
           <span class="badge machine-elements-badge">0 Einzelelemente</span>
           <span class="badge machine-hours-badge">0,00 h Arbeit</span>
@@ -411,7 +415,7 @@ ${isBasis ? `
       </div>
       <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf">
       <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Berechneter Preis">
-      <input class="price-input machine-manual" type="number" value="${data.manual??''}" min="0" step="1" oninput="calc()" placeholder="manuell">
+      <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell">
       <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)">▾</button>
     </div>
     <div class="sub-wrap">
@@ -424,7 +428,7 @@ ${isBasis ? `
       <div class="section-box no-print">
         <div class="section-title">Zusammenfassung Position</div>
         <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;">
-          <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input class="machine-devh" type="number" value="${data.devH??0}" min="0" step="0.5" oninput="calc()"><span>h</span></div></div>
+          <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span>h</span></div></div>
           <div class="param-block"><div class="param-label">Arbeitszeit Summe</div><input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1"></div>
           <div class="param-block"><div class="param-label">Arbeitskosten Summe</div><input class="price-display machine-workcostsum" type="text" value="0,00" readonly tabindex="-1"></div>
           <div class="param-block"><div class="param-label">Summe Einzelelemente</div><input class="price-display machine-elementsum" type="text" value="0,00" readonly tabindex="-1"></div>
@@ -437,8 +441,9 @@ ${isBasis ? `
         <div class="sub-list"></div>
       </div>
     </div>`;
-  const list=card.querySelector('.sub-list');
-  (data.elements||[]).forEach(el=>list.appendChild(createElementRow(el)));
+
+  const list = card.querySelector('.sub-list');
+  (data.elements || []).forEach(el => list.appendChild(createElementRow(el)));
   updateCardStyle(card);
   return card;
 }
@@ -604,28 +609,32 @@ function updatePlantInfo() {
   document.getElementById('plant-info').value=`${label} – ${series}`;
 }
 function buildGroupsForSelection() {
-  const cat=document.getElementById('plant-category').value;
-  const series=document.getElementById('plant-series').value;
-  const groups=groupsForCategory(cat);
-  const container=document.getElementById('machine-groups'); container.innerHTML='';
-  groups.forEach(group=>{
-    const block=document.createElement('div'); block.className='group-block';
-    block.innerHTML=`<div class="group-header">${group.title}</div>`;
-    group.positions.forEach(pos=>{
-      const isBase = /basisanlage/i.test(pos);
-const isBase = /basisanlage/i.test(pos);
-const displayName = isBase ? series : pos;
+  const cat = document.getElementById('plant-category').value;
+  const series = document.getElementById('plant-series').value;
+  const groups = groupsForCategory(cat);
+  const container = document.getElementById('machine-groups');
+  container.innerHTML = '';
 
-block.appendChild(createMachineCard({
-  name: displayName,
-  isBase: isBase,
-  checked: isBase,
-  isOptional: false,
-  groupTitle: group.title,
-  devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
-  elements: makeElementsForPosition(pos, cat, group.title, series)
-}));
+  groups.forEach(group => {
+    const block = document.createElement('div');
+    block.className = 'group-block';
+    block.innerHTML = `<div class="group-header">${group.title}</div>`;
+
+    group.positions.forEach(pos => {
+      const isBase = /basisanlage/i.test(pos);
+      const displayName = isBase ? series : pos;
+
+      block.appendChild(createMachineCard({
+        name: displayName,
+        isBase: isBase,
+        checked: isBase,
+        isOptional: false,
+        groupTitle: group.title,
+        devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
+        elements: makeElementsForPosition(pos, cat, group.title, series)
+      }));
     });
+
     container.appendChild(block);
   });
 }
