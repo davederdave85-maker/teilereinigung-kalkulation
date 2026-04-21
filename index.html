@@ -22,267 +22,83 @@
     --radius: 10px;
     --radius-sm: 6px;
   }
-  body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-  .app-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  .app-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .header-actions { display: flex; gap: 8px; }
-  .btn {
-    padding: 7px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    border: 1px solid var(--border-strong);
-    background: var(--surface);
-    color: var(--text);
-  }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  .btn { padding: 7px 16px; font-size: 13px; font-weight: 500; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); transition: background 0.15s; }
   .btn:hover { background: var(--surface2); }
   .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-primary:hover { background: #0c447c; }
-  .main-layout {
-    display: grid;
-    grid-template-columns: minmax(760px, 1fr) 400px;
-    gap: 24px;
-    max-width: 1560px;
-    margin: 0 auto;
-    padding: 28px 32px;
-  }
+  .btn-danger { background: #fff0f0; color: var(--danger); border-color: rgba(192,57,43,0.3); }
+  .btn-danger:hover { background: #ffe0e0; }
+  .btn-success { background: #f0f7ee; color: #3b6d11; border-color: rgba(59,109,17,0.3); }
+  .btn-success:hover { background: #e0f0d8; }
+  .main-layout { display: grid; grid-template-columns: minmax(760px, 1fr) 400px; gap: 24px; max-width: 1560px; margin: 0 auto; padding: 28px 32px; }
   .left-col, .right-col { display: flex; flex-direction: column; gap: 20px; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-  }
-  .card-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    margin-bottom: 14px;
-  }
-  .quick-help {
-    margin-bottom: 12px;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    background: #f7f9fc;
-    border: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--text-muted);
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; }
+  .quick-help { margin-bottom: 12px; padding: 10px 12px; border-radius: var(--radius-sm); background: #f7f9fc; border: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
   .cust-grid, .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-  .field input, .field textarea, .field select {
-    width: 100%;
-    padding: 7px 10px;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-    font-family: inherit;
-  }
+  .field input, .field textarea, .field select { width: 100%; padding: 7px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); outline: none; font-family: inherit; }
   .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); background: #fff; }
-  .group-block {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    margin-bottom: 16px;
-    background: #fff;
-  }
-  .group-header {
-    padding: 10px 12px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    text-transform: uppercase;
-  }
-  .machine-card {
-    border-bottom: 1px solid var(--border);
-    background: #fff;
-  }
+  .group-block { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 16px; background: #fff; }
+  .group-header { padding: 10px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); text-transform: uppercase; }
+  .machine-card { border-bottom: 1px solid var(--border); background: #fff; }
   .machine-card:last-child { border-bottom: none; }
   .machine-card.checked { background: #fcfdff; }
-  .machine-row {
-    display: grid;
-    grid-template-columns: 28px minmax(250px, 1.65fr) 120px 120px 120px 34px;
-    gap: 10px;
-    align-items: center;
-    padding: 12px 10px;
-  }
-  .machine-row input[type=checkbox] {
-    width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer;
-  }
+  .machine-row { display: grid; grid-template-columns: 28px minmax(250px, 1.65fr) 120px 120px 120px 34px; gap: 10px; align-items: center; padding: 12px 10px; }
+  .machine-row input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
   .machine-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .machine-badges { display: flex; flex-wrap: wrap; gap: 6px; }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: var(--surface3);
-    border: 1px solid var(--border);
-    font-size: 11px;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-  .editable-name, .price-input, .price-display, .sub-name, .sub-input, .sub-display, .oh-name, .oh-input {
-    width: 100%;
-    min-width: 0;
-    padding: 7px 8px;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-  }
-  .editable-name:focus, .price-input:focus, .sub-name:focus, .sub-input:focus, .oh-name:focus, .oh-input:focus {
-    border-color: var(--accent); background: #fff;
-  }
-  .price-display, .sub-display {
-    background: var(--surface3);
-    text-align: right;
-    font-weight: 600;
-    color: var(--accent);
-  }
+  .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 999px; background: var(--surface3); border: 1px solid var(--border); font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .editable-name, .price-input, .price-display, .sub-name, .sub-input, .sub-display, .oh-name, .oh-input { width: 100%; min-width: 0; padding: 7px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); outline: none; }
+  .editable-name:focus, .price-input:focus, .sub-name:focus, .sub-input:focus, .oh-name:focus, .oh-input:focus { border-color: var(--accent); background: #fff; }
+  .price-display, .sub-display { background: var(--surface3); text-align: right; font-weight: 600; color: var(--accent); }
   .price-input, .sub-input, .oh-input { text-align: right; }
-  .icon-btn {
-    background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; color: var(--text-muted);
-  }
+  .icon-btn { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; color: var(--text-muted); }
   .icon-btn:hover { background: var(--surface2); color: var(--text); }
-  .sub-wrap {
-    display: none;
-    padding: 14px;
-    border-top: 1px solid var(--border);
-    background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
-  }
+  .sub-wrap { display: none; padding: 14px; border-top: 1px solid var(--border); background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%); }
   .machine-card.expanded .sub-wrap { display: block; }
-  .section-box {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: #fff;
-    padding: 12px;
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 10px;
-  }
-  .sub-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
+  .section-box { border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; padding: 12px; margin-bottom: 12px; }
+  .section-title { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .sub-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .sub-note { font-size: 12px; color: var(--text-muted); }
-  .sub-header {
-    display: grid;
-    grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px;
-    gap: 10px;
-    align-items: center;
-    color: var(--text-muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-    padding: 0 8px;
-  }
-  .sub-row {
-    display: grid;
-    grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 8px;
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface3);
-  }
+  .sub-header { display: grid; grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px; gap: 10px; align-items: center; color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding: 0 8px; }
+  .sub-row { display: grid; grid-template-columns: minmax(260px,1.9fr) 120px 100px 120px 120px 28px; gap: 10px; align-items: center; margin-bottom: 8px; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface3); }
   .sub-row:hover { border-color: var(--accent-border); }
-  .param-block, .metric {
-    background: var(--surface2);
-    border-radius: var(--radius-sm);
-    padding: 12px;
-  }
+  .param-block, .metric { background: var(--surface2); border-radius: var(--radius-sm); padding: 12px; }
   .param-label, .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
   .param-row { display: flex; align-items: center; gap: 6px; }
-  .param-row input { width: 76px; padding: 5px 8px; font-size: 14px; font-weight: 500; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); text-align: right; }
+  .param-row input { width: 76px; padding: 5px 8px; font-size: 14px; font-weight: 500; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); text-align: right; outline: none; }
+  .param-row input:focus { border-color: var(--accent); }
   .metric-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .metric-value { font-size: 17px; font-weight: 600; }
-  .metric-total {
-    background: var(--accent-bg);
-    border: 1px solid var(--accent-border);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    text-align: center;
-    margin-bottom: 16px;
-  }
+  .metric-total { background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: var(--radius-sm); padding: 14px; text-align: center; margin-bottom: 16px; }
   .metric-total .label { font-size: 12px; color: var(--accent); margin-bottom: 4px; }
   .metric-total .value { font-size: 26px; font-weight: 700; color: var(--accent); }
-  .breakdown, .offer-table, .oh-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  .breakdown td, .offer-table td, .oh-table td {
-    padding: 6px 4px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-  }
+  .breakdown, .offer-table, .oh-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .breakdown td, .offer-table td, .oh-table td { padding: 6px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
   .breakdown td:last-child, .offer-table td:last-child, .oh-table td:last-child { text-align: right; font-weight: 500; }
   .breakdown tr.subtotal td { background: var(--surface2); font-weight: 600; }
   .breakdown tr.grand td { background: var(--accent-bg); color: var(--accent); font-weight: 700; font-size: 14px; }
   .breakdown tr:last-child td, .offer-table tr:last-child td, .oh-table tr:last-child td { border-bottom: none; }
-  .offer-preview, .overhead-preview {
-    border: 1px dashed var(--accent-border);
-    background: var(--surface3);
-    border-radius: var(--radius-sm);
-    padding: 12px;
-    margin-top: 10px;
-  }
-  .offer-preview h4, .overhead-preview h4 {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-  }
+  .offer-preview, .overhead-preview { border: 1px dashed var(--accent-border); background: var(--surface3); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; }
+  .offer-preview h4, .overhead-preview h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
   .muted { color: var(--text-muted); font-size: 12px; }
-  .oh-row {
-    display: grid;
-    grid-template-columns: minmax(220px,1.4fr) 120px 180px 30px;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 8px;
-  }
+  .oh-row { display: grid; grid-template-columns: minmax(220px,1.4fr) 120px 180px 30px; gap: 10px; align-items: center; margin-bottom: 8px; }
   .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
+ 
+  /* ── Projekt-Manager ── */
+  .project-bar { display: flex; align-items: center; gap: 8px; padding: 10px 32px; background: #eef3f9; border-bottom: 1px solid var(--accent-border); flex-wrap: wrap; }
+  .project-bar label { font-size: 12px; color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .project-bar select { padding: 5px 8px; font-size: 13px; border: 1px solid var(--accent-border); border-radius: var(--radius-sm); background: #fff; color: var(--text); outline: none; min-width: 220px; }
+  .project-bar input[type=text] { padding: 5px 10px; font-size: 13px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: #fff; color: var(--text); outline: none; width: 200px; }
+  .project-bar input[type=text]:focus { border-color: var(--accent); }
+  .save-indicator { font-size: 11px; color: #3b6d11; background: #eaf3de; border-radius: 999px; padding: 2px 10px; border: 1px solid rgba(59,109,17,0.2); display: none; }
+  .save-indicator.visible { display: inline-block; }
+ 
   @media print {
     .no-print { display: none !important; }
     .app-header { position: static; }
@@ -294,76 +110,76 @@
 </style>
 </head>
 <body>
+ 
 <div class="app-header no-print">
   <div>
     <div style="font-size:17px;font-weight:600;">Kalkulation Teilereinigung</div>
     <div class="subtitle">Anlagenart, Baureihe, Teilüberschriften, Optionen und Overhead</div>
   </div>
   <div class="header-actions">
+    <span class="save-indicator" id="save-indicator">✓ Gespeichert</span>
     <button class="btn" onclick="resetForm()">Zurücksetzen</button>
     <button class="btn btn-primary" onclick="window.print()">&#128438; Angebot drucken / PDF</button>
   </div>
 </div>
+ 
+<!-- Projekt-Leiste -->
+<div class="project-bar no-print">
+  <label>Projekte:</label>
+  <select id="project-select" onchange="loadSelectedProject()">
+    <option value="">— Projekt laden —</option>
+  </select>
+  <button class="btn btn-danger" onclick="deleteProject()" title="Ausgewähltes Projekt löschen">Löschen</button>
+  <div style="width:1px;height:24px;background:var(--border-strong);margin:0 4px;"></div>
+  <input type="text" id="project-name-input" placeholder="Projektname...">
+  <button class="btn btn-success" onclick="saveProject()">&#128190; Speichern</button>
+</div>
+ 
 <div class="main-layout">
   <div class="left-col">
     <div class="card">
       <div class="card-title">Anlagenauswahl</div>
-      <div class="quick-help no-print">Wähle Anlagenart und Baureihe. Das Tool lädt danach die passende Struktur mit Teilüberschriften. Bei Hybridanlagen werden wässriger Teil, Lösemittelteil sowie gemeinsame Bereiche kombiniert.</div>
+      <div class="quick-help no-print">Wähle Anlagenart und Baureihe. Das Tool lädt danach die passende Struktur mit Teilüberschriften.</div>
       <div class="cust-grid">
-        <div class="field">
-          <label>Anlagenart</label>
-          <select id="plant-category" onchange="updateSeriesOptions();applySeriesTemplate()">
-            <option value="loesemittel">Lösemittelanlagen</option>
-            <option value="waessrig">Wässrige Anlagen</option>
-            <option value="hybrid">Hybride Anlagen</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Baureihe</label>
-          <select id="plant-series" onchange="applySeriesTemplate()"></select>
-        </div>
-        <div class="field" style="grid-column:1/-1;">
-          <label>Auswahl / Hinweis</label>
-          <input type="text" id="plant-info" readonly style="background:var(--surface3);">
-        </div>
+        <div class="field"><label>Anlagenart</label><select id="plant-category" onchange="updateSeriesOptions();applySeriesTemplate()"><option value="loesemittel">Lösemittelanlagen</option><option value="waessrig">Wässrige Anlagen</option><option value="hybrid">Hybride Anlagen</option></select></div>
+        <div class="field"><label>Baureihe</label><select id="plant-series" onchange="applySeriesTemplate()"></select></div>
+        <div class="field" style="grid-column:1/-1;"><label>Auswahl / Hinweis</label><input type="text" id="plant-info" readonly style="background:var(--surface3);"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Kundendaten</div>
       <div class="cust-grid">
-        <div class="field"><label>Kundenname / Firma</label><input type="text" id="cust-name" placeholder="Mustermann GmbH"></div>
-        <div class="field"><label>Ansprechpartner</label><input type="text" id="cust-contact" placeholder="Max Mustermann"></div>
-        <div class="field"><label>Angebotsnummer</label><input type="text" id="offer-no" placeholder="AN-2026-001"></div>
+        <div class="field"><label>Kundenname / Firma</label><input type="text" id="cust-name" placeholder="Mustermann GmbH" oninput="autoSaveSettings()"></div>
+        <div class="field"><label>Ansprechpartner</label><input type="text" id="cust-contact" placeholder="Max Mustermann" oninput="autoSaveSettings()"></div>
+        <div class="field"><label>Angebotsnummer</label><input type="text" id="offer-no" placeholder="AN-2026-001" oninput="autoSaveSettings()"></div>
         <div class="field"><label>Datum</label><input type="text" id="offer-date"></div>
-        <div class="field" style="grid-column:1/-1"><label>Betreff / Projekt</label><input type="text" id="offer-subject" placeholder="Reinigungsanlage"></div>
+        <div class="field" style="grid-column:1/-1"><label>Betreff / Projekt</label><input type="text" id="offer-subject" placeholder="Reinigungsanlage" oninput="autoSaveSettings()"></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Anlagenpositionen</div>
-      <div class="quick-help no-print">Jede Teilüberschrift entspricht eurer Angebotsstruktur. Positionen können gewählt, geöffnet und intern kalkuliert werden. Der manuelle Preis dient zum Runden für das Angebot.</div>
+      <div class="quick-help no-print">Jede Teilüberschrift entspricht eurer Angebotsstruktur. Positionen können gewählt, geöffnet und intern kalkuliert werden.</div>
       <div id="machine-groups"></div>
     </div>
   </div>
+ 
   <div class="right-col">
     <div class="card">
-      <div class="card-title">Zuschläge & Margen</div>
+      <div class="card-title">Zuschläge &amp; Margen</div>
       <div class="params-grid">
-        <div class="param-block"><div class="param-label">Materialzuschlag</div><div class="param-row"><input type="number" id="p-material" value="10" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
-        <div class="param-block"><div class="param-label">Provision</div><div class="param-row"><input type="number" id="p-provision" value="5" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
-        <div class="param-block"><div class="param-label">Marge</div><div class="param-row"><input type="number" id="p-marge" value="15" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
-        <div class="param-block"><div class="param-label">Risiko</div><div class="param-row"><input type="number" id="p-risiko" value="3" min="0" max="100" step="0.5" oninput="calc()"><span>%</span></div></div>
-        <div class="param-block"><div class="param-label">Arbeitszeit</div><div class="param-row"><input type="number" id="work-rate" value="85" min="0" step="5" oninput="calc()"><span>€/h</span></div></div>
-        <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc()"><span>€/h</span></div></div>
+        <div class="param-block"><div class="param-label">Materialzuschlag</div><div class="param-row"><input type="number" id="p-material" value="10" min="0" max="100" step="0.5" oninput="calc();autoSaveSettings()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Provision</div><div class="param-row"><input type="number" id="p-provision" value="5" min="0" max="100" step="0.5" oninput="calc();autoSaveSettings()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Marge</div><div class="param-row"><input type="number" id="p-marge" value="15" min="0" max="100" step="0.5" oninput="calc();autoSaveSettings()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Risiko</div><div class="param-row"><input type="number" id="p-risiko" value="3" min="0" max="100" step="0.5" oninput="calc();autoSaveSettings()"><span>%</span></div></div>
+        <div class="param-block"><div class="param-label">Arbeitszeit</div><div class="param-row"><input type="number" id="work-rate" value="85" min="0" step="5" oninput="calc();autoSaveSettings()"><span>€/h</span></div></div>
+        <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc();autoSaveSettings()"><span>€/h</span></div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Overhead</div>
-      <div class="quick-help no-print">Overhead-Positionen können separat ausgewiesen werden. Optional können sie ganz oder teilweise in den Anlagenpreis einfließen.</div>
-      <div class="toggle-inline no-print"><input type="checkbox" id="oh-include" onchange="calc()"><label for="oh-include">Overhead in Anlagenpreis einrechnen</label></div>
-      <div class="field no-print" style="margin-top:10px; max-width:180px;">
-        <label>Anteil in Preis</label>
-        <input type="number" id="oh-share" value="100" min="0" max="100" step="5" oninput="calc()">
-      </div>
+      <div class="quick-help no-print">Overhead-Positionen können separat ausgewiesen werden.</div>
+      <div class="toggle-inline no-print"><input type="checkbox" id="oh-include" onchange="calc();autoSaveSettings()"><label for="oh-include">Overhead in Anlagenpreis einrechnen</label></div>
+      <div class="field no-print" style="margin-top:10px; max-width:180px;"><label>Anteil in Preis</label><input type="number" id="oh-share" value="100" min="0" max="100" step="5" oninput="calc();autoSaveSettings()"></div>
       <div id="overhead-list" style="margin-top:12px;"></div>
       <div class="section-box no-print" style="margin-top:12px;">
         <div class="section-title">Overhead-Position hinzufügen</div>
@@ -389,39 +205,35 @@
     </div>
     <div class="card">
       <div class="card-title">Angebotsvorschau</div>
-      <div class="offer-preview">
-        <h4>Preisübersicht in Euro</h4>
-        <table class="offer-table"><tbody id="offer-preview-body"></tbody></table>
-      </div>
-      <div class="overhead-preview" style="margin-top:12px;">
-        <h4>Overhead</h4>
-        <table class="oh-table"><tbody id="offer-overhead-body"></tbody></table>
-      </div>
+      <div class="offer-preview"><h4>Preisübersicht in Euro</h4><table class="offer-table"><tbody id="offer-preview-body"></tbody></table></div>
+      <div class="overhead-preview" style="margin-top:12px;"><h4>Overhead</h4><table class="oh-table"><tbody id="offer-overhead-body"></tbody></table></div>
     </div>
     <div class="card">
       <div class="card-title">Notizen / Bemerkungen</div>
-      <div class="field"><textarea id="notes" rows="5" placeholder="Lieferbedingungen, Zahlungsziel, technische Hinweise..."></textarea></div>
+      <div class="field"><textarea id="notes" rows="5" placeholder="Lieferbedingungen, Zahlungsziel, technische Hinweise..." oninput="autoSaveSettings()"></textarea></div>
     </div>
   </div>
 </div>
+ 
 <script>
+/* ═══════════════════════════════════════════════════════
+   DATEN
+═══════════════════════════════════════════════════════ */
 const SERIES = {
   loesemittel: ['Multiclean LC-III','Multiclean S-Standard','Multiclean S-1 PRO','Multiclean S-2 PRO','Multiclean S-3 PRO','Multiclean S-4 PRO','Multiclean S-1 MAX','Multiclean S-2 MAX','Multiclean S-3 MAX','Multiclean S-4 MAX'],
   waessrig: ['Multiclean A-Standard','Multiclean A-1 PRO','Multiclean A-2 PRO','Multiclean A-3 PRO','Multiclean A-4 PRO','Multiclean A-1 MAX','Multiclean A-2 MAX','Multiclean A-3 MAX','Multiclean A-4 MAX'],
   hybrid: ['Multiclean DUO-Standard','Multiclean DUO-1 PRO','Multiclean DUO-2 PRO','Multiclean DUO-3 PRO','Multiclean DUO-4 PRO','Multiclean DUO-1 MAX','Multiclean DUO-2 MAX','Multiclean DUO-3 MAX','Multiclean DUO-4 MAX']
 };
-
 const LOESEMITTEL_GROUPS = [
   { title: 'Basisanlage', positions: ['Basisanlage'] },
   { title: 'OPTIONEN ANLAGE & PROZESS', positions: ['Elektropolierte Arbeitskammer','Abweichendes Nutzmaß','Auflastung auf höheres Chargengewicht','Vor-Reinigungs-Kreislauf','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 2)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 3)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 4)','Aktivkohlefass zur Emissionsminderung','Auto-Adsorber für den 2-Schicht-Betrieb mit PER','Erweiterung auf 3-Schicht-Betrieb PER','Konzentrationsmessgerät PER (Vorschrift in D, CH)','Konzentrationsmessgerät modifizierter Alkohol','VA-Bodenwanne','Wartungszugang mit Rollladen','Anlagendach','Innenraum-Absaugung','Schalldämmung'] },
   { title: 'TROCKNUNG', positions: ['Heißluft-Trocknung (PER)','Infrarottrocknung','Verstärkte Vakuum-Trocknung 300 m³/h','Verstärkte, Vakuum-Trocknung mit Schraubenpumpe, 350 m³/h','Wärmetauscher aus Edelstahl','Kompakt-Kälteaggregat (sofern bauseits kein Kühlwasser vorh.)','Drycooler','Wartungs-Kühleinrichtung'] },
   { title: 'ULTRASCHALL', positions: ['Standard-Ultraschall 1x 1.500 W / 30 kHz','Standard-Ultraschall 2x 1.500 W / 30 kHz','3-Seiten-Ultraschall 3x 1.500 W / 30 kHz','Verstärkter Ultraschall'] },
-  { title: 'FILTRATION', positions: ['Grobschmutzfilter-Gehäuse mit VA-Siebkorbeinsatz','Neodym-Magnetstab im Grobschmutzfilter-Gehäuse','Neodym-Magnetstab im Beutelfilter-Gehäuse, je Kreislauf','Kerzenfilter-Einsatz im Beutelfilter-Gehäuse, je Einheit','Doppel-Filter mit automatischer Umschaltung, je Kreislauf','Filter-Differenzdruck-Überwachung','Filterdeckelabfrage','Destillatfilter mit 1x20“ Filterkerze'] },
+  { title: 'FILTRATION', positions: ['Grobschmutzfilter-Gehäuse mit VA-Siebkorbeinsatz','Neodym-Magnetstab im Grobschmutzfilter-Gehäuse','Neodym-Magnetstab im Beutelfilter-Gehäuse, je Kreislauf','Kerzenfilter-Einsatz im Beutelfilter-Gehäuse, je Einheit','Doppel-Filter mit automatischer Umschaltung, je Kreislauf','Filter-Differenzdruck-Überwachung','Filterdeckelabfrage','Destillatfilter mit 1x20" Filterkerze'] },
   { title: 'BADPFLEGE', positions: ['Restdestillation mit Ölaustrag in Betriebspausen','Restdestille VRD 50 mit kontinuierlichem Ölaustrag','Sumpfkühlung','Dampfbeheizte Ausführung nur Hauptdestille','Dampfbeheizte Ausführung, Haupt- und Restdestille','Konzentrations-Messgerät für Konservierbad','Dosiereinrichtung für Konservierbad','Schlauchset / Füllarmaturen für offenes Fass','Füllarmaturen für Sicherheitsgebinde'] },
   { title: 'AUTOMATISIERUNG', positions: ['Automatischer Korbdeckel, 10 mm','Standard Ladetisch','Manuelle Rollenbahn (1-1-1)','Manuelle Rollenbahn (3-1-3)','Beladeplatz mit automatischem Einschub','Automatische Beschickungeinrichtung (ABE) mit 1-spuriger Stau-Förderstrecke (3-1-3)','Verlängerung der angetriebenen Förderstrecke','Docking-Station für Trolley','Trolley','Offener Tunnel über der Auslauf-Förderstrecke','FFU zur Spülung des Tunnels mit gefilterter Luft','Doppel-Schleuse zur Reinraum-Anbindung','Hubtisch Belade/Entladeplatz','Rückführ-Rollenbahn','Eckumsetzer','Spezielle Warenträger'] },
   { title: 'INDUSTRIALISIERUNG', positions: ['VPN-Modem für Fernwartung via Talk2M','Barcode-Scanner zur Programmanwahl','Betriebsdatenerfassung auf Wechselspeicher','Netzwerkanbindung über OPC-UA','Leuchtmeldesäule','Schaltschrank-Klimatisierung','Energie-Erfassung (nur Anzeige)','Energie-Erfassung (mit Anbindung)','Einzelader-Kennzeichnung','Rohrleitung-Kennzeichnung','Bedieneranmeldung mittels RFID / System Euchner','Sonderlackierung','Einhaltung spezieller Betriebsmittel-Vorschriften'] }
 ];
-
 const WAESSRIG_GROUPS = [
   { title: 'Basisanlage', positions: ['Basisanlage'] },
   { title: 'OPTIONEN ANLAGE & PROZESS', positions: ['Elektropolierte Arbeitskammer','Abweichendes Nutzmaß','Auflastung auf höheres Chargengewicht','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 3)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 4)','Weiterer Tankkreislauf inkl. Pumpe + Filter (Tank 5)','Verstärkte Pumpe: 450 l/min @ 6 bar, mit Druckvorwahl, je Kreislauf','Wartungszugang mit Rollladen','Anlagendach','Innenraum-Absaugung','Schalldämmung'] },
@@ -432,158 +244,141 @@ const WAESSRIG_GROUPS = [
   { title: 'AUTOMATISIERUNG', positions: ['Automatischer Korbdeckel, 10 mm','Standard Ladetisch','Manuelle Rollenbahn (1-1-1)','Manuelle Rollenbahn (3-1-3)','Beladeplatz mit automatischem Einschub','Automatische Beschickungeinrichtung (ABE) mit 1-spuriger Stau-Förderstrecke (3-1-3)','Verlängerung der angetriebenen Förderstrecke','Docking-Station für Trolley','Trolley','Offener Tunnel über der Auslauf-Förderstrecke','FFU zur Spülung des Tunnels mit gefilterter Luft','Doppel-Schleuse zur Reinraum-Anbindung','Hubtisch Belade/Entladeplatz','Rückführ-Rollenbahn','Eckumsetzer','Spezielle Warenträger'] },
   { title: 'INDUSTRIALISIERUNG', positions: ['VPN-Modem für Fernwartung via Talk2M','Barcode-Scanner zur Programmanwahl','Betriebsdatenerfassung auf Wechselspeicher','Netzwerkanbindung über OPC-UA','Leuchtmeldesäule','Schaltschrank-Klimatisierung','Energie-Erfassung (nur Anzeige)','Energie-Erfassung (mit Anbindung)','Einzelader-Kennzeichnung','Rohrleitung-Kennzeichnung','Bedieneranmeldung mittels RFID / System Euchner','Sonderlackierung','Einhaltung spezieller Betriebsmittel-Vorschriften'] }
 ];
-
 const OVERHEAD_DEFAULTS = ['Transport frei Abladestelle (Deutschland)','Montage, Inbetriebnahme, Schulung zzgl. Reisekosten','Tagessatz für Nachschulung, Prozessoptimierung','Übersetzung Dokumentation','Garantieerweiterung auf 24 Monate','Heißabnahme','Inbetriebnahme','Anlagenabnahme'];
-
-let machineId = 0;
-let elementId = 0;
-let overheadId = 0;
-
-function fmt(n) {
-  return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
-}
-function fmtNum(n) {
-  return (Number(n) || 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-function num(v) {
-  if (typeof v === 'string') v = v.replace(',', '.');
-  return parseFloat(v) || 0;
-}
-function slug(str) {
-  return String(str).toLowerCase().replace(/[^a-z0-9]+/g, '-');
-}
+ 
+let machineId = 0, elementId = 0, overheadId = 0;
+ 
+/* ═══════════════════════════════════════════════════════
+   HILFSFUNKTIONEN
+═══════════════════════════════════════════════════════ */
+const fmt    = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+const fmtNum = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+const num    = v => { if(typeof v==='string') v=v.replace(',','.'); return parseFloat(v)||0; };
+ 
 function getParams() {
   return {
-    pMat: num(document.getElementById('p-material').value) / 100,
-    pProv: num(document.getElementById('p-provision').value) / 100,
-    pMarge: num(document.getElementById('p-marge').value) / 100,
-    pRisik: num(document.getElementById('p-risiko').value) / 100,
-    workRate: num(document.getElementById('work-rate').value),
+    pMat:    num(document.getElementById('p-material').value)/100,
+    pProv:   num(document.getElementById('p-provision').value)/100,
+    pMarge:  num(document.getElementById('p-marge').value)/100,
+    pRisik:  num(document.getElementById('p-risiko').value)/100,
+    workRate:num(document.getElementById('work-rate').value),
     devRate: num(document.getElementById('dev-rate').value)
   };
 }
 function sizeFactor(series) {
-  if (/LC-III/i.test(series)) return 0.95;
-  if (/Standard/i.test(series)) return 1.0;
-  const m = series.match(/(?:S|A|DUO)-([1-4])/i);
-  if (!m) return 1.0;
-  const n = Number(m[1]);
-  const isMax = /MAX/i.test(series);
-  const base = 0.95 + (n * 0.18);
-  return isMax ? base + 0.2 : base;
+  if(/LC-III/i.test(series)) return 0.95;
+  if(/Standard/i.test(series)) return 1.0;
+  const m=series.match(/(?:S|A|DUO)-([1-4])/i);
+  if(!m) return 1.0;
+  return (0.95+(Number(m[1])*0.18))+(/MAX/i.test(series)?0.2:0);
 }
 function basePriceForPosition(name, factor, category, groupTitle) {
-  const t = name.toLowerCase();
-  let base = 1800;
-  if (t.includes('basisanlage')) base = category === 'hybrid' ? 32000 : 22000;
-  else if (groupTitle.includes('ANLAGE')) base = 2800;
-  else if (groupTitle.includes('TROCKNUNG')) base = 3600;
-  else if (groupTitle.includes('ULTRASCHALL')) base = 2600;
-  else if (groupTitle.includes('FILTRATION')) base = 1700;
-  else if (groupTitle.includes('BADPFLEGE')) base = 2100;
-  else if (groupTitle.includes('AUTOMATISIERUNG')) base = 3200;
-  else if (groupTitle.includes('INDUSTRIALISIERUNG')) base = 1900;
-  if (t.includes('kälteaggregat') || t.includes('drycooler')) base += 2400;
-  if (t.includes('schalldämmung')) base += 800;
-  if (t.includes('arbeitskammer')) base += 1200;
-  if (t.includes('tankkreislauf')) base += 2600;
-  if (t.includes('ultraschall')) base += 2000;
-  if (t.includes('barcode') || t.includes('opc') || t.includes('vpn')) base += 1200;
-  return Math.round(base * factor);
+  const t=name.toLowerCase();
+  let base=1800;
+  if(t.includes('basisanlage')) base=category==='hybrid'?32000:22000;
+  else if(groupTitle.includes('ANLAGE')) base=2800;
+  else if(groupTitle.includes('TROCKNUNG')) base=3600;
+  else if(groupTitle.includes('ULTRASCHALL')) base=2600;
+  else if(groupTitle.includes('FILTRATION')) base=1700;
+  else if(groupTitle.includes('BADPFLEGE')) base=2100;
+  else if(groupTitle.includes('AUTOMATISIERUNG')) base=3200;
+  else if(groupTitle.includes('INDUSTRIALISIERUNG')) base=1900;
+  if(t.includes('kälteaggregat')||t.includes('drycooler')) base+=2400;
+  if(t.includes('schalldämmung')) base+=800;
+  if(t.includes('arbeitskammer')) base+=1200;
+  if(t.includes('tankkreislauf')) base+=2600;
+  if(t.includes('ultraschall')) base+=2000;
+  if(t.includes('barcode')||t.includes('opc')||t.includes('vpn')) base+=1200;
+  return Math.round(base*factor);
 }
 function makeElementsForPosition(name, category, groupTitle, series) {
-  const factor = sizeFactor(series);
-  const total = basePriceForPosition(name, factor, category, groupTitle);
-  const mainShare = Math.round(total * 0.72);
-  const secShare = total - mainShare;
+  const factor=sizeFactor(series);
+  const total=basePriceForPosition(name,factor,category,groupTitle);
+  const mainShare=Math.round(total*0.72);
   return [
-    { name: name + ' - Material / Komponenten', purchase: mainShare, workH: Math.max(1, Math.round((mainShare / 700) * 2) / 2) },
-    { name: name + ' - Montage / Integration', purchase: secShare, workH: Math.max(0.5, Math.round((secShare / 900) * 2) / 2) }
+    {name:name+' - Material / Komponenten', purchase:mainShare, workH:Math.max(1,Math.round((mainShare/700)*2)/2)},
+    {name:name+' - Montage / Integration',  purchase:total-mainShare, workH:Math.max(0.5,Math.round(((total-mainShare)/900)*2)/2)}
   ];
 }
-function normalizeGroups(groups, prefix = '') {
-  return groups.map(g => ({ title: prefix ? prefix + ' – ' + g.title : g.title, positions: [...g.positions] }));
+function normalizeGroups(groups, prefix='') {
+  return groups.map(g=>({title:prefix?prefix+' – '+g.title:g.title, positions:[...g.positions]}));
 }
 function dedupeGroups(groups) {
-  const out = [];
-  const byTitle = new Map();
-  groups.forEach(group => {
-    if (!byTitle.has(group.title)) {
-      const entry = { title: group.title, positions: [] };
-      byTitle.set(group.title, entry);
-      out.push(entry);
-    }
-    const entry = byTitle.get(group.title);
-    group.positions.forEach(pos => {
-      if (!entry.positions.includes(pos)) entry.positions.push(pos);
-    });
+  const out=[]; const byTitle=new Map();
+  groups.forEach(group=>{
+    if(!byTitle.has(group.title)){const e={title:group.title,positions:[]};byTitle.set(group.title,e);out.push(e);}
+    const e=byTitle.get(group.title);
+    group.positions.forEach(pos=>{if(!e.positions.includes(pos))e.positions.push(pos);});
   });
   return out;
 }
 function groupsForCategory(category) {
-  if (category === 'loesemittel') return LOESEMITTEL_GROUPS;
-  if (category === 'waessrig') return WAESSRIG_GROUPS;
-  const commonAuto = WAESSRIG_GROUPS.find(g => g.title === 'AUTOMATISIERUNG');
-  const commonInd = WAESSRIG_GROUPS.find(g => g.title === 'INDUSTRIALISIERUNG');
-  const loes = LOESEMITTEL_GROUPS.filter(g => !['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
-  const waes = WAESSRIG_GROUPS.filter(g => !['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
+  if(category==='loesemittel') return LOESEMITTEL_GROUPS;
+  if(category==='waessrig') return WAESSRIG_GROUPS;
+  const cA=WAESSRIG_GROUPS.find(g=>g.title==='AUTOMATISIERUNG');
+  const cI=WAESSRIG_GROUPS.find(g=>g.title==='INDUSTRIALISIERUNG');
+  const loes=LOESEMITTEL_GROUPS.filter(g=>!['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
+  const waes=WAESSRIG_GROUPS.filter(g=>!['AUTOMATISIERUNG','INDUSTRIALISIERUNG'].includes(g.title));
   return dedupeGroups([
-    ...normalizeGroups([{ title: 'Basisanlage', positions: ['Basisanlage'] }], 'Wässriger Teil'),
-    ...normalizeGroups(waes.filter(g => g.title !== 'Basisanlage'), 'Wässriger Teil'),
-    ...normalizeGroups([{ title: 'Basisanlage', positions: ['Basisanlage'] }], 'Lösemittelteil'),
-    ...normalizeGroups(loes.filter(g => g.title !== 'Basisanlage'), 'Lösemittelteil'),
-    { title: 'AUTOMATISIERUNG', positions: commonAuto ? commonAuto.positions : [] },
-    { title: 'INDUSTRIALISIERUNG', positions: commonInd ? commonInd.positions : [] }
+    ...normalizeGroups([{title:'Basisanlage',positions:['Basisanlage']}],'Wässriger Teil'),
+    ...normalizeGroups(waes.filter(g=>g.title!=='Basisanlage'),'Wässriger Teil'),
+    ...normalizeGroups([{title:'Basisanlage',positions:['Basisanlage']}],'Lösemittelteil'),
+    ...normalizeGroups(loes.filter(g=>g.title!=='Basisanlage'),'Lösemittelteil'),
+    {title:'AUTOMATISIERUNG',positions:cA?cA.positions:[]},
+    {title:'INDUSTRIALISIERUNG',positions:cI?cI.positions:[]}
   ]);
 }
-function createElementRow(data = {}) {
+ 
+/* ═══════════════════════════════════════════════════════
+   DOM-BAUSTEINE
+═══════════════════════════════════════════════════════ */
+function createElementRow(data={}) {
   elementId++;
-  const row = document.createElement('div');
-  row.className = 'sub-row element-row';
-  row.dataset.elementId = elementId;
-  row.innerHTML = `
-    <input class="sub-name el-name" type="text" value="${data.name || 'Einzelelement'}" oninput="calc()">
-    <input class="sub-input el-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc()">
-    <input class="sub-input el-workh" type="number" value="${data.workH ?? 0}" min="0" step="0.5" oninput="calc()">
+  const row=document.createElement('div');
+  row.className='sub-row element-row';
+  row.dataset.elementId=elementId;
+  row.innerHTML=`
+    <input class="sub-name el-name" type="text" value="${data.name||'Einzelelement'}" oninput="calc()">
+    <input class="sub-input el-purchase" type="number" value="${data.purchase??0}" min="0" step="0.01" oninput="calc()">
+    <input class="sub-input el-workh" type="number" value="${data.workH??0}" min="0" step="0.5" oninput="calc()">
     <input class="sub-display el-workcost" type="text" value="0,00" readonly tabindex="-1">
     <input class="sub-display el-total" type="text" value="0,00" readonly tabindex="-1">
-    <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()" title="Einzelelement entfernen">✕</button>
-  `;
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()" title="Entfernen">✕</button>`;
   return row;
 }
-function createMachineCard(data = {}) {
+function createMachineCard(data={}) {
   machineId++;
-  const card = document.createElement('div');
-  card.className = 'machine-card';
-  card.dataset.machineId = machineId;
-  card.dataset.groupTitle = data.groupTitle || '';
-  card.innerHTML = `
+  const card=document.createElement('div');
+  card.className='machine-card';
+  card.dataset.machineId=machineId;
+  card.dataset.groupTitle=data.groupTitle||'';
+  card.innerHTML=`
     <div class="machine-row">
-      <input class="machine-check" type="checkbox" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
+      <input class="machine-check" type="checkbox" ${data.checked?'checked':''} onchange="toggleMachine(this)">
       <div class="machine-main">
-        <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+        <input class="editable-name machine-name" type="text" value="${data.name||'Neue Position'}" oninput="calc()">
         <div class="machine-badges no-print">
-          <span class="badge machine-group-badge">${data.groupTitle || ''}</span>
+          <span class="badge machine-group-badge">${data.groupTitle||''}</span>
           <span class="badge machine-elements-badge">0 Einzelelemente</span>
           <span class="badge machine-hours-badge">0,00 h Arbeit</span>
         </div>
       </div>
-      <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf Einzelelemente">
-      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Automatisch berechneter Preis der Hauptposition">
-      <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell" title="Preis für Angebot manuell runden / überschreiben">
-      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Details öffnen / schließen">▾</button>
+      <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf">
+      <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Berechneter Preis">
+      <input class="price-input machine-manual" type="number" value="${data.manual??''}" min="0" step="1" oninput="calc()" placeholder="manuell">
+      <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)" title="Details">▾</button>
     </div>
     <div class="sub-wrap">
       <div class="section-box">
         <div class="sub-toolbar">
-          <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit. Entwicklung bleibt separat auf Ebene der Position. Materialzuschlag wird nur auf den Einkauf gerechnet, Zeiten werden separat addiert.</div>
+          <div class="sub-note">Einzelelemente mit Einkauf und Arbeitszeit.</div>
           <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
         </div>
       </div>
       <div class="section-box no-print">
         <div class="section-title">Zusammenfassung Position</div>
         <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;">
-          <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input class="machine-devh" type="number" value="${data.devH ?? 0}" min="0" step="0.5" oninput="calc()"><span>h</span></div></div>
+          <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input class="machine-devh" type="number" value="${data.devH??0}" min="0" step="0.5" oninput="calc()"><span>h</span></div></div>
           <div class="param-block"><div class="param-label">Arbeitszeit Summe</div><input class="price-display machine-worksum" type="text" value="0,00" readonly tabindex="-1"></div>
           <div class="param-block"><div class="param-label">Arbeitskosten Summe</div><input class="price-display machine-workcostsum" type="text" value="0,00" readonly tabindex="-1"></div>
           <div class="param-block"><div class="param-label">Summe Einzelelemente</div><input class="price-display machine-elementsum" type="text" value="0,00" readonly tabindex="-1"></div>
@@ -592,198 +387,90 @@ function createMachineCard(data = {}) {
       </div>
       <div class="section-box no-print">
         <div class="section-title">Einzelelemente</div>
-        <div class="sub-header">
-          <div>Einzelelement</div><div>Einkauf</div><div>Arbeit h</div><div>Arbeit €</div><div>Gesamt</div><div></div>
-        </div>
+        <div class="sub-header"><div>Einzelelement</div><div>Einkauf</div><div>Arbeit h</div><div>Arbeit €</div><div>Gesamt</div><div></div></div>
         <div class="sub-list"></div>
       </div>
-    </div>
-  `;
-  const list = card.querySelector('.sub-list');
-  (data.elements || []).forEach(el => list.appendChild(createElementRow(el)));
+    </div>`;
+  const list=card.querySelector('.sub-list');
+  (data.elements||[]).forEach(el=>list.appendChild(createElementRow(el)));
   return card;
 }
-function calcElementRow(row) {
-  const workRate = num(document.getElementById('work-rate').value);
-  const purchase = num(row.querySelector('.el-purchase').value);
-  const workH = num(row.querySelector('.el-workh').value);
-  const workCost = workH * workRate;
-  const total = purchase + workCost;
-  row.querySelector('.el-workcost').value = fmtNum(workCost);
-  row.querySelector('.el-total').value = fmtNum(total);
-  row.dataset.purchase = purchase;
-  row.dataset.workH = workH;
-  row.dataset.workCost = workCost;
-  row.dataset.total = total;
-  return { purchase, workH, workCost, total };
-}
-function calcMachineCard(card) {
-  const { pMat, pProv, pMarge, pRisik, devRate } = getParams();
-  const rows = card.querySelectorAll('.element-row');
-  let purchaseSum = 0, workHoursSum = 0, workCostSum = 0, elementTotalSum = 0;
-  rows.forEach(row => {
-    const r = calcElementRow(row);
-    purchaseSum += r.purchase;
-    workHoursSum += r.workH;
-    workCostSum += r.workCost;
-    elementTotalSum += r.total;
-  });
-  const devH = num(card.querySelector('.machine-devh').value);
-  const devCost = devH * devRate;
-  const material = purchaseSum * pMat;
-  const basis = purchaseSum + material + workCostSum + devCost;
-  const provision = basis * pProv;
-  const risk = basis * pRisik;
-  const interim = basis + provision + risk;
-  const margin = interim * pMarge;
-  const calcPrice = interim + margin;
-  card.querySelector('.machine-purchase').value = fmtNum(purchaseSum);
-  card.querySelector('.machine-worksum').value = fmtNum(workHoursSum);
-  card.querySelector('.machine-workcostsum').value = fmtNum(workCostSum);
-  card.querySelector('.machine-elementsum').value = fmtNum(elementTotalSum);
-  card.querySelector('.machine-devcost').value = fmtNum(devCost);
-  card.querySelector('.machine-calculated').value = fmtNum(calcPrice);
-  const badgeEl = card.querySelector('.machine-elements-badge');
-  const badgeHours = card.querySelector('.machine-hours-badge');
-  if (badgeEl) badgeEl.textContent = `${rows.length} Einzelelemente`;
-  if (badgeHours) badgeHours.textContent = `${fmtNum(workHoursSum)} h Arbeit`;
-  const checked = card.querySelector('.machine-check').checked;
-  const manualVal = num(card.querySelector('.machine-manual').value);
-  return {
-    checked,
-    name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
-    groupTitle: card.dataset.groupTitle || '',
-    purchaseSum,
-    workHoursSum,
-    workCostSum,
-    elementTotalSum,
-    devCost,
-    material,
-    basis,
-    provision,
-    risk,
-    margin,
-    calcPrice,
-    offerPrice: manualVal > 0 ? manualVal : calcPrice,
-    manualUsed: manualVal > 0
-  };
-}
-function createOverheadRow(name = '', price = 0) {
+function createOverheadRow(name='', price=0) {
   overheadId++;
-  const row = document.createElement('div');
-  row.className = 'oh-row';
-  row.dataset.overheadId = overheadId;
-  row.innerHTML = `
-    <input class="oh-name" type="text" value="${name}" oninput="calc()">
-    <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc()">
+  const row=document.createElement('div');
+  row.className='oh-row';
+  row.dataset.overheadId=overheadId;
+  row.innerHTML=`
+    <input class="oh-name" type="text" value="${name}" oninput="calc();autoSaveSettings()">
+    <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
     <div></div>
-    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc()">✕</button>
-  `;
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>`;
   return row;
 }
-function addOverhead() {
-  const name = document.getElementById('new-oh-name').value.trim();
-  const price = num(document.getElementById('new-oh-price').value);
-  if (!name) { document.getElementById('new-oh-name').focus(); return; }
-  document.getElementById('overhead-list').appendChild(createOverheadRow(name, price));
-  document.getElementById('new-oh-name').value = '';
-  document.getElementById('new-oh-price').value = '';
-  calc();
+ 
+/* ═══════════════════════════════════════════════════════
+   KALKULATION
+═══════════════════════════════════════════════════════ */
+function calcElementRow(row) {
+  const workRate=num(document.getElementById('work-rate').value);
+  const purchase=num(row.querySelector('.el-purchase').value);
+  const workH=num(row.querySelector('.el-workh').value);
+  const workCost=workH*workRate;
+  row.querySelector('.el-workcost').value=fmtNum(workCost);
+  row.querySelector('.el-total').value=fmtNum(purchase+workCost);
+  return {purchase, workH, workCost, total:purchase+workCost};
 }
-function seedOverhead() {
-  const list = document.getElementById('overhead-list');
-  list.innerHTML = '';
-  OVERHEAD_DEFAULTS.forEach(name => list.appendChild(createOverheadRow(name, 0)));
-}
-function updateSeriesOptions() {
-  const category = document.getElementById('plant-category').value;
-  const select = document.getElementById('plant-series');
-  select.innerHTML = SERIES[category].map(s => `<option value="${s}">${s}</option>`).join('');
-  updatePlantInfo();
-}
-function updatePlantInfo() {
-  const category = document.getElementById('plant-category').value;
-  const series = document.getElementById('plant-series').value;
-  const label = category === 'loesemittel' ? 'Lösemittelanlagen' : category === 'waessrig' ? 'Wässrige Anlagen' : 'Hybride Anlagen';
-  document.getElementById('plant-info').value = `${label} – ${series}`;
-}
-function addElement(card, data = {}) {
-  const list = card.querySelector('.sub-list');
-  list.appendChild(createElementRow(data));
-  card.classList.add('expanded');
-  const btn = card.querySelector('.machine-row .icon-btn');
-  if (btn) btn.textContent = '▴';
-  calc();
-}
-function toggleMachine(cb) {
-  cb.closest('.machine-card').classList.toggle('checked', cb.checked);
-  calc();
-}
-function toggleExpand(btn) {
-  const card = btn.closest('.machine-card');
-  card.classList.toggle('expanded');
-  btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
-}
-function buildGroupsForSelection() {
-  const category = document.getElementById('plant-category').value;
-  const series = document.getElementById('plant-series').value;
-  const groups = groupsForCategory(category);
-  const container = document.getElementById('machine-groups');
-  container.innerHTML = '';
-  groups.forEach(group => {
-    const block = document.createElement('div');
-    block.className = 'group-block';
-    block.innerHTML = `<div class="group-header">${group.title}</div>`;
-    group.positions.forEach(pos => {
-      const card = createMachineCard({
-        name: pos,
-        checked: /basisanlage/i.test(pos),
-        groupTitle: group.title,
-        devH: /basisanlage/i.test(pos) ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
-        elements: makeElementsForPosition(pos, category, group.title, series)
-      });
-      block.appendChild(card);
-    });
-    container.appendChild(block);
-  });
-}
-function applySeriesTemplate() {
-  updatePlantInfo();
-  buildGroupsForSelection();
-  calc();
+function calcMachineCard(card) {
+  const {pMat,pProv,pMarge,pRisik,devRate}=getParams();
+  const rows=card.querySelectorAll('.element-row');
+  let purchaseSum=0,workHoursSum=0,workCostSum=0,elementTotalSum=0;
+  rows.forEach(row=>{const r=calcElementRow(row);purchaseSum+=r.purchase;workHoursSum+=r.workH;workCostSum+=r.workCost;elementTotalSum+=r.total;});
+  const devH=num(card.querySelector('.machine-devh').value);
+  const devCost=devH*devRate;
+  const material=purchaseSum*pMat;
+  const basis=purchaseSum+material+workCostSum+devCost;
+  const provision=basis*pProv;
+  const risk=basis*pRisik;
+  const interim=basis+provision+risk;
+  const margin=interim*pMarge;
+  const calcPrice=interim+margin;
+  card.querySelector('.machine-purchase').value=fmtNum(purchaseSum);
+  card.querySelector('.machine-worksum').value=fmtNum(workHoursSum);
+  card.querySelector('.machine-workcostsum').value=fmtNum(workCostSum);
+  card.querySelector('.machine-elementsum').value=fmtNum(elementTotalSum);
+  card.querySelector('.machine-devcost').value=fmtNum(devCost);
+  card.querySelector('.machine-calculated').value=fmtNum(calcPrice);
+  const badgeEl=card.querySelector('.machine-elements-badge');
+  const badgeH=card.querySelector('.machine-hours-badge');
+  if(badgeEl) badgeEl.textContent=`${rows.length} Einzelelemente`;
+  if(badgeH)  badgeH.textContent=`${fmtNum(workHoursSum)} h Arbeit`;
+  const checked=card.querySelector('.machine-check').checked;
+  const manualVal=num(card.querySelector('.machine-manual').value);
+  return {checked, name:card.querySelector('.machine-name').value||'Ohne Bezeichnung', groupTitle:card.dataset.groupTitle||'', purchaseSum, workHoursSum, workCostSum, elementTotalSum, devCost, material, basis, provision, risk, margin, calcPrice, offerPrice:manualVal>0?manualVal:calcPrice, manualUsed:manualVal>0};
 }
 function calc() {
-  const machineCards = document.querySelectorAll('.machine-card');
-  let totalPurchase = 0, totalMaterial = 0, totalWork = 0, totalDev = 0, totalBasis = 0, totalProv = 0, totalRisk = 0, totalMargin = 0, totalOffer = 0;
-  const rows = [];
-  machineCards.forEach(card => {
-    const r = calcMachineCard(card);
-    if (!r.checked) return;
-    totalPurchase += r.purchaseSum;
-    totalMaterial += r.material;
-    totalWork += r.workCostSum;
-    totalDev += r.devCost;
-    totalBasis += r.basis;
-    totalProv += r.provision;
-    totalRisk += r.risk;
-    totalMargin += r.margin;
-    totalOffer += r.offerPrice;
+  const machineCards=document.querySelectorAll('.machine-card');
+  let totalPurchase=0,totalMaterial=0,totalWork=0,totalDev=0,totalBasis=0,totalProv=0,totalRisk=0,totalMargin=0,totalOffer=0;
+  const rows=[];
+  machineCards.forEach(card=>{
+    const r=calcMachineCard(card);
+    if(!r.checked) return;
+    totalPurchase+=r.purchaseSum; totalMaterial+=r.material; totalWork+=r.workCostSum;
+    totalDev+=r.devCost; totalBasis+=r.basis; totalProv+=r.provision;
+    totalRisk+=r.risk; totalMargin+=r.margin; totalOffer+=r.offerPrice;
     rows.push(r);
   });
-  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
-    name: row.querySelector('.oh-name').value || 'Overhead',
-    price: num(row.querySelector('.oh-price').value)
-  }));
-  const overheadTotal = ohRows.reduce((s, r) => s + r.price, 0);
-  const includeOverhead = document.getElementById('oh-include').checked;
-  const ohShare = Math.min(100, Math.max(0, num(document.getElementById('oh-share').value))) / 100;
-  const includedOverhead = includeOverhead ? overheadTotal * ohShare : 0;
-  const grandTotal = totalOffer + includedOverhead;
-
-  document.getElementById('s-total').textContent = fmt(totalOffer);
-  document.getElementById('s-overhead').textContent = fmt(overheadTotal);
-  document.getElementById('s-grand').textContent = fmt(grandTotal);
-  document.getElementById('breakdown-body').innerHTML = `
+  const ohRows=[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({name:row.querySelector('.oh-name').value||'Overhead',price:num(row.querySelector('.oh-price').value)}));
+  const overheadTotal=ohRows.reduce((s,r)=>s+r.price,0);
+  const includeOH=document.getElementById('oh-include').checked;
+  const ohShare=Math.min(100,Math.max(0,num(document.getElementById('oh-share').value)))/100;
+  const includedOH=includeOH?overheadTotal*ohShare:0;
+  const grandTotal=totalOffer+includedOH;
+ 
+  document.getElementById('s-total').textContent=fmt(totalOffer);
+  document.getElementById('s-overhead').textContent=fmt(overheadTotal);
+  document.getElementById('s-grand').textContent=fmt(grandTotal);
+  document.getElementById('breakdown-body').innerHTML=`
     <tr><td>Einkauf Einzelelemente</td><td>${fmt(totalPurchase)}</td></tr>
     <tr><td>Materialzuschlag auf Einkauf</td><td>${fmt(totalMaterial)}</td></tr>
     <tr><td>Arbeitskosten Einzelelemente</td><td>${fmt(totalWork)}</td></tr>
@@ -793,57 +480,300 @@ function calc() {
     <tr><td>Risiko</td><td>${fmt(totalRisk)}</td></tr>
     <tr><td>Marge</td><td>${fmt(totalMargin)}</td></tr>
     <tr><td>Overhead gesamt</td><td>${fmt(overheadTotal)}</td></tr>
-    <tr><td>Davon eingerechnet</td><td>${fmt(includedOverhead)}</td></tr>
-    <tr class="grand"><td>Gesamt inkl. eingerechnetem Overhead</td><td>${fmt(grandTotal)}</td></tr>
-  `;
-
-  const preview = document.getElementById('offer-preview-body');
-  if (!rows.length) {
-    preview.innerHTML = '<tr><td class="muted">Noch keine Position ausgewählt.</td><td></td></tr>';
-  } else {
-    let html = '';
-    let currentGroup = '';
-    rows.forEach(r => {
-      if (r.groupTitle !== currentGroup) {
-        currentGroup = r.groupTitle;
-        html += `<tr><td colspan="2" style="font-weight:700;color:#6b6b66;background:#f0efe9;">${currentGroup}</td></tr>`;
-      }
-      html += `<tr><td>${r.name}<div class="muted">Berechnet: ${fmt(r.calcPrice)}${r.manualUsed ? ' · Angebot manuell gesetzt' : ''}</div></td><td>${fmt(r.offerPrice)}</td></tr>`;
+    <tr><td>Davon eingerechnet</td><td>${fmt(includedOH)}</td></tr>
+    <tr class="grand"><td>Gesamt inkl. eingerechnetem Overhead</td><td>${fmt(grandTotal)}</td></tr>`;
+ 
+  const preview=document.getElementById('offer-preview-body');
+  if(!rows.length){preview.innerHTML='<tr><td class="muted">Noch keine Position ausgewählt.</td><td></td></tr>';}
+  else {
+    let html=''; let cg='';
+    rows.forEach(r=>{
+      if(r.groupTitle!==cg){cg=r.groupTitle;html+=`<tr><td colspan="2" style="font-weight:700;color:#6b6b66;background:#f0efe9;">${cg}</td></tr>`;}
+      html+=`<tr><td>${r.name}<div class="muted">Berechnet: ${fmt(r.calcPrice)}${r.manualUsed?' · Angebot manuell gesetzt':''}</div></td><td>${fmt(r.offerPrice)}</td></tr>`;
     });
-    html += `<tr><td style="font-weight:700;">Anlagenpreis</td><td style="font-weight:700;">${fmt(totalOffer)}</td></tr>`;
-    preview.innerHTML = html;
+    html+=`<tr><td style="font-weight:700;">Anlagenpreis</td><td style="font-weight:700;">${fmt(totalOffer)}</td></tr>`;
+    preview.innerHTML=html;
   }
-
-  const ohPreview = document.getElementById('offer-overhead-body');
-  if (!ohRows.length) {
-    ohPreview.innerHTML = '<tr><td class="muted">Keine Overhead-Positionen.</td><td></td></tr>';
-  } else {
-    ohPreview.innerHTML = ohRows.map(r => `<tr><td>${r.name}</td><td>${fmt(r.price)}</td></tr>`).join('') + `<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;">${fmt(overheadTotal)}</td></tr>`;
+  const ohPreview=document.getElementById('offer-overhead-body');
+  if(!ohRows.length){ohPreview.innerHTML='<tr><td class="muted">Keine Overhead-Positionen.</td><td></td></tr>';}
+  else{ohPreview.innerHTML=ohRows.map(r=>`<tr><td>${r.name}</td><td>${fmt(r.price)}</td></tr>`).join('')+`<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;">${fmt(overheadTotal)}</td></tr>`;}
+}
+ 
+/* ═══════════════════════════════════════════════════════
+   UI-AKTIONEN
+═══════════════════════════════════════════════════════ */
+function addElement(card, data={}) {
+  card.querySelector('.sub-list').appendChild(createElementRow(data));
+  card.classList.add('expanded');
+  const btn=card.querySelector('.machine-row .icon-btn'); if(btn) btn.textContent='▴';
+  calc();
+}
+function addOverhead() {
+  const name=document.getElementById('new-oh-name').value.trim();
+  const price=num(document.getElementById('new-oh-price').value);
+  if(!name){document.getElementById('new-oh-name').focus();return;}
+  document.getElementById('overhead-list').appendChild(createOverheadRow(name,price));
+  document.getElementById('new-oh-name').value='';
+  document.getElementById('new-oh-price').value='';
+  calc(); autoSaveSettings();
+}
+function toggleMachine(cb){cb.closest('.machine-card').classList.toggle('checked',cb.checked);calc();}
+function toggleExpand(btn){const card=btn.closest('.machine-card');card.classList.toggle('expanded');btn.textContent=card.classList.contains('expanded')?'▴':'▾';}
+function seedOverhead() {
+  const list=document.getElementById('overhead-list'); list.innerHTML='';
+  OVERHEAD_DEFAULTS.forEach(name=>list.appendChild(createOverheadRow(name,0)));
+}
+function updateSeriesOptions() {
+  const cat=document.getElementById('plant-category').value;
+  const sel=document.getElementById('plant-series');
+  sel.innerHTML=SERIES[cat].map(s=>`<option value="${s}">${s}</option>`).join('');
+  updatePlantInfo();
+}
+function updatePlantInfo() {
+  const cat=document.getElementById('plant-category').value;
+  const series=document.getElementById('plant-series').value;
+  const label=cat==='loesemittel'?'Lösemittelanlagen':cat==='waessrig'?'Wässrige Anlagen':'Hybride Anlagen';
+  document.getElementById('plant-info').value=`${label} – ${series}`;
+}
+function buildGroupsForSelection() {
+  const cat=document.getElementById('plant-category').value;
+  const series=document.getElementById('plant-series').value;
+  const groups=groupsForCategory(cat);
+  const container=document.getElementById('machine-groups'); container.innerHTML='';
+  groups.forEach(group=>{
+    const block=document.createElement('div'); block.className='group-block';
+    block.innerHTML=`<div class="group-header">${group.title}</div>`;
+    group.positions.forEach(pos=>{
+      block.appendChild(createMachineCard({name:pos, checked:/basisanlage/i.test(pos), groupTitle:group.title, devH:/basisanlage/i.test(pos)?Math.max(2,Math.round(sizeFactor(series)*4)):0, elements:makeElementsForPosition(pos,cat,group.title,series)}));
+    });
+    container.appendChild(block);
+  });
+}
+function applySeriesTemplate(){updatePlantInfo();buildGroupsForSelection();calc();}
+ 
+/* ═══════════════════════════════════════════════════════
+   EINSTELLUNGEN AUTO-SPEICHERN (localStorage)
+═══════════════════════════════════════════════════════ */
+const SETTINGS_KEY = 'teilereinigung_settings';
+ 
+function collectSettings() {
+  return {
+    pMaterial: document.getElementById('p-material').value,
+    pProvision: document.getElementById('p-provision').value,
+    pMarge: document.getElementById('p-marge').value,
+    pRisiko: document.getElementById('p-risiko').value,
+    workRate: document.getElementById('work-rate').value,
+    devRate: document.getElementById('dev-rate').value,
+    ohInclude: document.getElementById('oh-include').checked,
+    ohShare: document.getElementById('oh-share').value,
+    overhead: [...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({
+      name: row.querySelector('.oh-name').value,
+      price: row.querySelector('.oh-price').value
+    }))
+  };
+}
+ 
+function applySettings(s) {
+  if(!s) return;
+  if(s.pMaterial  !== undefined) document.getElementById('p-material').value  = s.pMaterial;
+  if(s.pProvision !== undefined) document.getElementById('p-provision').value = s.pProvision;
+  if(s.pMarge     !== undefined) document.getElementById('p-marge').value     = s.pMarge;
+  if(s.pRisiko    !== undefined) document.getElementById('p-risiko').value     = s.pRisiko;
+  if(s.workRate   !== undefined) document.getElementById('work-rate').value   = s.workRate;
+  if(s.devRate    !== undefined) document.getElementById('dev-rate').value     = s.devRate;
+  if(s.ohInclude  !== undefined) document.getElementById('oh-include').checked = s.ohInclude;
+  if(s.ohShare    !== undefined) document.getElementById('oh-share').value     = s.ohShare;
+  if(s.overhead && s.overhead.length) {
+    const list=document.getElementById('overhead-list'); list.innerHTML='';
+    s.overhead.forEach(o=>list.appendChild(createOverheadRow(o.name, o.price)));
   }
 }
+ 
+let autoSaveTimer = null;
+function autoSaveSettings() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(()=>{
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(collectSettings()));
+      flashSaved();
+    } catch(e){}
+  }, 600);
+}
+ 
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if(raw) applySettings(JSON.parse(raw));
+  } catch(e){}
+}
+ 
+function flashSaved() {
+  const el = document.getElementById('save-indicator');
+  el.classList.add('visible');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(()=>el.classList.remove('visible'), 2000);
+}
+ 
+/* ═══════════════════════════════════════════════════════
+   PROJEKTE SPEICHERN / LADEN
+═══════════════════════════════════════════════════════ */
+const PROJECTS_KEY = 'teilereinigung_projects';
+ 
+function getAllProjects() {
+  try { return JSON.parse(localStorage.getItem(PROJECTS_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+function saveAllProjects(obj) {
+  try { localStorage.setItem(PROJECTS_KEY, JSON.stringify(obj)); } catch(e){}
+}
+ 
+function collectProjectData() {
+  // Maschinen-Auswahl aus dem DOM lesen
+  const machines = [...document.querySelectorAll('.machine-card')].map(card=>({
+    name:      card.querySelector('.machine-name').value,
+    groupTitle:card.dataset.groupTitle,
+    checked:   card.querySelector('.machine-check').checked,
+    devH:      card.querySelector('.machine-devh').value,
+    manual:    card.querySelector('.machine-manual').value,
+    elements:  [...card.querySelectorAll('.element-row')].map(row=>({
+      name:    row.querySelector('.el-name').value,
+      purchase:row.querySelector('.el-purchase').value,
+      workH:   row.querySelector('.el-workh').value
+    }))
+  }));
+ 
+  return {
+    savedAt: new Date().toLocaleString('de-DE'),
+    category:   document.getElementById('plant-category').value,
+    series:     document.getElementById('plant-series').value,
+    custName:   document.getElementById('cust-name').value,
+    custContact:document.getElementById('cust-contact').value,
+    offerNo:    document.getElementById('offer-no').value,
+    offerDate:  document.getElementById('offer-date').value,
+    offerSubject:document.getElementById('offer-subject').value,
+    notes:      document.getElementById('notes').value,
+    settings:   collectSettings(),
+    machines
+  };
+}
+ 
+function applyProjectData(data) {
+  // Anlagenart & Baureihe
+  document.getElementById('plant-category').value = data.category || 'loesemittel';
+  updateSeriesOptions();
+  if(data.series) {
+    const sel = document.getElementById('plant-series');
+    [...sel.options].forEach(o=>{ if(o.value===data.series) o.selected=true; });
+  }
+  updatePlantInfo();
+  buildGroupsForSelection();
+ 
+  // Kundendaten
+  document.getElementById('cust-name').value     = data.custName    || '';
+  document.getElementById('cust-contact').value  = data.custContact || '';
+  document.getElementById('offer-no').value      = data.offerNo     || '';
+  document.getElementById('offer-date').value    = data.offerDate   || '';
+  document.getElementById('offer-subject').value = data.offerSubject|| '';
+  document.getElementById('notes').value         = data.notes       || '';
+ 
+  // Einstellungen
+  if(data.settings) applySettings(data.settings);
+ 
+  // Maschinenzustand wiederherstellen
+  if(data.machines && data.machines.length) {
+    const cards = [...document.querySelectorAll('.machine-card')];
+    data.machines.forEach(saved=>{
+      const card = cards.find(c=>c.querySelector('.machine-name').value===saved.name && c.dataset.groupTitle===saved.groupTitle);
+      if(!card) return;
+      card.querySelector('.machine-check').checked = saved.checked;
+      card.classList.toggle('checked', saved.checked);
+      card.querySelector('.machine-devh').value    = saved.devH   || 0;
+      card.querySelector('.machine-manual').value  = saved.manual || '';
+      // Einzelelemente
+      const list = card.querySelector('.sub-list'); list.innerHTML='';
+      (saved.elements||[]).forEach(el=>list.appendChild(createElementRow(el)));
+    });
+  }
+  calc();
+}
+ 
+function refreshProjectSelect(selectValue='') {
+  const projects = getAllProjects();
+  const sel = document.getElementById('project-select');
+  const names = Object.keys(projects).sort();
+  sel.innerHTML = '<option value="">— Projekt laden —</option>' +
+    names.map(n=>`<option value="${n}"${n===selectValue?' selected':''}>${n} <span style="color:#999">(${projects[n].savedAt||''})</span></option>`).join('');
+}
+ 
+function saveProject() {
+  const name = document.getElementById('project-name-input').value.trim();
+  if(!name){ document.getElementById('project-name-input').focus(); alert('Bitte einen Projektnamen eingeben.'); return; }
+  const projects = getAllProjects();
+  if(projects[name] && !confirm(`Projekt "${name}" bereits vorhanden. Überschreiben?`)) return;
+  projects[name] = collectProjectData();
+  saveAllProjects(projects);
+  refreshProjectSelect(name);
+  flashSaved();
+}
+ 
+function loadSelectedProject() {
+  const name = document.getElementById('project-select').value;
+  if(!name) return;
+  const projects = getAllProjects();
+  if(!projects[name]) return;
+  if(!confirm(`Projekt "${name}" laden? Nicht gespeicherte Änderungen gehen verloren.`)) {
+    document.getElementById('project-select').value=''; return;
+  }
+  document.getElementById('project-name-input').value = name;
+  applyProjectData(projects[name]);
+  flashSaved();
+}
+ 
+function deleteProject() {
+  const name = document.getElementById('project-select').value;
+  if(!name){ alert('Kein Projekt ausgewählt.'); return; }
+  if(!confirm(`Projekt "${name}" wirklich löschen?`)) return;
+  const projects = getAllProjects();
+  delete projects[name];
+  saveAllProjects(projects);
+  document.getElementById('project-name-input').value='';
+  refreshProjectSelect();
+}
+ 
+/* ═══════════════════════════════════════════════════════
+   ZURÜCKSETZEN
+═══════════════════════════════════════════════════════ */
 function resetForm() {
-  if (!confirm('Alle Eingaben zurücksetzen?')) return;
-  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('p-material').value = 10;
+  if(!confirm('Alle Eingaben zurücksetzen? Gespeicherte Projekte bleiben erhalten.')) return;
+  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-material').value  = 10;
   document.getElementById('p-provision').value = 5;
-  document.getElementById('p-marge').value = 15;
-  document.getElementById('p-risiko').value = 3;
-  document.getElementById('work-rate').value = 85;
-  document.getElementById('dev-rate').value = 110;
+  document.getElementById('p-marge').value      = 15;
+  document.getElementById('p-risiko').value     = 3;
+  document.getElementById('work-rate').value    = 85;
+  document.getElementById('dev-rate').value     = 110;
   document.getElementById('oh-include').checked = false;
-  document.getElementById('oh-share').value = 100;
-  document.getElementById('new-oh-name').value = '';
+  document.getElementById('oh-share').value     = 100;
+  document.getElementById('new-oh-name').value  = '';
   document.getElementById('new-oh-price').value = '';
-  document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
+  document.getElementById('offer-date').value   = new Date().toLocaleDateString('de-DE');
+  document.getElementById('project-select').value = '';
+  document.getElementById('project-name-input').value = '';
   updateSeriesOptions();
   seedOverhead();
   applySeriesTemplate();
 }
-
+ 
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
 document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
 updateSeriesOptions();
 seedOverhead();
 applySeriesTemplate();
+loadSettings();   // gespeicherte Einstellungen wiederherstellen
+refreshProjectSelect(); // Projektliste befüllen
+calc();
 </script>
 </body>
 </html>
