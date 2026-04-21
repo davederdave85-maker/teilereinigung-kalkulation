@@ -387,7 +387,7 @@ function createMachineCard(data={}) {
       <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked?'checked':''} onchange="toggleMachine(this)">
       <input class="machine-opt cb-opt" type="checkbox" title="Optional (linke Spalte)" ${data.isOptional?'checked':''} ${isBasis?'disabled':''}  onchange="toggleOptional(this)">
       <div class="machine-main">
-${/basisanlage/i.test(data.name || '') ? `
+${isBasis ? `
 <div class="base-options no-print" style="margin-top:6px; display:flex; flex-direction:column; gap:4px; font-size:12px;">
   <label><input type="checkbox" class="base-opt" value="inkl. Glastüre" onchange="calc()"> inkl. Glastüre</label>
   <label><input type="checkbox" class="base-opt" value="inkl. Glas-Bullauge" onchange="calc()"> inkl. Glas-Bullauge</label>
@@ -613,6 +613,7 @@ function buildGroupsForSelection() {
     block.innerHTML=`<div class="group-header">${group.title}</div>`;
     group.positions.forEach(pos=>{
       const isBase = /basisanlage/i.test(pos);
+const isBase = /basisanlage/i.test(pos);
 const displayName = isBase ? series : pos;
 
 block.appendChild(createMachineCard({
