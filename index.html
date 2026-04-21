@@ -381,7 +381,7 @@ function createMachineCard(data={}) {
   card.className='machine-card';
   card.dataset.machineId=machineId;
   card.dataset.groupTitle=data.groupTitle||'';
-  const isBasis = /basisanlage/i.test(data.name||'');
+  const isBasis = !!data.isBase;
   card.innerHTML=`
     <div class="machine-row">
       <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked?'checked':''} onchange="toggleMachine(this)">
@@ -612,12 +612,18 @@ function buildGroupsForSelection() {
     const block=document.createElement('div'); block.className='group-block';
     block.innerHTML=`<div class="group-header">${group.title}</div>`;
     group.positions.forEach(pos=>{
-      const displayName = /basisanlage/i.test(pos)
-  ? series
-  : pos;
+      const isBase = /basisanlage/i.test(pos);
+const displayName = isBase ? series : pos;
 
 block.appendChild(createMachineCard({
-  name: displayName, checked:/basisanlage/i.test(pos), isOptional:false, groupTitle:group.title, devH:/basisanlage/i.test(pos)?Math.max(2,Math.round(sizeFactor(series)*4)):0, elements:makeElementsForPosition(pos,cat,group.title,series)}));
+  name: displayName,
+  isBase: isBase,
+  checked: isBase,
+  isOptional: false,
+  groupTitle: group.title,
+  devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
+  elements: makeElementsForPosition(pos, cat, group.title, series)
+}));
     });
     container.appendChild(block);
   });
@@ -626,46 +632,44 @@ function applySeriesTemplate(){updatePlantInfo();buildGroupsForSelection();calc(
 
 /* ═══ WORD EXPORT ═══ */
 function collectAngebotData() {
-  const machineCards=document.querySelectorAll('.machine-card');
-  const positions=[];
-const baseOptions = [
-  ...card.querySelectorAll('.base-opt:checked')
-].map(cb => cb.value);
+  const machineCards = document.querySelectorAll('.machine-card');
+  const positions = [];
 
-const extra = card.querySelector('.base-opt-extra')?.value;
-if (extra) baseOptions.push(extra);
+  machineCards.forEach(card => {
+    const checked = card.querySelector('.machine-check').checked;
+    if (!checked) return;
 
-positions.push({
-  name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
-  groupTitle: card.dataset.groupTitle || '',
-  inAngebot: true,
-  isOptional,
-  offerPrice: manualVal > 0 ? manualVal : calcVal,
-  calculatedPrice: calcVal,
-  baseOptions
-});
-  machineCards.forEach(card=>{
-    const checked=card.querySelector('.machine-check').checked;
-    if(!checked) return;
-    const isOptional=card.querySelector('.machine-opt').checked;
-    const manualVal=num(card.querySelector('.machine-manual').value);
-    const calcVal=num(card.querySelector('.machine-calculated').value.replace(/\./g,'').replace(',','.'));
+    const isOptional = card.querySelector('.machine-opt').checked;
+    const manualVal = num(card.querySelector('.machine-manual').value);
+    const calcVal = num(card.querySelector('.machine-calculated').value.replace(/\./g, '').replace(',', '.'));
+
+    const baseOptions = [
+      ...card.querySelectorAll('.base-opt:checked')
+    ].map(cb => cb.value);
+
+    const extra = card.querySelector('.base-opt-extra')?.value?.trim();
+    if (extra) baseOptions.push(extra);
+
     positions.push({
-      name: card.querySelector('.machine-name').value||'Ohne Bezeichnung',
-      groupTitle: card.dataset.groupTitle||'',
+      name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
+      groupTitle: card.dataset.groupTitle || '',
       inAngebot: true,
       isOptional,
       offerPrice: manualVal > 0 ? manualVal : calcVal,
-      calculatedPrice: calcVal
+      calculatedPrice: calcVal,
+      baseOptions
     });
   });
-  const ohRows=[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({
-    name:row.querySelector('.oh-name').value||'Overhead',
-    price:num(row.querySelector('.oh-price').value)
+
+  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
+    name: row.querySelector('.oh-name').value || 'Overhead',
+    price: num(row.querySelector('.oh-price').value)
   }));
-  const empPositions=positions.filter(p=>!p.isOptional);
-  const totalEmp=empPositions.reduce((s,p)=>s+p.offerPrice,0);
-  const series=document.getElementById('plant-series').value;
+
+  const empPositions = positions.filter(p => !p.isOptional);
+  const totalEmp = empPositions.reduce((s, p) => s + p.offerPrice, 0);
+  const series = document.getElementById('plant-series').value;
+
   return {
     offerNo: document.getElementById('offer-no').value,
     offerDate: document.getElementById('offer-date').value,
