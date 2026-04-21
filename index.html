@@ -660,6 +660,192 @@ function fmtWord(n) {
   }) + ' €';
 }
 
+function exportWord() {
+  const data = collectAngebotData();
+
+  function esc(text) {
+    return String(text || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function eur(value) {
+    return (Number(value) || 0).toLocaleString('de-DE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) + ' €';
+  }
+
+  let currentGroup = '';
+  let rowsHtml = '';
+
+  data.positions.forEach((pos, index) => {
+    if (pos.groupTitle !== currentGroup) {
+      currentGroup = pos.groupTitle;
+      rowsHtml += `
+        <tr>
+          <td colspan="3" style="padding-top:12px; font-style:italic; text-decoration:underline; font-weight:bold; border-bottom:none;">
+            ${esc(currentGroup)}
+          </td>
+        </tr>
+      `;
+    }
+
+    rowsHtml += `
+      <tr>
+        <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd;">
+          ${index + 1}. ${esc(pos.name)}
+        </td>
+        <td style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
+          ${pos.isOptional ? eur(pos.offerPrice) : ''}
+        </td>
+        <td style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
+          ${!pos.isOptional ? eur(pos.offerPrice) : ''}
+        </td>
+      </tr>
+    `;
+  });
+
+  const totalEmp = data.positions
+    .filter(p => !p.isOptional)
+    .reduce((sum, p) => sum + (Number(p.offerPrice) || 0), 0);
+
+  const overheadRows = (data.overhead || []).map((oh, i) => `
+    <tr>
+      <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd;">
+        ${51 + i}. ${esc(oh.name)}
+      </td>
+      <td colspan="2" style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
+        ${(Number(oh.price) || 0) > 0 ? eur(oh.price) : 'TBD'}
+      </td>
+    </tr>
+  `).join('');
+
+  const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
+
+  const content = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:w="urn:schemas-microsoft-com:office:word"
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8">
+      <title>Angebot</title>
+      <style>
+        body {
+          font-family: Calibri, Arial, sans-serif;
+          font-size: 11pt;
+          color: #000;
+          margin: 30px;
+        }
+        h1 {
+          text-align: center;
+          font-size: 16pt;
+          font-weight: normal;
+          margin-bottom: 18px;
+          letter-spacing: 0.5px;
+        }
+        .meta {
+          margin-bottom: 16px;
+        }
+        .meta div {
+          margin-bottom: 3px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 10px;
+        }
+        th {
+          padding: 6px 4px 8px;
+          border-bottom: 2px solid #000;
+          font-size: 10pt;
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+        }
+        .sumline td {
+          border-top: 2px solid #000;
+          border-bottom: none;
+          padding-top: 8px;
+          font-weight: bold;
+        }
+        .section-title {
+          margin-top: 22px;
+          margin-bottom: 8px;
+          font-style: italic;
+          text-decoration: underline;
+          font-weight: bold;
+        }
+        .footer-note {
+          margin-top: 16px;
+          font-weight: bold;
+        }
+        .notes-title {
+          margin-top: 20px;
+          font-weight: bold;
+        }
+        .notes {
+          margin-top: 6px;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>PREISÜBERSICHT in EURO</h1>
+
+      <div class="meta">
+        <div><strong>Angebot Nr.:</strong> ${esc(data.offerNo || '—')}</div>
+        <div><strong>Datum:</strong> ${esc(data.offerDate || '—')}</div>
+        <div><strong>Kunde:</strong> ${esc(data.custName || '—')}</div>
+        <div><strong>Ansprechpartner:</strong> ${esc(data.custContact || '—')}</div>
+        <div><strong>Baureihe:</strong> ${esc(data.seriesLabel || '—')}</div>
+        <div><strong>Betreff:</strong> ${esc(data.offerSubject || '—')}</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Position</th>
+            <th style="text-align:right;">Optional</th>
+            <th style="text-align:right;">Empfohlen</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+          <tr class="sumline">
+            <td>Anlagenpreis in empfohlener Ausstattung</td>
+            <td></td>
+            <td style="text-align:right;">${eur(totalEmp)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      ${(data.overhead && data.overhead.length) ? `
+        <div class="section-title">OVERHEAD</div>
+        <table>
+          <tbody>
+            ${overheadRows}
+          </tbody>
+        </table>
+      ` : ''}
+
+      <div class="footer-note">Weitere Optionen und Varianten auf Anfrage.</div>
+
+      ${data.notes ? `
+        <div class="notes-title">Bemerkungen:</div>
+        <div class="notes">${notesHtml}</div>
+      ` : ''}
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `Angebot_${(data.offerNo || 'Export').replace(/[^\w\\-]+/g, '_')}.doc`;
+  link.click();
+}
+
 /* ═══ EINSTELLUNGEN / PROJEKTE ═══ */
 const SETTINGS_KEY='teilereinigung_settings';
 const PROJECTS_KEY='teilereinigung_projects';
