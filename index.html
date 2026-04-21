@@ -621,7 +621,7 @@ function collectAngebotData() {
       inAngebot: true,
       isOptional,
       offerPrice: manualVal > 0 ? manualVal : calcVal,
-calculatedPrice: calcVal
+      calculatedPrice: calcVal
     });
   });
   const ohRows=[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({
@@ -778,16 +778,18 @@ function exportWord() {
           font-weight: bold;
         }
         .section-title {
-          margin-top: 22px;
-          margin-bottom: 8px;
-          font-style: italic;
-          text-decoration: underline;
-          font-weight: bold;
-        }
-        .footer-note {
-          margin-top: 16px;
-          font-weight: bold;
-        }
+  margin-top: 22px;
+  margin-bottom: 8px;
+  font-style: italic;
+  text-decoration: underline;
+  font-weight: bold;
+  padding-top: 10px;
+  border-top: 2px solid #000;
+}
+.footer-note {
+  margin-top: 20px;
+  font-weight: bold;
+}
         .notes-title {
           margin-top: 20px;
           font-weight: bold;
