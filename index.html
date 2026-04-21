@@ -685,27 +685,30 @@ function exportWord() {
     if (pos.groupTitle !== currentGroup) {
       currentGroup = pos.groupTitle;
       rowsHtml += `
-        <tr>
-          <td colspan="3" style="padding-top:12px; font-style:italic; text-decoration:underline; font-weight:bold; border-bottom:none;">
-            ${esc(currentGroup)}
-          </td>
-        </tr>
-      `;
+  <tr>
+    <td colspan="4" style="padding-top:12px; font-style:italic; text-decoration:underline; font-weight:bold; border-bottom:none;">
+      ${esc(currentGroup)}
+    </td>
+  </tr>
+`;
     }
 
     rowsHtml += `
-      <tr>
-        <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd;">
-          ${index + 1}. ${esc(pos.name)}
-        </td>
-        <td style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
-          ${pos.isOptional ? eur(pos.offerPrice) : ''}
-        </td>
-        <td style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
-          ${!pos.isOptional ? eur(pos.offerPrice) : ''}
-        </td>
-      </tr>
-    `;
+  <tr>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
+      Pos.${index + 1}
+    </td>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
+      ${esc(pos.name)}
+    </td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999; width:120px; white-space:nowrap;">
+      ${pos.isOptional ? eur(pos.offerPrice) : ''}
+    </td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; width:120px; white-space:nowrap;">
+      ${!pos.isOptional ? eur(pos.offerPrice) : ''}
+    </td>
+  </tr>
+`;
   });
 
   const totalEmp = data.positions
@@ -713,15 +716,19 @@ function exportWord() {
     .reduce((sum, p) => sum + (Number(p.offerPrice) || 0), 0);
 
   const overheadRows = (data.overhead || []).map((oh, i) => `
-    <tr>
-      <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd;">
-        ${51 + i}. ${esc(oh.name)}
-      </td>
-      <td colspan="2" style="padding:6px 4px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
-        ${(Number(oh.price) || 0) > 0 ? eur(oh.price) : 'TBD'}
-      </td>
-    </tr>
-  `).join('');
+  <tr>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
+      Pos.${51 + i}
+    </td>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
+      ${esc(oh.name)}
+    </td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;"></td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; white-space:nowrap;">
+      ${(Number(oh.price) || 0) > 0 ? eur(oh.price) : 'TBD'}
+    </td>
+  </tr>
+`).join('');
 
   const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
 
@@ -804,19 +811,21 @@ function exportWord() {
 
       <table>
         <thead>
-          <tr>
-            <th style="text-align:left;">Position</th>
-            <th style="text-align:right;">Optional</th>
-            <th style="text-align:right;">Empfohlen</th>
-          </tr>
-        </thead>
+  <tr>
+    <th style="text-align:left; width:70px;">Pos.</th>
+    <th style="text-align:left; border-right:1px solid #000;">Position</th>
+    <th style="text-align:right; border-right:1px solid #000; width:120px;">Optional</th>
+    <th style="text-align:right; width:120px;">Empfohlen</th>
+  </tr>
+</thead>
         <tbody>
           ${rowsHtml}
           <tr class="sumline">
-            <td>Anlagenpreis in empfohlener Ausstattung</td>
-            <td></td>
-            <td style="text-align:right;">${eur(totalEmp)}</td>
-          </tr>
+  <td></td>
+  <td>Anlagenpreis in empfohlener Ausstattung</td>
+  <td></td>
+  <td style="text-align:right;">${eur(totalEmp)}</td>
+</tr>
         </tbody>
       </table>
 
