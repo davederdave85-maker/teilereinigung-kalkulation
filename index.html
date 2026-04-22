@@ -163,7 +163,13 @@
   .offer-preview, .overhead-preview { border: 1px dashed var(--accent-border); background: var(--surface3); border-radius: var(--radius-sm); padding: 12px; margin-top: 10px; }
   .offer-preview h4, .overhead-preview h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
   .muted { color: var(--text-muted); font-size: 12px; }
-  .oh-row { display: grid; grid-template-columns: minmax(220px,1.4fr) 120px 180px 30px; gap: 10px; align-items: center; margin-bottom: 8px; }
+  .oh-row {
+  display: grid;
+  grid-template-columns: 90px minmax(220px,1.4fr) 120px 30px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
   .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
 
   /* Column legend */
@@ -543,15 +549,18 @@ function updateCardStyle(card) {
   else { badge.textContent='Empfohlen'; badge.className='badge badge-emp'; }
 }
 
-function createOverheadRow(name='', price=0) {
+function createOverheadRow(name = '', price = 0, includeInOffer = false) {
   overheadId++;
-  const row=document.createElement('div');
-  row.className='oh-row';
-  row.dataset.overheadId=overheadId;
-  row.innerHTML=`
+  const row = document.createElement('div');
+  row.className = 'oh-row';
+  row.dataset.overheadId = overheadId;
+  row.innerHTML = `
+    <label class="no-print" style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted);">
+      <input class="oh-include-offer" type="checkbox" ${includeInOffer ? 'checked' : ''} onchange="calc();autoSaveSettings()">
+      Angebot
+    </label>
     <input class="oh-name" type="text" value="${name}" oninput="calc();autoSaveSettings()">
     <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
-    <div></div>
     <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>`;
   return row;
 }
@@ -611,7 +620,11 @@ function calc() {
     rows.push(r);
   });
   const totalOffer=totalEmp+totalOpt;
-  const ohRows=[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({name:row.querySelector('.oh-name').value||'Overhead',price:num(row.querySelector('.oh-price').value)}));
+  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
+  name: row.querySelector('.oh-name').value || 'Overhead',
+  price: num(row.querySelector('.oh-price').value),
+  includeInOffer: row.querySelector('.oh-include-offer')?.checked || false
+}));
   const overheadTotal=ohRows.reduce((s,r)=>s+r.price,0);
   const includeOH=document.getElementById('oh-include').checked;
   const ohShare=Math.min(100,Math.max(0,num(document.getElementById('oh-share').value)))/100;
@@ -650,9 +663,16 @@ function calc() {
     html+=`<tr style="border-top:2px solid var(--border-strong)"><td style="font-weight:700;">Anlagenpreis Empfohlen</td><td></td><td style="font-weight:700;text-align:right;">${fmt(totalEmp)}</td></tr>`;
     preview.innerHTML=html;
   }
-  const ohPreview=document.getElementById('offer-overhead-body');
-  if(!ohRows.length){ohPreview.innerHTML='<tr><td class="muted">Keine Overhead-Positionen.</td><td></td></tr>';}
-  else{ohPreview.innerHTML=ohRows.map(r=>`<tr><td>${r.name}</td><td style="text-align:right;">${r.price>0?fmt(r.price):'TBD'}</td></tr>`).join('')+`<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;text-align:right;">${fmt(overheadTotal)}</td></tr>`;}
+  const ohPreview = document.getElementById('offer-overhead-body');
+const ohOfferRows = ohRows.filter(r => r.includeInOffer);
+
+if (!ohOfferRows.length) {
+  ohPreview.innerHTML = '<tr><td class="muted">Keine Overhead-Positionen im Angebot.</td><td></td></tr>';
+} else {
+  ohPreview.innerHTML =
+    ohOfferRows.map(r => `<tr><td>${r.name}</td><td style="text-align:right;">${r.price > 0 ? fmt(r.price) : 'TBD'}</td></tr>`).join('') +
+    `<tr><td style="font-weight:700;">Overhead gesamt</td><td style="font-weight:700;text-align:right;">${fmt(ohOfferRows.reduce((s, r) => s + r.price, 0))}</td></tr>`;
+}
 }
 
 /* ═══ UI AKTIONEN ═══ */
@@ -739,7 +759,7 @@ function addOverhead() {
   const name=document.getElementById('new-oh-name').value.trim();
   const price=num(document.getElementById('new-oh-price').value);
   if(!name){document.getElementById('new-oh-name').focus();return;}
-  document.getElementById('overhead-list').appendChild(createOverheadRow(name,price));
+  document.getElementById('overhead-list').appendChild(createOverheadRow(name, price, true));
   document.getElementById('new-oh-name').value='';
   document.getElementById('new-oh-price').value='';
   calc(); autoSaveSettings();
@@ -844,9 +864,10 @@ groupTitle: card.dataset.groupTitle || '',
   });
 
   const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
-    name: row.querySelector('.oh-name').value || 'Overhead',
-    price: num(row.querySelector('.oh-price').value)
-  }));
+  name: row.querySelector('.oh-name').value || 'Overhead',
+  price: num(row.querySelector('.oh-price').value),
+  includeInOffer: row.querySelector('.oh-include-offer')?.checked || false
+})).filter(row => row.includeInOffer);
 
   const empPositions = positions.filter(p => !p.isOptional);
   const totalEmp = empPositions.reduce((s, p) => s + p.offerPrice, 0);
@@ -1102,7 +1123,11 @@ function collectSettings() {
     devRate:document.getElementById('dev-rate').value,
     ohInclude:document.getElementById('oh-include').checked,
     ohShare:document.getElementById('oh-share').value,
-    overhead:[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({name:row.querySelector('.oh-name').value,price:row.querySelector('.oh-price').value}))
+    overhead:[...document.querySelectorAll('#overhead-list .oh-row')].map(row=>({
+  name: row.querySelector('.oh-name').value,
+  price: row.querySelector('.oh-price').value,
+  includeInOffer: row.querySelector('.oh-include-offer')?.checked || false
+}))
   };
 }
 function applySettings(s) {
@@ -1115,7 +1140,11 @@ function applySettings(s) {
   if(s.devRate!==undefined) document.getElementById('dev-rate').value=s.devRate;
   if(s.ohInclude!==undefined) document.getElementById('oh-include').checked=s.ohInclude;
   if(s.ohShare!==undefined) document.getElementById('oh-share').value=s.ohShare;
-  if(s.overhead&&s.overhead.length){const list=document.getElementById('overhead-list');list.innerHTML='';s.overhead.forEach(o=>list.appendChild(createOverheadRow(o.name,o.price)));}
+  if (s.overhead && s.overhead.length) {
+  const list = document.getElementById('overhead-list');
+  list.innerHTML = '';
+  s.overhead.forEach(o => list.appendChild(createOverheadRow(o.name, o.price, o.includeInOffer || false)));
+}
 }
 let autoSaveTimer=null;
 function autoSaveSettings() {
