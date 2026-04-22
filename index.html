@@ -374,7 +374,18 @@ function createElementRow(data={}) {
     <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()">✕</button>`;
   return row;
 }
+function getNextPositionNumber() {
+  const values = [...document.querySelectorAll('.machine-posno')]
+    .map(el => (el.value || '').trim())
+    .map(v => {
+      const m = v.match(/\d+/);
+      return m ? parseInt(m[0], 10) : NaN;
+    })
+    .filter(v => !isNaN(v));
 
+  const next = values.length ? Math.max(...values) + 1 : 1;
+  return `Pos.${next}`;
+}
 function createMachineCard(data = {}) {
   machineId++;
   const card = document.createElement('div');
@@ -390,7 +401,10 @@ function createMachineCard(data = {}) {
       <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
       <input class="machine-opt cb-opt" type="checkbox" title="Optional (linke Spalte)" ${data.isOptional ? 'checked' : ''} ${isBasis ? 'disabled' : ''} onchange="toggleOptional(this)">
       <div class="machine-main">
-        <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+  <div style="display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:center;">
+    <input class="price-input machine-posno" type="text" value="${data.posNo || ''}" placeholder="Pos." oninput="calc()">
+    <input class="editable-name machine-name" type="text" value="${data.name||'Neue Position'}" oninput="calc()">
+  </div>
 
         ${isBasis ? `
         <div class="base-options no-print" style="margin-top:6px; display:flex; flex-direction:column; gap:4px; font-size:12px;">
@@ -585,17 +599,17 @@ function addMainPosition(btn, groupTitle) {
   if (!block) return;
 
   const card = createMachineCard({
-    posNo: '',
-    name: 'Neue Position',
-    isBase: false,
-    checked: false,
-    isOptional: false,
-    groupTitle: groupTitle,
-    devH: 0,
-    elements: [
-      { name: 'Einzelelement 1', purchase: 0, workH: 0 }
-    ]
-  });
+  posNo: getNextPositionNumber(),
+  name: 'Neue Position',
+  isBase: false,
+  checked: false,
+  isOptional: false,
+  groupTitle: groupTitle,
+  devH: 0,
+  elements: [
+    { name: 'Einzelelement 1', purchase: 0, workH: 0 }
+  ]
+});
 
   const addRow = btn.closest('.no-print');
   if (addRow) {
@@ -651,15 +665,15 @@ block.innerHTML = `<div class="group-header">${group.title}</div>`;
   const displayName = isBase ? series : pos;
 
   block.appendChild(createMachineCard({
-    posNo: '',
-    name: displayName,
-    isBase: isBase,
-    checked: isBase,
-    isOptional: false,
-    groupTitle: group.title,
-    devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
-    elements: makeElementsForPosition(pos, cat, group.title, series)
-  }));
+  posNo: getNextPositionNumber(),
+  name: displayName,
+  isBase: isBase,
+  checked: isBase,
+  isOptional: false,
+  groupTitle: group.title,
+  devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
+  elements: makeElementsForPosition(pos, cat, group.title, series)
+}));
 });
 
 const addRow = document.createElement('div');
@@ -705,8 +719,9 @@ function collectAngebotData() {
     if (extra) baseOptions.push(extra);
 
     positions.push({
-      name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
-      groupTitle: card.dataset.groupTitle || '',
+      posNo: card.querySelector('.machine-posno')?.value?.trim() || '',
+name: card.querySelector('.machine-name').value || 'Ohne Bezeichnung',
+groupTitle: card.dataset.groupTitle || '',
       inAngebot: true,
       isOptional,
       offerPrice: manualVal > 0 ? manualVal : calcVal,
@@ -789,7 +804,7 @@ function exportWord() {
     rowsHtml += `
   <tr>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
-      Pos.${index + 1}
+      ${esc(pos.posNo || ('Pos.' + (index + 1)))}
     </td>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
       ${esc(pos.name)}
@@ -997,8 +1012,9 @@ function getAllProjects(){try{return JSON.parse(localStorage.getItem(PROJECTS_KE
 function saveAllProjects(obj){try{localStorage.setItem(PROJECTS_KEY,JSON.stringify(obj));}catch(e){}}
 function collectProjectData() {
   const machines=[...document.querySelectorAll('.machine-card')].map(card=>({
-    name:card.querySelector('.machine-name').value,
-    groupTitle:card.dataset.groupTitle,
+    posNo:card.querySelector('.machine-posno')?.value || '',
+name:card.querySelector('.machine-name').value,
+groupTitle:card.dataset.groupTitle,
     checked:card.querySelector('.machine-check').checked,
     isOptional:card.querySelector('.machine-opt').checked,
     devH:card.querySelector('.machine-devh').value,
@@ -1026,8 +1042,9 @@ function applyProjectData(data) {
       if(!card) return;
       card.querySelector('.machine-check').checked=saved.checked;
       card.querySelector('.machine-opt').checked=saved.isOptional||false;
-      card.querySelector('.machine-devh').value=saved.devH||0;
-      card.querySelector('.machine-manual').value=saved.manual||'';
+      if (card.querySelector('.machine-posno')) card.querySelector('.machine-posno').value = saved.posNo || '';
+card.querySelector('.machine-devh').value=saved.devH||0;
+card.querySelector('.machine-manual').value=saved.manual||'';
       const list=card.querySelector('.sub-list');list.innerHTML='';
       (saved.elements||[]).forEach(el=>list.appendChild(createElementRow(el)));
       updateCardStyle(card);
