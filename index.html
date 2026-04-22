@@ -580,6 +580,26 @@ function addElement(card, data={}) {
   const btn=card.querySelector('.machine-row .icon-btn'); if(btn) btn.textContent='▴';
   calc();
 }
+function addMainPosition(btn, groupTitle) {
+  const block = btn.closest('.group-block');
+  if (!block) return;
+
+  const card = createMachineCard({
+    posNo: '',
+    name: 'Neue Position',
+    isBase: false,
+    checked: false,
+    isOptional: false,
+    groupTitle: groupTitle,
+    devH: 0,
+    elements: [
+      { name: 'Einzelelement 1', purchase: 0, workH: 0 }
+    ]
+  });
+
+  block.appendChild(card);
+  calc();
+}
 function addOverhead() {
   const name=document.getElementById('new-oh-name').value.trim();
   const price=num(document.getElementById('new-oh-price').value);
@@ -617,8 +637,13 @@ function buildGroupsForSelection() {
 
   groups.forEach(group => {
     const block = document.createElement('div');
-    block.className = 'group-block';
-    block.innerHTML = `<div class="group-header">${group.title}</div>`;
+block.className = 'group-block';
+block.innerHTML = `
+  <div class="group-header" style="display:flex; justify-content:space-between; align-items:center;">
+    <span>${group.title}</span>
+    <button class="btn no-print" type="button" onclick="addMainPosition(this, '${group.title}')">+ Position</button>
+  </div>
+`;
 
     group.positions.forEach(pos => {
       const isBase = /basisanlage/i.test(pos);
