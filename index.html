@@ -336,7 +336,7 @@ const WAESSRIG_GROUPS = [
 ];
 const OVERHEAD_DEFAULTS = ['Transport frei Abladestelle (Deutschland)','Montage, Inbetriebnahme, Schulung zzgl. Reisekosten','Tagessatz für Nachschulung, Prozessoptimierung','Übersetzung Dokumentation','Garantieerweiterung auf 24 Monate','Heißabnahme','Inbetriebnahme','Anlagenabnahme'];
 
-let machineId = 0, elementId = 0, overheadId = 0;
+let machineId = 0, elementId = 0, overheadId = 0, autoPosCounter = 1;
 
 const fmt    = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 const fmtNum = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -432,16 +432,7 @@ function createElementRow(data={}) {
   return row;
 }
 function getNextPositionNumber() {
-  const values = [...document.querySelectorAll('.machine-posno')]
-    .map(el => (el.value || '').trim())
-    .map(v => {
-      const m = v.match(/\d+/);
-      return m ? parseInt(m[0], 10) : NaN;
-    })
-    .filter(v => !isNaN(v));
-
-  const next = values.length ? Math.max(...values) + 1 : 1;
-  return `Pos.${next}`;
+  return `Pos.${autoPosCounter++}`;
 }
 function createMachineCard(data = {}) {
   machineId++;
@@ -667,7 +658,7 @@ function addMainPosition(btn, groupTitle) {
   if (!block) return;
 
   const card = createMachineCard({
-  posNo: getNextPositionNumber(),
+  posNo: '0',
   name: 'Neue Position',
   isBase: false,
   checked: false,
@@ -769,6 +760,7 @@ function buildGroupsForSelection() {
   const groups = groupsForCategory(cat);
   const container = document.getElementById('machine-groups');
   container.innerHTML = '';
+autoPosCounter = 1;
 
   groups.forEach(group => {
     const block = document.createElement('div');
