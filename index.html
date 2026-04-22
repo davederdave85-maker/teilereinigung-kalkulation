@@ -597,7 +597,13 @@ function addMainPosition(btn, groupTitle) {
     ]
   });
 
-  block.appendChild(card);
+  const addRow = btn.closest('.no-print');
+  if (addRow) {
+    block.insertBefore(card, addRow);
+  } else {
+    block.appendChild(card);
+  }
+
   calc();
 }
 function addOverhead() {
@@ -638,27 +644,33 @@ function buildGroupsForSelection() {
   groups.forEach(group => {
     const block = document.createElement('div');
 block.className = 'group-block';
-block.innerHTML = `
-  <div class="group-header" style="display:flex; justify-content:space-between; align-items:center;">
-    <span>${group.title}</span>
-    <button class="btn no-print" type="button" onclick="addMainPosition(this, '${group.title}')">+ Position</button>
-  </div>
-`;
+block.innerHTML = `<div class="group-header">${group.title}</div>`;
 
     group.positions.forEach(pos => {
-      const isBase = /basisanlage/i.test(pos);
-      const displayName = isBase ? series : pos;
+  const isBase = /basisanlage/i.test(pos);
+  const displayName = isBase ? series : pos;
 
-      block.appendChild(createMachineCard({
-        name: displayName,
-        isBase: isBase,
-        checked: isBase,
-        isOptional: false,
-        groupTitle: group.title,
-        devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
-        elements: makeElementsForPosition(pos, cat, group.title, series)
-      }));
-    });
+  block.appendChild(createMachineCard({
+    posNo: '',
+    name: displayName,
+    isBase: isBase,
+    checked: isBase,
+    isOptional: false,
+    groupTitle: group.title,
+    devH: isBase ? Math.max(2, Math.round(sizeFactor(series) * 4)) : 0,
+    elements: makeElementsForPosition(pos, cat, group.title, series)
+  }));
+});
+
+const addRow = document.createElement('div');
+addRow.className = 'no-print';
+addRow.style.padding = '10px 12px';
+addRow.style.borderTop = '1px solid var(--border)';
+addRow.style.background = '#faf9f6';
+addRow.innerHTML = `<button class="btn" type="button" onclick="addMainPosition(this, '${group.title.replace(/'/g, "\\'")}')">+ Position</button>`;
+block.appendChild(addRow);
+
+container.appendChild(block);
 
     container.appendChild(block);
   });
