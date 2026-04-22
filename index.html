@@ -664,10 +664,17 @@ block.innerHTML = `<div class="group-header">${group.title}</div>`;
 
 const addRow = document.createElement('div');
 addRow.className = 'no-print';
-addRow.style.padding = '10px 12px';
+addRow.style.padding = '14px 12px';
 addRow.style.borderTop = '1px solid var(--border)';
 addRow.style.background = '#faf9f6';
-addRow.innerHTML = `<button class="btn" type="button" onclick="addMainPosition(this, '${group.title.replace(/'/g, "\\'")}')">+ Position</button>`;
+addRow.style.display = 'flex';
+addRow.style.justifyContent = 'center';
+
+addRow.innerHTML = `
+  <button class="btn" type="button" onclick="addMainPosition(this, '${group.title.replace(/'/g, "\\'")}')">
+    + Position
+  </button>
+`;
 block.appendChild(addRow);
 
 container.appendChild(block);
