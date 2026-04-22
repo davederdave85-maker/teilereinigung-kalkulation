@@ -760,7 +760,7 @@ function buildGroupsForSelection() {
   const groups = groupsForCategory(cat);
   const container = document.getElementById('machine-groups');
   container.innerHTML = '';
-autoPosCounter = 1;
+  autoPosCounter = 1;
 
   groups.forEach(group => {
     const block = document.createElement('div');
@@ -908,7 +908,11 @@ function exportWord() {
     rowsHtml += `
   <tr>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
-      ${esc(pos.posNo || ('Pos.' + (index + 1)))}
+      ${esc(
+  !pos.posNo ? ('Pos.' + (index + 1)) :
+  /^pos\./i.test(pos.posNo) ? pos.posNo :
+  'Pos.' + pos.posNo
+)}
     </td>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
       ${esc(pos.name)}
