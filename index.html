@@ -55,28 +55,85 @@
   /* ── Main machine row: 6 cols ── */
   /* cb-angebot | cb-optional | name+badges | Einkauf | Berechnet | Manuell | expand */
   .machine-row {
-    display: grid;
-    grid-template-columns: 24px 24px minmax(200px,1fr) 110px 110px 110px 30px;
-    gap: 8px;
-    align-items: center;
-    padding: 10px 10px;
-  }
+  display: grid;
+  grid-template-columns: 24px 24px minmax(240px,1fr) 110px 110px 110px 30px 30px 30px;
+  gap: 8px;
+  align-items: start;
+  padding: 10px 10px;
+}
   .machine-row input[type=checkbox] { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; }
   .cb-opt { accent-color: var(--opt-border) !important; }
-  .machine-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .machine-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  overflow: hidden;
+}
   .machine-badges { display: flex; flex-wrap: wrap; gap: 4px; }
   .badge { display: inline-flex; align-items: center; padding: 1px 6px; border-radius: 999px; background: var(--surface3); border: 1px solid var(--border); font-size: 10px; color: var(--text-muted); white-space: nowrap; }
   .badge-opt { background: var(--opt-bg); border-color: var(--opt-border); color: var(--opt-text); }
   .badge-emp { background: var(--emp-bg); border-color: var(--emp-border); color: var(--emp-text); }
 
   .editable-name, .price-input, .price-display, .sub-name, .sub-input, .sub-display, .oh-name, .oh-input {
-    width: 100%; min-width: 0; padding: 6px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); outline: none;
-  }
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+}
+.machine-name {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.35;
+  min-height: 34px;
+  height: auto;
+}
   .editable-name:focus, .price-input:focus, .sub-name:focus, .sub-input:focus, .oh-name:focus, .oh-input:focus { border-color: var(--accent); background: #fff; }
   .price-display, .sub-display { background: var(--surface3); text-align: right; font-weight: 600; color: var(--accent); }
   .price-input, .sub-input, .oh-input { text-align: right; }
   .icon-btn { background: none; border: none; cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; color: var(--text-muted); }
   .icon-btn:hover { background: var(--surface2); color: var(--text); }
+.machine-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c0392b;
+  font-size: 15px;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0.75;
+}
+.machine-delete:hover {
+  background: #ffeaea;
+  opacity: 1;
+}
+
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: var(--surface3);
+  font-size: 14px;
+  user-select: none;
+  min-height: 30px;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.machine-card.dragging {
+  opacity: 0.45;
+}
   .sub-wrap { display: none; padding: 14px; border-top: 1px solid var(--border); background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%); }
   .machine-card.expanded .sub-wrap { display: block; }
   .section-box { border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; padding: 12px; margin-bottom: 12px; }
@@ -393,6 +450,7 @@ function createMachineCard(data = {}) {
   card.dataset.machineId = machineId;
   card.dataset.groupTitle = data.groupTitle || '';
   card.dataset.isBase = data.isBase ? '1' : '0';
+  card.draggable = true;
 
   const isBasis = !!data.isBase;
 
@@ -400,11 +458,12 @@ function createMachineCard(data = {}) {
     <div class="machine-row">
       <input class="machine-check" type="checkbox" title="Ins Angebot" ${data.checked ? 'checked' : ''} onchange="toggleMachine(this)">
       <input class="machine-opt cb-opt" type="checkbox" title="Optional (linke Spalte)" ${data.isOptional ? 'checked' : ''} ${isBasis ? 'disabled' : ''} onchange="toggleOptional(this)">
+
       <div class="machine-main">
-  <div style="display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:center;">
-    <input class="price-input machine-posno" type="text" value="${data.posNo || ''}" placeholder="Pos." oninput="calc()">
-    <input class="editable-name machine-name" type="text" value="${data.name||'Neue Position'}" oninput="calc()">
-  </div>
+        <div style="display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:start;">
+          <input class="price-input machine-posno" type="text" value="${data.posNo || ''}" placeholder="Pos." oninput="calc()">
+          <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+        </div>
 
         ${isBasis ? `
         <div class="base-options no-print" style="margin-top:6px; display:flex; flex-direction:column; gap:4px; font-size:12px;">
@@ -427,11 +486,16 @@ function createMachineCard(data = {}) {
           <span class="badge machine-hours-badge">0,00 h Arbeit</span>
         </div>
       </div>
+
       <input class="price-display machine-purchase" type="text" value="0,00" readonly tabindex="-1" title="Summe Einkauf">
       <input class="price-display machine-calculated" type="text" value="0,00" readonly tabindex="-1" title="Berechneter Preis">
       <input class="price-input machine-manual" type="number" value="${data.manual ?? ''}" min="0" step="1" oninput="calc()" placeholder="manuell">
+
       <button class="icon-btn no-print" type="button" onclick="toggleExpand(this)">▾</button>
+      <button class="machine-delete no-print" type="button" onclick="deleteMainPosition(this)" title="Position löschen">🗑</button>
+      <div class="drag-handle no-print" title="Position verschieben">⋮⋮</div>
     </div>
+
     <div class="sub-wrap">
       <div class="section-box">
         <div class="sub-toolbar">
@@ -439,6 +503,7 @@ function createMachineCard(data = {}) {
           <button class="btn no-print" type="button" onclick="addElement(this.closest('.machine-card'))">+ Einzelelement</button>
         </div>
       </div>
+
       <div class="section-box no-print">
         <div class="section-title">Zusammenfassung Position</div>
         <div style="display:grid;grid-template-columns:1.2fr 150px 150px 150px 150px;gap:10px;">
@@ -449,6 +514,7 @@ function createMachineCard(data = {}) {
           <div class="param-block"><div class="param-label">Entwicklungskosten</div><input class="price-display machine-devcost" type="text" value="0,00" readonly tabindex="-1"></div>
         </div>
       </div>
+
       <div class="section-box no-print">
         <div class="section-title">Einzelelemente</div>
         <div class="sub-header"><div>Einzelelement</div><div>Einkauf</div><div>Arbeit h</div><div>Arbeit €</div><div>Gesamt</div><div></div></div>
@@ -458,7 +524,9 @@ function createMachineCard(data = {}) {
 
   const list = card.querySelector('.sub-list');
   (data.elements || []).forEach(el => list.appendChild(createElementRow(el)));
+
   updateCardStyle(card);
+  attachDragEvents(card);
   return card;
 }
 
@@ -620,6 +688,53 @@ function addMainPosition(btn, groupTitle) {
 
   calc();
 }
+function deleteMainPosition(btn) {
+  const card = btn.closest('.machine-card');
+  if (!card) return;
+  if (!confirm('Diese Position wirklich löschen?')) return;
+  card.remove();
+  calc();
+}
+
+function attachDragEvents(card) {
+  const handle = card.querySelector('.drag-handle');
+  if (!handle) return;
+
+  handle.addEventListener('mousedown', () => {
+    card.setAttribute('draggable', 'true');
+  });
+
+  card.addEventListener('dragstart', e => {
+    if (!e.target.closest('.machine-card')) return;
+    card.classList.add('dragging');
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    calc();
+  });
+
+  card.addEventListener('dragover', e => {
+    e.preventDefault();
+  });
+
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+    const dragging = document.querySelector('.machine-card.dragging');
+    if (!dragging || dragging === card) return;
+
+    const parent = card.parentNode;
+    const rect = card.getBoundingClientRect();
+    const before = e.clientY < rect.top + rect.height / 2;
+
+    if (before) {
+      parent.insertBefore(dragging, card);
+    } else {
+      parent.insertBefore(dragging, card.nextSibling);
+    }
+    calc();
+  });
+}
 function addOverhead() {
   const name=document.getElementById('new-oh-name').value.trim();
   const price=num(document.getElementById('new-oh-price').value);
@@ -690,10 +805,7 @@ addRow.innerHTML = `
   </button>
 `;
 block.appendChild(addRow);
-
 container.appendChild(block);
-
-    container.appendChild(block);
   });
 }
 function applySeriesTemplate(){updatePlantInfo();buildGroupsForSelection();calc();}
