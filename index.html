@@ -165,7 +165,7 @@
   .muted { color: var(--text-muted); font-size: 12px; }
   .oh-row {
   display: grid;
-  grid-template-columns: 90px minmax(220px,1.4fr) 120px 30px;
+  grid-template-columns: 90px minmax(260px,1fr) 140px 30px;
   gap: 10px;
   align-items: center;
   margin-bottom: 8px;
@@ -250,6 +250,36 @@
         <strong>&#9745; Optional</strong> — Position kommt in die <em>linke</em> Spalte (Optional). Nicht markiert = <em>rechte</em> Spalte (Empfohlen).
       </div>
       <div id="machine-groups"></div>
+<div class="group-block" style="margin-top:18px;">
+  <div class="group-header">OVERHEAD</div>
+
+  <div style="padding:12px;" class="no-print">
+    <div class="toggle-inline">
+      <input type="checkbox" id="oh-include" onchange="calc();autoSaveSettings()">
+      <label for="oh-include">Overhead in Anlagenpreis einrechnen</label>
+    </div>
+
+    <div class="field" style="margin-top:10px;max-width:180px;">
+      <label>Anteil in Preis</label>
+      <input type="number" id="oh-share" value="100" min="0" max="100" step="5" oninput="calc();autoSaveSettings()">
+    </div>
+
+    <div id="overhead-list" style="margin-top:12px;"></div>
+
+    <div class="section-box" style="margin-top:12px;">
+      <div class="section-title">Overhead-Position hinzufügen</div>
+      <div class="oh-row">
+        <label class="no-print" style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted);">
+          <input class="oh-include-offer" type="checkbox" checked disabled>
+          Angebot
+        </label>
+        <input class="oh-name" type="text" id="new-oh-name" placeholder="Overhead-Position">
+        <input class="oh-input" type="number" id="new-oh-price" placeholder="Preis" min="0" step="0.01">
+        <button class="icon-btn" type="button" onclick="addOverhead()">＋</button>
+      </div>
+    </div>
+  </div>
+</div>
     </div>
   </div>
 
@@ -265,21 +295,7 @@
         <div class="param-block"><div class="param-label">Entwicklungszeit</div><div class="param-row"><input type="number" id="dev-rate" value="110" min="0" step="5" oninput="calc();autoSaveSettings()"><span>€/h</span></div></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Overhead</div>
-      <div class="toggle-inline no-print"><input type="checkbox" id="oh-include" onchange="calc();autoSaveSettings()"><label for="oh-include">Overhead in Anlagenpreis einrechnen</label></div>
-      <div class="field no-print" style="margin-top:10px;max-width:180px;"><label>Anteil in Preis</label><input type="number" id="oh-share" value="100" min="0" max="100" step="5" oninput="calc();autoSaveSettings()"></div>
-      <div id="overhead-list" style="margin-top:12px;"></div>
-      <div class="section-box no-print" style="margin-top:12px;">
-        <div class="section-title">Overhead-Position hinzufügen</div>
-        <div class="oh-row">
-          <input class="oh-name" type="text" id="new-oh-name" placeholder="Overhead-Position">
-          <input class="oh-input" type="number" id="new-oh-price" placeholder="Preis" min="0" step="0.01">
-          <div></div>
-          <button class="icon-btn" type="button" onclick="addOverhead()">＋</button>
-        </div>
-      </div>
-    </div>
+    
     <div class="card">
       <div class="card-title">Kalkulation</div>
       <div class="metric-row">
@@ -305,7 +321,7 @@
           <tbody id="offer-preview-body"></tbody>
         </table>
       </div>
-      <div class="overhead-preview" style="margin-top:12px;"><h4>Overhead</h4><table class="oh-table"><tbody id="offer-overhead-body"></tbody></table></div>
+      
     </div>
     <div class="card">
       <div class="card-title">Notizen / Bemerkungen</div>
