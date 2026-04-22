@@ -87,12 +87,13 @@
   outline: none;
 }
 .machine-name {
-  white-space: normal;
+  white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
   line-height: 1.35;
-  min-height: 34px;
-  height: auto;
+  min-height: 38px;
+  resize: vertical;
+  overflow: hidden;
 }
   .editable-name:focus, .price-input:focus, .sub-name:focus, .sub-input:focus, .oh-name:focus, .oh-input:focus { border-color: var(--accent); background: #fff; }
   .price-display, .sub-display { background: var(--surface3); text-align: right; font-weight: 600; color: var(--accent); }
@@ -431,6 +432,10 @@ function createElementRow(data={}) {
     <button class="icon-btn no-print" type="button" onclick="this.closest('.element-row').remove();calc()">✕</button>`;
   return row;
 }
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
 function getNextPositionNumber() {
   return `Pos.${autoPosCounter++}`;
 }
@@ -453,7 +458,7 @@ function createMachineCard(data = {}) {
       <div class="machine-main">
         <div style="display:grid; grid-template-columns:90px 1fr; gap:8px; align-items:start;">
           <input class="price-input machine-posno" type="text" value="${data.posNo || ''}" placeholder="Pos." oninput="calc()">
-          <input class="editable-name machine-name" type="text" value="${data.name || 'Neue Position'}" oninput="calc()">
+          <textarea class="editable-name machine-name" rows="2" oninput="autoGrow(this); calc()">${data.name || 'Neue Position'}</textarea>
         </div>
 
         ${isBasis ? `
@@ -517,8 +522,12 @@ function createMachineCard(data = {}) {
   (data.elements || []).forEach(el => list.appendChild(createElementRow(el)));
 
   updateCardStyle(card);
-  attachDragEvents(card);
-  return card;
+attachDragEvents(card);
+
+const nameField = card.querySelector('.machine-name');
+if (nameField) autoGrow(nameField);
+
+return card;
 }
 
 function updateCardStyle(card) {
