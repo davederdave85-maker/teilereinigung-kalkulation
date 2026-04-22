@@ -165,7 +165,7 @@
   .muted { color: var(--text-muted); font-size: 12px; }
   .oh-row {
   display: grid;
-  grid-template-columns: 90px minmax(260px,1fr) 140px 30px;
+  grid-template-columns: 24px 24px minmax(260px,1fr) 120px 30px;
   gap: 10px;
   align-items: center;
   margin-bottom: 8px;
@@ -565,19 +565,21 @@ function updateCardStyle(card) {
   else { badge.textContent='Empfohlen'; badge.className='badge badge-emp'; }
 }
 
-function createOverheadRow(name = '', price = 0, includeInOffer = false) {
+function createOverheadRow(name = '', price = 0, checked = true, isOptional = false) {
   overheadId++;
   const row = document.createElement('div');
   row.className = 'oh-row';
   row.dataset.overheadId = overheadId;
+
   row.innerHTML = `
-    <label class="no-print" style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted);">
-      <input class="oh-include-offer" type="checkbox" ${includeInOffer ? 'checked' : ''} onchange="calc();autoSaveSettings()">
-      Angebot
-    </label>
+    <input class="oh-check" type="checkbox" ${checked ? 'checked' : ''} onchange="calc();autoSaveSettings()">
+    <input class="oh-opt cb-opt" type="checkbox" ${isOptional ? 'checked' : ''} onchange="calc();autoSaveSettings()">
+
     <input class="oh-name" type="text" value="${name}" oninput="calc();autoSaveSettings()">
     <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
-    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>`;
+
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>
+  `;
   return row;
 }
 
@@ -637,6 +639,11 @@ function calc() {
   });
   const totalOffer=totalEmp+totalOpt;
   const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
+  name: row.querySelector('.oh-name').value || 'Overhead',
+  price: num(row.querySelector('.oh-price').value),
+  checked: row.querySelector('.oh-check').checked,
+  isOptional: row.querySelector('.oh-opt').checked
+}));
   name: row.querySelector('.oh-name').value || 'Overhead',
   price: num(row.querySelector('.oh-price').value),
   includeInOffer: row.querySelector('.oh-include-offer')?.checked || false
@@ -879,11 +886,14 @@ groupTitle: card.dataset.groupTitle || '',
     });
   });
 
-  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
-  name: row.querySelector('.oh-name').value || 'Overhead',
-  price: num(row.querySelector('.oh-price').value),
-  includeInOffer: row.querySelector('.oh-include-offer')?.checked || false
-})).filter(row => row.includeInOffer);
+  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')]
+  .map(row => ({
+    name: row.querySelector('.oh-name').value || 'Overhead',
+    price: num(row.querySelector('.oh-price').value),
+    checked: row.querySelector('.oh-check').checked,
+    isOptional: row.querySelector('.oh-opt').checked
+  }))
+  .filter(r => r.checked);
 
   const empPositions = positions.filter(p => !p.isOptional);
   const totalEmp = empPositions.reduce((s, p) => s + p.offerPrice, 0);
@@ -984,6 +994,19 @@ ${pos.baseOptions && pos.baseOptions.length ? `
     .reduce((sum, p) => sum + (Number(p.offerPrice) || 0), 0);
 
   const overheadRows = (data.overhead || []).map((oh, i) => `
+<tr>
+  <td style="padding:6px 4px;">Pos.${51 + i}</td>
+  <td style="padding:6px 4px; border-right:1px solid #999;">
+    ${esc(oh.name)}
+  </td>
+  <td style="text-align:right; border-right:1px solid #999;">
+    ${oh.isOptional ? eur(oh.price) : ''}
+  </td>
+  <td style="text-align:right;">
+    ${!oh.isOptional ? eur(oh.price) : ''}
+  </td>
+</tr>
+`).join('');
   <tr>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
       Pos.${51 + i}
