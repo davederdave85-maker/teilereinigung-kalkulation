@@ -1085,6 +1085,8 @@ ${pos.baseOptions && pos.baseOptions.length ? `
   </tr>
 `).join('');
 
+const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
+
   const content = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office"
           xmlns:w="urn:schemas-microsoft-com:office:word"
@@ -1307,12 +1309,6 @@ function saveProject(){const name=document.getElementById('project-name-input').
 function loadSelectedProject(){const name=document.getElementById('project-select').value;if(!name)return;const projects=getAllProjects();if(!projects[name])return;if(!confirm(`Projekt "${name}" laden? Nicht gespeicherte Änderungen gehen verloren.`)){document.getElementById('project-select').value='';return;}document.getElementById('project-name-input').value=name;applyProjectData(projects[name]);flashSaved();}
 function deleteProject(){const name=document.getElementById('project-select').value;if(!name){alert('Kein Projekt ausgewählt.');return;}if(!confirm(`Projekt "${name}" wirklich löschen?`))return;const projects=getAllProjects();delete projects[name];saveAllProjects(projects);document.getElementById('project-name-input').value='';refreshProjectSelect();}
 
-function resetForm(){
-  if(!confirm('Alle Eingaben zurücksetzen? Gespeicherte Projekte bleiben erhalten.'))return;
-  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('p-material').value=10;document.getElementById('p-provision').value=5;document.getElementById('p-marge').value=15;document.getElementById('p-risiko').value=3;document.getElementById('work-rate').value=85;document.getElementById('dev-rate').value=110;
-  document.getElementById('oh-include').checked=false;document.getElementById('oh-share').value=100;
-  document.getElementById('new-oh-name').value='';document.getElementById('new-oh-price').value='';
 function validateApp() {
   const requiredIds = [
     'plant-category',
@@ -1341,15 +1337,27 @@ function validateApp() {
 
   return true;
 }
+function resetForm(){
+  if(!confirm('Alle Eingaben zurücksetzen? Gespeicherte Projekte bleiben erhalten.'))return;
+  ['cust-name','cust-contact','offer-no','offer-subject','notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-material').value=10;document.getElementById('p-provision').value=5;document.getElementById('p-marge').value=15;document.getElementById('p-risiko').value=3;document.getElementById('work-rate').value=85;document.getElementById('dev-rate').value=110;
+  document.getElementById('oh-include').checked=false;document.getElementById('oh-share').value=100;
+  document.getElementById('new-oh-name').value='';document.getElementById('new-oh-price').value='';
   document.getElementById('offer-date').value=new Date().toLocaleDateString('de-DE');
   document.getElementById('project-select').value='';document.getElementById('project-name-input').value='';
   updateSeriesOptions();seedOverhead();applySeriesTemplate();
 }
 
 /* ═══ INIT ═══ */
-document.getElementById('offer-date').value=new Date().toLocaleDateString('de-DE');
-updateSeriesOptions(); seedOverhead(); applySeriesTemplate();
-loadSettings(); refreshProjectSelect(); calc();
+if (validateApp()) {
+  document.getElementById('offer-date').value = new Date().toLocaleDateString('de-DE');
+  updateSeriesOptions();
+  seedOverhead();
+  applySeriesTemplate();
+  loadSettings();
+  refreshProjectSelect();
+  calc();
+}
 </script>
 </body>
 </html>
