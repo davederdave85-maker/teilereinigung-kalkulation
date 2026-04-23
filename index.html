@@ -174,12 +174,104 @@
   .offer-preview h4, .overhead-preview h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
   .muted { color: var(--text-muted); font-size: 12px; }
   .oh-row {
+  display: grid;
+  grid-template-columns: 24px 24px minmax(260px,1fr) 120px 30px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
 .overhead-card {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: #fff;
   margin-bottom: 10px;
   overflow: hidden;
+}
+.overhead-card.is-optional {
+  background: #fffcf0;
+}
+.overhead-card.is-empfohlen {
+  background: #f8fff5;
+}
+.overhead-row {
+  display: grid;
+  grid-template-columns: 24px 24px minmax(240px,1fr) 120px 30px 30px;
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+}
+.overhead-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.overhead-sub-wrap {
+  display: none;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
+}
+.overhead-card.expanded .overhead-sub-wrap {
+  display: block;
+}
+.overhead-sub-header,
+.overhead-sub-row {
+  display: grid;
+  grid-template-columns: minmax(220px,1.5fr) 90px 70px 70px 70px 90px 28px;
+  gap: 8px;
+  align-items: center;
+}
+.overhead-sub-header {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+.overhead-sub-row {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface3);
+  margin-bottom: 8px;
+}
+.overhead-sub-row:hover {
+  border-color: var(--accent-border);
+}
+.overhead-add-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+.oh-mini {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+}
+.oh-mini:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+.oh-mini-display {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface3);
+  color: var(--accent);
+  text-align: right;
+  font-weight: 600;
 }
 .overhead-card.is-optional {
   background: #fffcf0;
@@ -1221,12 +1313,20 @@ groupTitle: card.dataset.groupTitle || '',
     });
   });
 
-  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')]
-  .map(row => ({
-    name: row.querySelector('.oh-name').value || 'Overhead',
-    price: num(row.querySelector('.oh-price').value),
-    checked: row.querySelector('.oh-check').checked,
-    isOptional: row.querySelector('.oh-opt').checked
+  const ohRows = [...document.querySelectorAll('#overhead-list .overhead-card')]
+  .map(card => ({
+    name: card.querySelector('.oh-name').value || 'Overhead',
+    price: num(card.querySelector('.oh-price').value),
+    checked: card.querySelector('.oh-check').checked,
+    isOptional: card.querySelector('.oh-opt').checked,
+    items: [...card.querySelectorAll('.overhead-sub-row')].map(row => ({
+      name: row.querySelector('.oh-item-name').value || 'Unterposition',
+      purchase: num(row.querySelector('.oh-item-purchase').value),
+      workH: num(row.querySelector('.oh-item-workh').value),
+      matPct: num(row.querySelector('.oh-item-mat').value),
+      provPct: num(row.querySelector('.oh-item-prov').value),
+      total: num((row.querySelector('.oh-item-total').value || '0').replace(/\./g, '').replace(',', '.'))
+    }))
   }))
   .filter(r => r.checked);
 
@@ -1484,33 +1584,27 @@ const PROJECTS_KEY='teilereinigung_projects';
 
 function collectSettings() {
   return {
-    pMaterial:document.getElementById('p-material').value,
-    pProvision:document.getElementById('p-provision').value,
-    pMarge:document.getElementById('p-marge').value,
-    pRisiko:document.getElementById('p-risiko').value,
-    workRate:document.getElementById('work-rate').value,
-    devRate:document.getElementById('dev-rate').value,
-    ohInclude:document.getElementById('oh-include').checked,
-    ohShare:document.getElementById('oh-share').value,
-    overhead:[...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
-  name: row.querySelector('.oh-name').value,
-  price: row.querySelector('.oh-price').value,
-  checked: row.querySelector('.oh-check').checked,
-  isOptional: row.querySelector('.oh-opt').checked
-}))
-overhead: [...document.querySelectorAll('#overhead-list .overhead-card')].map(card => ({
-  name: card.querySelector('.oh-name').value,
-  price: card.querySelector('.oh-price').value,
-  checked: card.querySelector('.oh-check').checked,
-  isOptional: card.querySelector('.oh-opt').checked,
-  items: [...card.querySelectorAll('.overhead-sub-row')].map(row => ({
-    name: row.querySelector('.oh-item-name').value,
-    purchase: row.querySelector('.oh-item-purchase').value,
-    workH: row.querySelector('.oh-item-workh').value,
-    matPct: row.querySelector('.oh-item-mat').value,
-    provPct: row.querySelector('.oh-item-prov').value
-  }))
-}))
+    pMaterial: document.getElementById('p-material').value,
+    pProvision: document.getElementById('p-provision').value,
+    pMarge: document.getElementById('p-marge').value,
+    pRisiko: document.getElementById('p-risiko').value,
+    workRate: document.getElementById('work-rate').value,
+    devRate: document.getElementById('dev-rate').value,
+    ohInclude: document.getElementById('oh-include').checked,
+    ohShare: document.getElementById('oh-share').value,
+    overhead: [...document.querySelectorAll('#overhead-list .overhead-card')].map(card => ({
+      name: card.querySelector('.oh-name').value,
+      price: card.querySelector('.oh-price').value,
+      checked: card.querySelector('.oh-check').checked,
+      isOptional: card.querySelector('.oh-opt').checked,
+      items: [...card.querySelectorAll('.overhead-sub-row')].map(row => ({
+        name: row.querySelector('.oh-item-name').value,
+        purchase: row.querySelector('.oh-item-purchase').value,
+        workH: row.querySelector('.oh-item-workh').value,
+        matPct: row.querySelector('.oh-item-mat').value,
+        provPct: row.querySelector('.oh-item-prov').value
+      }))
+    }))
   };
 }
 function applySettings(s) {
