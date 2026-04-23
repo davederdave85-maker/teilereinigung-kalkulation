@@ -990,9 +990,23 @@ ${pos.baseOptions && pos.baseOptions.length ? `
     .reduce((sum, p) => sum + (Number(p.offerPrice) || 0), 0);
 
   const overheadRows = (data.overhead || []).map((oh, i) => `
+  <tr>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
+      Pos.${51 + i}
+    </td>
+    <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
+      ${esc(oh.name)}
+    </td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
+      ${oh.isOptional ? eur(oh.price) : ''}
+    </td>
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
+      ${!oh.isOptional ? eur(oh.price) : ''}
+    </td>
+  </tr>
+`).join('');
 
-
-  const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
+const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
 
   const content = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office"
