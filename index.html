@@ -273,97 +273,6 @@
   text-align: right;
   font-weight: 600;
 }
-.overhead-card.is-optional {
-  background: #fffcf0;
-}
-.overhead-card.is-empfohlen {
-  background: #f8fff5;
-}
-.overhead-row {
-  display: grid;
-  grid-template-columns: 24px 24px minmax(240px,1fr) 120px 30px 30px;
-  gap: 10px;
-  align-items: start;
-  padding: 10px;
-}
-.overhead-main {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
-.overhead-sub-wrap {
-  display: none;
-  padding: 12px;
-  border-top: 1px solid var(--border);
-  background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
-}
-.overhead-card.expanded .overhead-sub-wrap {
-  display: block;
-}
-.overhead-sub-header,
-.overhead-sub-row {
-  display: grid;
-  grid-template-columns: minmax(220px,1.5fr) 90px 70px 70px 70px 90px 28px;
-  gap: 8px;
-  align-items: center;
-}
-.overhead-sub-header {
-  color: var(--text-muted);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: .05em;
-  margin-bottom: 8px;
-  padding: 0 8px;
-}
-.overhead-sub-row {
-  padding: 8px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface3);
-  margin-bottom: 8px;
-}
-.overhead-sub-row:hover {
-  border-color: var(--accent-border);
-}
-.overhead-add-row {
-  display: flex;
-  justify-content: center;
-  padding-top: 8px;
-}
-.oh-mini {
-  width: 100%;
-  min-width: 0;
-  padding: 6px 8px;
-  font-size: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface2);
-  color: var(--text);
-  outline: none;
-}
-.oh-mini:focus {
-  border-color: var(--accent);
-  background: #fff;
-}
-.oh-mini-display {
-  width: 100%;
-  min-width: 0;
-  padding: 6px 8px;
-  font-size: 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface3);
-  color: var(--accent);
-  text-align: right;
-  font-weight: 600;
-}
-  display: grid;
-  grid-template-columns: 24px 24px minmax(260px,1fr) 120px 30px;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 8px;
-}
   .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
 
   /* Column legend */
@@ -990,7 +899,7 @@ function calc() {
   };
 });
 
-const overheadTotal = ohRows.reduce((s, r) => s + r.price, 0);
+const overheadTotal = ohRows.filter(r => r.checked).reduce((s, r) => s + r.price, 0);
 const includeOH = document.getElementById('oh-include').checked;
 const ohShare = Math.min(100, Math.max(0, num(document.getElementById('oh-share').value))) / 100;
 const includedOH = includeOH ? overheadTotal * ohShare : 0;
