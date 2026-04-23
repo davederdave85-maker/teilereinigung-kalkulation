@@ -174,6 +174,98 @@
   .offer-preview h4, .overhead-preview h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px; }
   .muted { color: var(--text-muted); font-size: 12px; }
   .oh-row {
+.overhead-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.overhead-card.is-optional {
+  background: #fffcf0;
+}
+.overhead-card.is-empfohlen {
+  background: #f8fff5;
+}
+.overhead-row {
+  display: grid;
+  grid-template-columns: 24px 24px minmax(240px,1fr) 120px 30px 30px;
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+}
+.overhead-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.overhead-sub-wrap {
+  display: none;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface3) 0%, #fdfcf9 100%);
+}
+.overhead-card.expanded .overhead-sub-wrap {
+  display: block;
+}
+.overhead-sub-header,
+.overhead-sub-row {
+  display: grid;
+  grid-template-columns: minmax(220px,1.5fr) 90px 70px 70px 70px 90px 28px;
+  gap: 8px;
+  align-items: center;
+}
+.overhead-sub-header {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+.overhead-sub-row {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface3);
+  margin-bottom: 8px;
+}
+.overhead-sub-row:hover {
+  border-color: var(--accent-border);
+}
+.overhead-add-row {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+.oh-mini {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--text);
+  outline: none;
+}
+.oh-mini:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+.oh-mini-display {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface3);
+  color: var(--accent);
+  text-align: right;
+  font-weight: 600;
+}
   display: grid;
   grid-template-columns: 24px 24px minmax(260px,1fr) 120px 30px;
   gap: 10px;
@@ -646,22 +738,82 @@ function updateCardStyle(card) {
   else { badge.textContent='Empfohlen'; badge.className='badge badge-emp'; }
 }
 
-function createOverheadRow(name = '', price = 0, checked = true, isOptional = false) {
-  overheadId++;
+function calcOverheadItemPrice(itemRow) {
+  const purchase = num(itemRow.querySelector('.oh-item-purchase').value);
+  const workH = num(itemRow.querySelector('.oh-item-workh').value);
+  const matPct = num(itemRow.querySelector('.oh-item-mat').value) / 100;
+  const provPct = num(itemRow.querySelector('.oh-item-prov').value) / 100;
+  const workRate = num(document.getElementById('work-rate').value);
+
+  const workCost = workH * workRate;
+  const material = purchase * matPct;
+  const basis = purchase + material + workCost;
+  const provision = basis * provPct;
+  const total = basis + provision;
+
+  itemRow.querySelector('.oh-item-total').value = fmtNum(total);
+  return { purchase, workH, material, workCost, provision, total };
+}
+
+function createOverheadItemRow(data = {}) {
   const row = document.createElement('div');
-  row.className = 'oh-row';
-  row.dataset.overheadId = overheadId;
-
+  row.className = 'overhead-sub-row';
   row.innerHTML = `
-    <input class="oh-check" type="checkbox" ${checked ? 'checked' : ''} onchange="calc();autoSaveSettings()">
-    <input class="oh-opt cb-opt" type="checkbox" ${isOptional ? 'checked' : ''} onchange="calc();autoSaveSettings()">
-
-    <input class="oh-name" type="text" value="${name}" oninput="calc();autoSaveSettings()">
-    <input class="oh-input oh-price" type="number" value="${price}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
-
-    <button class="icon-btn no-print" type="button" onclick="this.closest('.oh-row').remove();calc();autoSaveSettings()">✕</button>
+    <input class="oh-mini oh-item-name" type="text" value="${data.name || 'Unterposition'}" oninput="calc();autoSaveSettings()">
+    <input class="oh-mini oh-item-purchase" type="number" value="${data.purchase ?? 0}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
+    <input class="oh-mini oh-item-workh" type="number" value="${data.workH ?? 0}" min="0" step="0.5" oninput="calc();autoSaveSettings()">
+    <input class="oh-mini oh-item-mat" type="number" value="${data.matPct ?? 0}" min="0" step="0.5" oninput="calc();autoSaveSettings()">
+    <input class="oh-mini oh-item-prov" type="number" value="${data.provPct ?? 0}" min="0" step="0.5" oninput="calc();autoSaveSettings()">
+    <input class="oh-mini-display oh-item-total" type="text" value="0,00" readonly tabindex="-1">
+    <button class="icon-btn no-print" type="button" onclick="this.closest('.overhead-sub-row').remove();calc();autoSaveSettings()">✕</button>
   `;
   return row;
+}
+
+function createOverheadRow(data = {}) {
+  overheadId++;
+  const card = document.createElement('div');
+  card.className = 'overhead-card';
+  card.dataset.overheadId = overheadId;
+
+  card.innerHTML = `
+    <div class="overhead-row">
+      <input class="oh-check" type="checkbox" ${data.checked !== false ? 'checked' : ''} onchange="toggleOverheadCard(this)">
+      <input class="oh-opt cb-opt" type="checkbox" ${data.isOptional ? 'checked' : ''} onchange="toggleOverheadCard(this)">
+      <div class="overhead-main">
+        <input class="oh-name" type="text" value="${data.name || 'Overhead'}" oninput="calc();autoSaveSettings()">
+        <div class="machine-badges no-print">
+          <span class="badge overhead-status-badge"></span>
+          <span class="badge overhead-items-badge">0 Unterpositionen</span>
+        </div>
+      </div>
+      <input class="oh-input oh-price" type="number" value="${data.price ?? 0}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
+      <button class="icon-btn no-print" type="button" onclick="toggleOverheadExpand(this)">▾</button>
+      <button class="machine-delete no-print" type="button" onclick="deleteOverheadCard(this)" title="Overhead löschen">🗑</button>
+    </div>
+
+    <div class="overhead-sub-wrap">
+      <div class="overhead-sub-header">
+        <div>Unterposition</div>
+        <div>Einkauf</div>
+        <div>h</div>
+        <div>Mat %</div>
+        <div>Prov %</div>
+        <div>Gesamt</div>
+        <div></div>
+      </div>
+      <div class="overhead-sub-list"></div>
+      <div class="overhead-add-row no-print">
+        <button class="btn" type="button" onclick="addOverheadItem(this.closest('.overhead-card'))">+ Unterposition</button>
+      </div>
+    </div>
+  `;
+
+  const list = card.querySelector('.overhead-sub-list');
+  (data.items || []).forEach(item => list.appendChild(createOverheadItemRow(item)));
+
+  updateOverheadCardStyle(card);
+  return card;
 }
 
 /* ═══ KALKULATION ═══ */
@@ -719,12 +871,32 @@ function calc() {
     rows.push(r);
   });
   const totalOffer=totalEmp+totalOpt;
-  const ohRows = [...document.querySelectorAll('#overhead-list .oh-row')].map(row => ({
-  name: row.querySelector('.oh-name').value || 'Overhead',
-  price: num(row.querySelector('.oh-price').value),
-  checked: row.querySelector('.oh-check').checked,
-  isOptional: row.querySelector('.oh-opt').checked
-}));
+  const ohRows = [...document.querySelectorAll('#overhead-list .overhead-card')].map(card => {
+  const items = [...card.querySelectorAll('.overhead-sub-row')].map(row => {
+    const r = calcOverheadItemPrice(row);
+    return {
+      name: row.querySelector('.oh-item-name').value || 'Unterposition',
+      purchase: r.purchase,
+      workH: r.workH,
+      matPct: num(row.querySelector('.oh-item-mat').value),
+      provPct: num(row.querySelector('.oh-item-prov').value),
+      total: r.total
+    };
+  });
+
+  const total = items.reduce((sum, item) => sum + item.total, 0);
+  card.querySelector('.oh-price').value = total.toFixed(2);
+
+  updateOverheadCardStyle(card);
+
+  return {
+    name: card.querySelector('.oh-name').value || 'Overhead',
+    price: total,
+    checked: card.querySelector('.oh-check').checked,
+    isOptional: card.querySelector('.oh-opt').checked,
+    items
+  };
+});
 
 const overheadTotal = ohRows.reduce((s, r) => s + r.price, 0);
 const includeOH = document.getElementById('oh-include').checked;
@@ -807,6 +979,64 @@ function deleteMainPosition(btn) {
   card.remove();
   calc();
 }
+function addOverheadItem(card, data = {}) {
+  card.querySelector('.overhead-sub-list').appendChild(createOverheadItemRow(data));
+  card.classList.add('expanded');
+  const btn = card.querySelector('.overhead-row .icon-btn');
+  if (btn) btn.textContent = '▴';
+  calc();
+  autoSaveSettings();
+}
+
+function toggleOverheadExpand(btn) {
+  const card = btn.closest('.overhead-card');
+  card.classList.toggle('expanded');
+  btn.textContent = card.classList.contains('expanded') ? '▴' : '▾';
+}
+
+function deleteOverheadCard(btn) {
+  const card = btn.closest('.overhead-card');
+  if (!card) return;
+  if (!confirm('Diese Overhead-Position wirklich löschen?')) return;
+  card.remove();
+  calc();
+  autoSaveSettings();
+}
+
+function updateOverheadCardStyle(card) {
+  const checked = card.querySelector('.oh-check').checked;
+  const isOpt = card.querySelector('.oh-opt').checked;
+
+  card.classList.toggle('is-optional', checked && isOpt);
+  card.classList.toggle('is-empfohlen', checked && !isOpt);
+
+  const statusBadge = card.querySelector('.overhead-status-badge');
+  const itemsBadge = card.querySelector('.overhead-items-badge');
+  const items = card.querySelectorAll('.overhead-sub-row').length;
+
+  if (statusBadge) {
+    if (!checked) {
+      statusBadge.textContent = '';
+      statusBadge.className = 'badge overhead-status-badge';
+    } else if (isOpt) {
+      statusBadge.textContent = 'Optional';
+      statusBadge.className = 'badge badge-opt overhead-status-badge';
+    } else {
+      statusBadge.textContent = 'Empfohlen';
+      statusBadge.className = 'badge badge-emp overhead-status-badge';
+    }
+  }
+
+  if (itemsBadge) {
+    itemsBadge.textContent = `${items} Unterpositionen`;
+  }
+}
+
+function toggleOverheadCard(cb) {
+  updateOverheadCardStyle(cb.closest('.overhead-card'));
+  calc();
+  autoSaveSettings();
+}
 
 function attachDragEvents(card) {
   const handle = card.querySelector('.drag-handle');
@@ -848,20 +1078,56 @@ function attachDragEvents(card) {
   });
 }
 function addOverhead() {
-  const name=document.getElementById('new-oh-name').value.trim();
-  const price=num(document.getElementById('new-oh-price').value);
-  if(!name){document.getElementById('new-oh-name').focus();return;}
-  document.getElementById('overhead-list').appendChild(createOverheadRow(name, price, true));
-  document.getElementById('new-oh-name').value='';
-  document.getElementById('new-oh-price').value='';
-  calc(); autoSaveSettings();
+  const name = document.getElementById('new-oh-name').value.trim();
+  const price = num(document.getElementById('new-oh-price').value);
+
+  if (!name) {
+    document.getElementById('new-oh-name').focus();
+    return;
+  }
+
+  const card = createOverheadRow({
+    name,
+    checked: true,
+    isOptional: false,
+    price,
+    items: [
+      {
+        name: 'Unterposition 1',
+        purchase: price,
+        workH: 0,
+        matPct: 0,
+        provPct: 0
+      }
+    ]
+  });
+
+  document.getElementById('overhead-list').appendChild(card);
+
+  document.getElementById('new-oh-name').value = '';
+  document.getElementById('new-oh-price').value = '';
+
+  calc();
+  autoSaveSettings();
 }
 function toggleMachine(cb){ updateCardStyle(cb.closest('.machine-card')); calc(); }
 function toggleOptional(cb){ updateCardStyle(cb.closest('.machine-card')); calc(); }
 function toggleExpand(btn){const card=btn.closest('.machine-card');card.classList.toggle('expanded');btn.textContent=card.classList.contains('expanded')?'▴':'▾';}
 function seedOverhead() {
-  const list=document.getElementById('overhead-list'); list.innerHTML='';
-  OVERHEAD_DEFAULTS.forEach(name=>list.appendChild(createOverheadRow(name,0)));
+  const list = document.getElementById('overhead-list');
+  list.innerHTML = '';
+
+  OVERHEAD_DEFAULTS.forEach(name => {
+    list.appendChild(createOverheadRow({
+      name,
+      checked: true,
+      isOptional: false,
+      price: 0,
+      items: [
+        { name: name, purchase: 0, workH: 0, matPct: 0, provPct: 0 }
+      ]
+    }));
+  });
 }
 function updateSeriesOptions() {
   const cat=document.getElementById('plant-category').value;
@@ -1232,6 +1498,19 @@ function collectSettings() {
   checked: row.querySelector('.oh-check').checked,
   isOptional: row.querySelector('.oh-opt').checked
 }))
+overhead: [...document.querySelectorAll('#overhead-list .overhead-card')].map(card => ({
+  name: card.querySelector('.oh-name').value,
+  price: card.querySelector('.oh-price').value,
+  checked: card.querySelector('.oh-check').checked,
+  isOptional: card.querySelector('.oh-opt').checked,
+  items: [...card.querySelectorAll('.overhead-sub-row')].map(row => ({
+    name: row.querySelector('.oh-item-name').value,
+    purchase: row.querySelector('.oh-item-purchase').value,
+    workH: row.querySelector('.oh-item-workh').value,
+    matPct: row.querySelector('.oh-item-mat').value,
+    provPct: row.querySelector('.oh-item-prov').value
+  }))
+}))
   };
 }
 function applySettings(s) {
@@ -1248,8 +1527,14 @@ function applySettings(s) {
   const list = document.getElementById('overhead-list');
   list.innerHTML = '';
   s.overhead.forEach(o => list.appendChild(
-    createOverheadRow(o.name, o.price, o.checked ?? true, o.isOptional ?? false)
-  ));
+  createOverheadRow({
+    name: o.name,
+    price: o.price,
+    checked: o.checked ?? true,
+    isOptional: o.isOptional ?? false,
+    items: o.items || []
+  })
+));
 }
 }
 let autoSaveTimer=null;
