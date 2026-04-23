@@ -1065,21 +1065,25 @@ ${pos.baseOptions && pos.baseOptions.length ? `
   const overheadRows = (data.overhead || []).map((oh, i) => `
   <tr>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; width:70px; white-space:nowrap;">
-      Pos.${51 + i}
+      ${esc(!oh.posNo ? ('Pos.' + (51 + i)) : (/^pos\./i.test(oh.posNo) ? oh.posNo : 'Pos.' + oh.posNo))}
     </td>
     <td style="padding:6px 4px; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
       ${esc(oh.name)}
+      ${oh.items && oh.items.length ? `
+        <br>
+        <span style="font-size:10pt; color:#444;">
+          ${oh.items.map(item => '• ' + esc(item.name)).join('<br>')}
+        </span>
+      ` : ''}
     </td>
-    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999;">
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; border-right:1px solid #999; width:120px; white-space:nowrap;">
       ${oh.isOptional ? eur(oh.price) : ''}
     </td>
-    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd;">
+    <td style="padding:6px 6px; text-align:right; vertical-align:top; border-bottom:1px solid #ddd; width:120px; white-space:nowrap;">
       ${!oh.isOptional ? eur(oh.price) : ''}
     </td>
   </tr>
 `).join('');
-
-const notesHtml = esc(data.notes || '').replace(/\n/g, '<br>');
 
   const content = `
     <html xmlns:o="urn:schemas-microsoft-com:office:office"
