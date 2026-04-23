@@ -215,8 +215,8 @@
   <div class="header-actions">
     <span class="save-indicator" id="save-indicator">✓ Gespeichert</span>
     <button class="btn" onclick="resetForm()">Zurücksetzen</button>
-    <button class="btn btn-word" onclick="exportWord()">&#128196; Word-Angebot</button>
-    <button class="btn btn-primary" onclick="window.print()">&#128438; PDF / Drucken</button>
+    <button class="btn btn-word" onclick="safeRun(exportWord, 'exportWord')">&#128196; Word-Angebot</button>
+    <button class="btn btn-primary" onclick="safeRun(() => window.print(), 'print')">&#128438; PDF / Drucken</button>
   </div>
 </div>
 
@@ -372,7 +372,80 @@ let machineId = 0, elementId = 0, overheadId = 0, autoPosCounter = 1;
 const fmt    = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 const fmtNum = n => (Number(n)||0).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
 const num    = v => { if(typeof v==='string') v=v.replace(',','.'); return parseFloat(v)||0; };
+function ensureErrorBox() {
+  let box = document.getElementById('error-box');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'error-box';
+    box.style.position = 'fixed';
+    box.style.left = '12px';
+    box.style.right = '12px';
+    box.style.bottom = '12px';
+    box.style.zIndex = '99999';
+    box.style.background = '#fff4f4';
+    box.style.border = '1px solid #c0392b';
+    box.style.color = '#8e1f13';
+    box.style.padding = '10px 12px';
+    box.style.borderRadius = '8px';
+    box.style.fontSize = '12px';
+    box.style.lineHeight = '1.4';
+    box.style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
+    box.style.display = 'none';
+    document.body.appendChild(box);
+  }
+  return box;
+}
 
+function showError(msg) {
+  const box = ensureErrorBox();
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;">
+      <div>
+        <strong>Fehler:</strong><br>${String(msg)}
+      </div>
+      <button onclick="clearError()" style="border:0;background:none;cursor:pointer;font-size:16px;line-height:1;color:#8e1f13;">×</button>
+    </div>
+  `;
+  box.style.display = 'block';
+}
+
+function clearError() {
+  const box = document.getElementById('error-box');
+  if (box) box.style.display = 'none';
+}
+
+function showInfo(msg) {
+  const box = ensureErrorBox();
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;color:#1f4d2b;">
+      <div>
+        <strong>Hinweis:</strong><br>${String(msg)}
+      </div>
+      <button onclick="clearError()" style="border:0;background:none;cursor:pointer;font-size:16px;line-height:1;color:#1f4d2b;">×</button>
+    </div>
+  `;
+  box.style.background = '#eef9f0';
+  box.style.border = '1px solid #7ecb5a';
+  box.style.color = '#1f4d2b';
+  box.style.display = 'block';
+}
+
+function safeRun(fn, name) {
+  try {
+    clearError();
+    return fn();
+  } catch (e) {
+    console.error(e);
+    showError(`${name}: ${e.message}`);
+  }
+}
+window.onerror = function(message, source, lineno, colno, error) {
+  showError(`JS-Fehler: ${message} (Zeile ${lineno})`);
+};
+
+window.addEventListener('unhandledrejection', function(event) {
+  showError(`Promise-Fehler: ${event.reason}`);
+});
 function getParams() {
   return {
     pMat:    num(document.getElementById('p-material').value)/100,
@@ -1236,6 +1309,34 @@ function resetForm(){
   document.getElementById('p-material').value=10;document.getElementById('p-provision').value=5;document.getElementById('p-marge').value=15;document.getElementById('p-risiko').value=3;document.getElementById('work-rate').value=85;document.getElementById('dev-rate').value=110;
   document.getElementById('oh-include').checked=false;document.getElementById('oh-share').value=100;
   document.getElementById('new-oh-name').value='';document.getElementById('new-oh-price').value='';
+function validateApp() {
+  const requiredIds = [
+    'plant-category',
+    'plant-series',
+    'machine-groups',
+    'overhead-list',
+    'offer-preview-body',
+    'breakdown-body'
+  ];
+
+  const missing = requiredIds.filter(id => !document.getElementById(id));
+  if (missing.length) {
+    showError('Fehlende DOM-Elemente: ' + missing.join(', '));
+    return false;
+  }
+
+  if (typeof buildGroupsForSelection !== 'function') {
+    showError('Funktion buildGroupsForSelection fehlt.');
+    return false;
+  }
+
+  if (typeof calc !== 'function') {
+    showError('Funktion calc fehlt.');
+    return false;
+  }
+
+  return true;
+}
   document.getElementById('offer-date').value=new Date().toLocaleDateString('de-DE');
   document.getElementById('project-select').value='';document.getElementById('project-name-input').value='';
   updateSeriesOptions();seedOverhead();applySeriesTemplate();
