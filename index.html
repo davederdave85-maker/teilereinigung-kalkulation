@@ -196,7 +196,7 @@
 }
 .overhead-row {
   display: grid;
-  grid-template-columns: 24px 24px minmax(240px,1fr) 120px 30px 30px;
+  grid-template-columns: 24px 24px minmax(240px,1fr) 120px 30px 30px 30px;
   gap: 10px;
   align-items: start;
   padding: 10px;
@@ -272,6 +272,27 @@
   color: var(--accent);
   text-align: right;
   font-weight: 600;
+}
+.overhead-card.dragging {
+  opacity: 0.45;
+}
+
+.overhead-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: var(--surface3);
+  font-size: 14px;
+  user-select: none;
+  min-height: 30px;
+}
+
+.overhead-drag-handle:active {
+  cursor: grabbing;
 }
   .toggle-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 13px; }
 
@@ -790,8 +811,8 @@ function createOverheadRow(data = {}) {
       </div>
       <input class="oh-input oh-price" type="number" value="${data.price ?? 0}" min="0" step="0.01" oninput="calc();autoSaveSettings()">
       <button class="icon-btn no-print" type="button" onclick="toggleOverheadExpand(this)">▾</button>
-      <button class="machine-delete no-print" type="button" onclick="deleteOverheadCard(this)" title="Overhead löschen">🗑</button>
-    </div>
+<button class="machine-delete no-print" type="button" onclick="deleteOverheadCard(this)" title="Overhead löschen">🗑</button>
+<div class="overhead-drag-handle no-print" title="Overhead verschieben">⋮⋮</div>
 
     <div class="overhead-sub-wrap">
       <div class="overhead-sub-header">
@@ -814,7 +835,8 @@ function createOverheadRow(data = {}) {
   (data.items || []).forEach(item => list.appendChild(createOverheadItemRow(item)));
 
   updateOverheadCardStyle(card);
-  return card;
+attachOverheadDragEvents(card);
+return card;
 }
 
 /* ═══ KALKULATION ═══ */
@@ -1040,6 +1062,50 @@ function toggleOverheadCard(cb) {
 }
 
 function attachDragEvents(card) {
+function attachOverheadDragEvents(card) {
+  const handle = card.querySelector('.overhead-drag-handle');
+  if (!handle) return;
+
+  card.draggable = true;
+
+  card.addEventListener('dragstart', e => {
+    if (!e.target.closest('.overhead-drag-handle')) {
+      e.preventDefault();
+      return;
+    }
+    card.classList.add('dragging');
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    calc();
+    autoSaveSettings();
+  });
+
+  card.addEventListener('dragover', e => {
+    e.preventDefault();
+  });
+
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+
+    const dragging = document.querySelector('.overhead-card.dragging');
+    if (!dragging || dragging === card) return;
+
+    const parent = card.parentNode;
+    const rect = card.getBoundingClientRect();
+    const before = e.clientY < rect.top + rect.height / 2;
+
+    if (before) {
+      parent.insertBefore(dragging, card);
+    } else {
+      parent.insertBefore(dragging, card.nextSibling);
+    }
+
+    calc();
+    autoSaveSettings();
+  });
+}
   const handle = card.querySelector('.drag-handle');
   if (!handle) return;
 
