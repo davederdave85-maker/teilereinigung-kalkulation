@@ -392,12 +392,10 @@
 
     <div class="section-box" style="margin-top:12px;">
       <div class="section-title">Overhead-Position hinzufügen</div>
-      <div class="oh-row">
-  <div></div>
-  <div></div>
-  <input class="oh-name" type="text" id="new-oh-name" placeholder="Overhead-Position">
-  <input class="oh-input" type="number" id="new-oh-price" placeholder="Preis" min="0" step="0.01">
-  <button class="icon-btn" type="button" onclick="addOverhead()">＋</button>
+      <div class="overhead-add-row no-print">
+  <button class="btn" type="button" onclick="addOverheadQuick()">
+    + Overhead-Position
+  </button>
 </div>
     </div>
   </div>
@@ -1189,6 +1187,28 @@ function attachOverheadDragEvents(card) {
   });
 }
 function addOverhead() {
+function addOverheadQuick() {
+  const card = createOverheadRow({
+    name: 'Neue Overhead-Position',
+    checked: true,
+    isOptional: false,
+    price: 0,
+    items: [
+      {
+        name: 'Unterposition 1',
+        purchase: 0,
+        workH: 0,
+        matPct: 0,
+        provPct: 0
+      }
+    ]
+  });
+
+  document.getElementById('overhead-list').appendChild(card);
+
+  calc();
+  autoSaveSettings();
+}
   const name = document.getElementById('new-oh-name').value.trim();
   const price = num(document.getElementById('new-oh-price').value);
 
