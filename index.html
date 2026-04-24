@@ -1144,6 +1144,50 @@ function attachOverheadDragEvents(card) {
     calc();
   });
 }
+function attachOverheadDragEvents(card) {
+  const handle = card.querySelector('.overhead-drag-handle');
+  if (!handle) return;
+
+  card.draggable = true;
+
+  card.addEventListener('dragstart', e => {
+    if (!e.target.closest('.overhead-drag-handle')) {
+      e.preventDefault();
+      return;
+    }
+    card.classList.add('dragging');
+  });
+
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    calc();
+    autoSaveSettings();
+  });
+
+  card.addEventListener('dragover', e => {
+    e.preventDefault();
+  });
+
+  card.addEventListener('drop', e => {
+    e.preventDefault();
+
+    const dragging = document.querySelector('.overhead-card.dragging');
+    if (!dragging || dragging === card) return;
+
+    const parent = card.parentNode;
+    const rect = card.getBoundingClientRect();
+    const before = e.clientY < rect.top + rect.height / 2;
+
+    if (before) {
+      parent.insertBefore(dragging, card);
+    } else {
+      parent.insertBefore(dragging, card.nextSibling);
+    }
+
+    calc();
+    autoSaveSettings();
+  });
+}
 function addOverhead() {
   const name = document.getElementById('new-oh-name').value.trim();
   const price = num(document.getElementById('new-oh-price').value);
