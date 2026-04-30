@@ -341,6 +341,9 @@
   <div style="width:1px;height:24px;background:var(--border-strong);margin:0 4px;"></div>
   <input type="text" id="project-name-input" placeholder="Projektname...">
   <button class="btn btn-success" onclick="saveProject()">&#128190; Speichern</button>
+<button class="btn" onclick="exportProjectFile()">Speichern unter</button>
+<button class="btn" onclick="importProjectFile()">Projekt öffnen</button>
+<input type="file" id="project-file-input" accept=".json" style="display:none" onchange="handleProjectFile(this)">
 </div>
 
 <div class="main-layout">
@@ -1726,7 +1729,50 @@ function refreshProjectSelect(sel=''){const projects=getAllProjects();const name
 function saveProject(){const name=document.getElementById('project-name-input').value.trim();if(!name){document.getElementById('project-name-input').focus();alert('Bitte einen Projektnamen eingeben.');return;}const projects=getAllProjects();if(projects[name]&&!confirm(`Projekt "${name}" bereits vorhanden. Überschreiben?`))return;projects[name]=collectProjectData();saveAllProjects(projects);refreshProjectSelect(name);flashSaved();}
 function loadSelectedProject(){const name=document.getElementById('project-select').value;if(!name)return;const projects=getAllProjects();if(!projects[name])return;if(!confirm(`Projekt "${name}" laden? Nicht gespeicherte Änderungen gehen verloren.`)){document.getElementById('project-select').value='';return;}document.getElementById('project-name-input').value=name;applyProjectData(projects[name]);flashSaved();}
 function deleteProject(){const name=document.getElementById('project-select').value;if(!name){alert('Kein Projekt ausgewählt.');return;}if(!confirm(`Projekt "${name}" wirklich löschen?`))return;const projects=getAllProjects();delete projects[name];saveAllProjects(projects);document.getElementById('project-name-input').value='';refreshProjectSelect();}
+function exportProjectFile() {
+  const data = collectProjectData();
+  const name = document.getElementById('project-name-input').value.trim() || 'Projekt';
 
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json'
+  });
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = name.replace(/[^\w\-]+/g, '_') + '.json';
+  link.click();
+
+  URL.revokeObjectURL(link.href);
+}
+
+function importProjectFile() {
+  document.getElementById('project-file-input').click();
+}
+
+function handleProjectFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      applyProjectData(data);
+
+      const cleanName = file.name.replace(/\.json$/i, '');
+      document.getElementById('project-name-input').value = cleanName;
+
+      showInfo('Projekt wurde lokal geladen: ' + file.name);
+    } catch (err) {
+      showError('Projektdatei konnte nicht gelesen werden: ' + err.message);
+    }
+
+    input.value = '';
+  };
+
+  reader.readAsText(file);
+}
 function validateApp() {
   const requiredIds = [
     'plant-category',
